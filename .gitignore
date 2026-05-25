@@ -26,3 +26,7 @@ pnpm-debug.log*
 # local tooling/worktree artifacts
 .claude/worktrees/
 nul
+# Local Pi runtime state
+.atl/
+
+.pi/settings.json
