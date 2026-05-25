@@ -30,37 +30,39 @@ const hasImages = galleryImages.length > 0;
   {hasImages ? (
     <>
       <div class="embla service-gallery__main relative" role="region" aria-label={`${serviceName} image gallery`} tabindex="0">
-        <div class="embla__viewport overflow-hidden bg-black aspect-4/3 min-h-80 lg:min-h-120 w-full rounded-[1.5rem] border border-white/8" data-gallery-main-viewport>
-          <div class="embla__container flex h-full">
-            {galleryImages.map((img, i) => (
-              <div class="embla__slide shrink-0 min-w-0 basis-full">
-                <button
-                  type="button"
-                  class="gallery-main-trigger group relative block w-full h-full cursor-zoom-in"
-                  data-gallery-main-trigger
-                  data-gallery-index={i}
-                  data-gallery-src={getCloudinaryImageUrl(img, 'f_auto,q_auto,w_1800')}
-                  aria-label={`Open image ${i + 1} of ${galleryImages.length} in fullscreen`}
-                >
-                  <CldImage
-                    src={img}
-                    alt={`${serviceName} — real result ${i + 1}`}
-                    width={1024}
-                    height={800}
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    class="w-full h-full object-cover"
-                    loading={i === 0 ? 'eager' : 'lazy'}
-                  />
+        <div class="relative aspect-4/3 min-h-80 lg:min-h-120 w-full rounded-[1.5rem] border border-white/8 overflow-hidden">
+          <div class="embla__viewport absolute inset-0 overflow-hidden bg-black" data-gallery-main-viewport>
+            <div class="embla__container flex h-full">
+              {galleryImages.map((img, i) => (
+                <div class="embla__slide shrink-0 min-w-0 basis-full">
+                  <button
+                    type="button"
+                    class="gallery-main-trigger group relative block w-full h-full cursor-zoom-in"
+                    data-gallery-main-trigger
+                    data-gallery-index={i}
+                    data-gallery-src={getCloudinaryImageUrl(img, 'f_auto,q_auto,w_1800')}
+                    aria-label={`Open image ${i + 1} of ${galleryImages.length} in fullscreen`}
+                  >
+                    <CldImage
+                      src={img}
+                      alt={`${serviceName} — real result ${i + 1}`}
+                      width={1024}
+                      height={800}
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                      class="w-full h-full object-cover"
+                      loading={i === 0 ? 'eager' : 'lazy'}
+                    />
 
-                  <div class="absolute inset-0 bg-black/6 transition-colors duration-300 group-hover:bg-wine/18" />
+                    <div class="absolute inset-0 bg-black/6 transition-colors duration-300 group-hover:bg-wine/18" />
 
-                    <div class="absolute right-3 bottom-3 bg-black/72 text-text-primary text-xs font-medium px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-wine-soft/18 backdrop-blur-sm">
-                    <Icon name="tabler:zoom-in" size='sm' />
-                    Full view
-                  </div>
-                </button>
-              </div>
-            ))}
+                      <div class="absolute right-3 bottom-3 bg-black/72 text-text-primary text-xs font-medium px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-wine-soft/18 backdrop-blur-sm">
+                      <Icon name="tabler:zoom-in" size='sm' />
+                      Full view
+                    </div>
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
