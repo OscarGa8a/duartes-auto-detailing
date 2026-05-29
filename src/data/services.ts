@@ -31,7 +31,7 @@ export interface Service {
 export const services: Service[] = [
   {
     slug: "interior-detailing",
-    name: " Deep Interior Cleaning & Protection",
+    name: " Interior Detail",
     tagline:
       "Detailed interior care focused on cleanliness, comfort, and presentation.",
     description:
@@ -68,7 +68,7 @@ export const services: Service[] = [
   },
   {
     slug: "exterior-detailing",
-    name: "Exterior Wash, Shine & Protection",
+    name: "Exterior Detail",
     tagline:
       "A refined exterior cleaning process that enhances gloss and presentation.",
     description:
@@ -105,8 +105,8 @@ export const services: Service[] = [
     ],
   },
   {
-    slug: "paint-correction-machine-polishing",
-    name: "Paint Correction & Machine Polishing",
+    slug: "paint-correction",
+    name: "Paint Correction",
     tagline:
       "Professional polishing designed to improve gloss, depth, and clarity.",
     description:
@@ -176,7 +176,7 @@ export const services: Service[] = [
   },
   {
     slug: "full-detailing",
-    name: "Complete Interior & Exterior Detailing",
+    name: "Full Detail (Interior - Exterior)",
     tagline:
       "Comprehensive interior and exterior detailing in one complete service.",
     description:
