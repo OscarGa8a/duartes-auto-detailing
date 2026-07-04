@@ -6,6 +6,8 @@ import RelatedServices from '../../components/sections/services/RelatedServices.
 import CTABanner from '../../components/ui/CTABanner.astro';
 import { services, getRelatedServices } from '../../data/services';
 import { config } from '../../data/config';
+import { getLocalBusinessJsonLd, getServiceJsonLd } from '../../data/business';
+import { getCloudinaryImageUrl } from '../../helpers/cloudinary';
 
 export function getStaticPaths() {
   return services.map((service) => ({
@@ -17,9 +19,12 @@ export function getStaticPaths() {
 const { service } = Astro.props;
 const related = getRelatedServices(service.relatedSlugs);
 
-const pageTitle = service.name;
-const pageDescription = service.tagline;
-const ogImage = service.ogImage ?? '/images/og-services.jpg';
+const pageTitle = `${service.name.trim()} in the Bay Area`;
+const pageDescription = `${service.tagline} Mobile service available across the Bay Area.`;
+const candidateOgImage = getCloudinaryImageUrl(service.ogImage ?? service.images[0] ?? '', 'f_auto,q_auto,w_1200,h_630,c_fill');
+const ogImage = candidateOgImage.startsWith('http') || candidateOgImage.startsWith('/') ? candidateOgImage : undefined;
+const site = Astro.site ?? new URL('https://duartesautodetailing.com');
+const structuredData = [getLocalBusinessJsonLd(site), getServiceJsonLd(site, service)];
 
 const phoneMessage = encodeURIComponent(`Hello, I'd like to book the service: ${service.name}`);
 const phoneUrl = `sms:${config.phoneUSE164}?body=${phoneMessage}`;
@@ -29,6 +34,8 @@ const phoneUrl = `sms:${config.phoneUSE164}?body=${phoneMessage}`;
   title={pageTitle}
   description={pageDescription}
   ogImage={ogImage}
+  imageAlt={`${service.name.trim()} result by Duartes Auto Detailing`}
+  structuredData={structuredData}
 >
   <ServiceDetailHero service={service} />
 

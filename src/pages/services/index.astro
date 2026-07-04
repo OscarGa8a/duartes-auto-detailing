@@ -3,11 +3,22 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../../components/ui/PageHero.astro';
 import DiscountBanner from '../../components/sections/home/DiscountBanner.astro';
 import ServicesSection from '../../components/sections/services/ServicesSection.astro';
+import { getLocalBusinessJsonLd, getServicesItemListJsonLd } from '../../data/business';
+import { services } from '../../data/services';
+import { getCloudinaryImageUrl } from '../../helpers/cloudinary';
+
+const site = Astro.site ?? new URL('https://duartesautodetailing.com');
+const structuredData = [getLocalBusinessJsonLd(site), getServicesItemListJsonLd(site)];
+const candidateOgImage = getCloudinaryImageUrl(services[0]?.images[0] ?? '', 'f_auto,q_auto,w_1200,h_630,c_fill');
+const ogImage = candidateOgImage.startsWith('http') || candidateOgImage.startsWith('/') ? candidateOgImage : undefined;
 ---
 
 <BaseLayout
-  title="Our Services | Duartes Auto Detailing"
-  description="Check out our premium detailing packages: Full Package, Ceramic Coating, Paint Correction, and more. Mobile service in the Bay Area."
+  title="Mobile Auto Detailing Services"
+  description="Explore Bay Area mobile detailing services including interior detail, exterior detail, full detail, ceramic coating, and paint correction."
+  ogImage={ogImage}
+  imageAlt="Duartes Auto Detailing service result"
+  structuredData={structuredData}
 >
   <PageHero
     title="Tailored Care For Every Finish"
@@ -16,5 +27,26 @@ import ServicesSection from '../../components/sections/services/ServicesSection.
     description="Explore premium mobile detailing packages designed around your vehicle, your finish goals, and the level of protection you want to maintain." 
   />
   <ServicesSection />
+  <section class="bg-off-white py-10 lg:py-16 border-b border-divider-light/70">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
+      <div data-reveal="up" class="flex flex-col gap-3">
+        <span class="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold-deep">
+          <span class="h-px w-10 bg-gold"></span>
+          Mobile service area
+        </span>
+        <h2 class="text-text-dark font-bold text-h2">Bay Area detailing brought to your location.</h2>
+        <p class="max-w-3xl text-text-dark/72 leading-relaxed">
+          Duartes Auto Detailing is a mobile service for Bay Area drivers. Visit the service-area hub to see priority city pages and learn how appointments work for homes, offices, and private garages.
+        </p>
+      </div>
+      <a
+        data-reveal="right"
+        href="/service-area/bay-area/"
+        class="inline-flex items-center justify-center rounded-full bg-black px-6 py-3 text-sm font-semibold text-text-primary transition-colors hover:bg-surface"
+      >
+        View Bay Area Service Area
+      </a>
+    </div>
+  </section>
   <DiscountBanner />
 </BaseLayout>

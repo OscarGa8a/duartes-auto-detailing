@@ -7,14 +7,19 @@ import Testimonials from '../components/sections/home/Testimonials.astro';
 import Gallery from '../components/sections/home/Gallery.astro';
 import DiscountBanner from '../components/sections/home/DiscountBanner.astro';
 import { getCloudinaryImageUrl } from '../helpers/cloudinary';
+import { getLocalBusinessJsonLd, getWebSiteJsonLd } from '../data/business';
 
 const ogImage = getCloudinaryImageUrl('og-image_usi1ab');
+const site = Astro.site ?? new URL('https://duartesautodetailing.com');
+const structuredData = [getLocalBusinessJsonLd(site), getWebSiteJsonLd(site)];
 ---
 
 <BaseLayout
-  title="Diamond-Level Automotive Detailing"
-  description="Premium car detailing delivered to your doorstep in the Bay Area. We bring that dealership shine right to your home or office. Book now!"
+  title="Bay Area Mobile Auto Detailing"
+  description="Premium mobile auto detailing in the Bay Area, delivered to your home, office, or private garage. Book Duartes Auto Detailing today."
   ogImage={ogImage}
+  imageAlt="Freshly detailed vehicle by Duartes Auto Detailing"
+  structuredData={structuredData}
 >
   <HeroSection />
   <WhyDuartes />

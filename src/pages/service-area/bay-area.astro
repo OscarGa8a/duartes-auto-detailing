@@ -1,0 +1,148 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/ui/PageHero.astro';
+import CTABanner from '../../components/ui/CTABanner.astro';
+import { services } from '../../data/services';
+import {
+  additionalServiceAreaCityNames,
+  priorityServiceAreaCities,
+  serviceAreaHub,
+} from '../../data/service-areas';
+import {
+  getBreadcrumbListJsonLd,
+  getLocalBusinessJsonLd,
+  getServiceAreaHubJsonLd,
+} from '../../data/business';
+
+const site = Astro.site ?? new URL('https://duartesautodetailing.com');
+const structuredData = [
+  getLocalBusinessJsonLd(site),
+  getServiceAreaHubJsonLd(site),
+  getBreadcrumbListJsonLd(site, [
+    { name: 'Home', path: '/' },
+    { name: 'Service Area', path: '/service-area/bay-area/' },
+  ]),
+];
+
+const featuredServices = services.filter((service) =>
+  ['interior-detailing', 'exterior-detailing', 'full-detailing', 'ceramic-coating'].includes(service.slug)
+);
+---
+
+<BaseLayout
+  title={serviceAreaHub.metaTitle}
+  description={serviceAreaHub.metaDescription}
+  imageAlt="Duartes Auto Detailing Bay Area mobile service"
+  structuredData={structuredData}
+>
+  <PageHero
+    title="Bay Area Mobile Auto Detailing Service Area"
+    backgroundImage={{ mobile: 'banner-services-mobile_opaa4u', desktop: 'banner-services-web_feprye' }}
+    eyebrow="Service area"
+    description={serviceAreaHub.heroDescription}
+  />
+
+  <section class="bg-black py-10 lg:py-16 border-b border-border-soft relative overflow-hidden">
+    <div class="motion-drift absolute -left-12 top-14 h-64 w-64 rounded-full bg-gold/10 blur-3xl"></div>
+    <div class="motion-drift absolute right-0 bottom-0 h-64 w-64 rounded-full bg-wine/12 blur-3xl" style="--float-delay: 1.2s"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
+      <div data-reveal="up" class="flex flex-col gap-4">
+        <span class="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold">
+          <span class="h-px w-10 bg-gold"></span>
+          Mobile detailing near you
+        </span>
+        <h2 class="text-h2 font-bold text-text-primary">Professional detailing across the Bay Area.</h2>
+        <p class="text-text-secondary leading-relaxed">
+          Duartes Auto Detailing brings premium vehicle care to customers across the Bay Area. The service is designed for drivers who want interior cleaning, exterior detailing, full details, paint correction, or ceramic coating without losing time to a traditional shop visit.
+        </p>
+        <p class="text-text-secondary leading-relaxed">
+          Appointments can be scheduled at homes, offices, and private garages when there is safe access to the vehicle. Service availability can vary by distance, appointment timing, vehicle condition, and the package selected.
+        </p>
+      </div>
+
+      <div data-reveal="scale" class="rounded-4xl border border-gold/16 bg-surface/80 p-5 shadow-lg lg:p-7">
+        <h3 class="text-h3 font-bold text-text-primary">Service city pages</h3>
+        <p class="mt-2 text-sm leading-relaxed text-text-secondary">
+          Browse the configured city guides below. Each page explains how mobile service works for that local area and links to relevant detailing services.
+        </p>
+        <div class="mt-5 grid gap-3 sm:grid-cols-2">
+          {priorityServiceAreaCities.map((city) => (
+            <a
+              href={`/service-area/${city.slug}/`}
+              class="group rounded-2xl border border-white/8 bg-black/32 p-4 transition-all hover:border-gold/36 hover:bg-wine/10"
+            >
+              <span class="text-sm font-semibold text-gold">{city.name}</span>
+              <span class="mt-1 block text-xs uppercase tracking-wide text-text-muted">Mobile auto detailing</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-off-white py-10 lg:py-16 border-b border-divider-light/70">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+      <div data-reveal="up" class="flex flex-col gap-3">
+        <span class="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold-deep">
+          <span class="h-px w-10 bg-gold"></span>
+          Service options
+        </span>
+        <h2 class="text-text-dark font-bold text-h2">Detailing packages available in the service area.</h2>
+        <p class="text-text-dark/72 leading-relaxed">
+          Choose the level of care that matches your vehicle: a targeted interior refresh, a glossy exterior detail, a complete inside-and-out service, or paint protection work for long-term maintenance.
+        </p>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        {featuredServices.map((service, index) => (
+          <a
+            data-reveal="up"
+            style={`--reveal-delay: ${index * 80}ms`}
+            href={`/services/${service.slug}`}
+            class="rounded-3xl border border-divider-light bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-gold/60 hover:shadow-lg"
+          >
+            <h3 class="text-lg font-bold text-text-dark">{service.name.trim()}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-text-dark/68">{service.tagline}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-black py-10 lg:py-16 border-b border-border-soft">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-8 lg:grid-cols-[1fr_1fr]">
+      <div data-reveal="up" class="rounded-4xl border border-white/8 bg-surface p-6 lg:p-8">
+        <h2 class="text-h2 font-bold text-text-primary">Need another nearby city?</h2>
+        <p class="mt-3 text-text-secondary leading-relaxed">
+          The public city pages now cover the confirmed service-area list. If your appointment is near one of these communities, contact Duartes Auto Detailing with the exact location so the team can confirm availability before booking.
+        </p>
+        {additionalServiceAreaCityNames.length > 0 && (
+          <ul class="mt-5 flex flex-wrap gap-2">
+            {additionalServiceAreaCityNames.map((city) => (
+              <li class="rounded-full border border-gold/18 bg-black/28 px-3 py-1.5 text-sm text-text-secondary">{city}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div data-reveal="up" style="--reveal-delay: 120ms" class="rounded-4xl border border-gold/16 bg-[linear-gradient(180deg,rgba(30,32,36,0.96),rgba(79,29,30,0.22))] p-6 lg:p-8">
+        <h2 class="text-h2 font-bold text-text-primary">How mobile appointments work</h2>
+        <ol class="mt-5 grid gap-4 text-text-secondary">
+          <li><strong class="text-gold">1. Choose your service.</strong> Start with the package that fits your vehicle condition and finish goals.</li>
+          <li><strong class="text-gold">2. Share your location details.</strong> Confirm parking access, available space, and any service notes.</li>
+          <li><strong class="text-gold">3. Get the vehicle detailed on-site.</strong> The team brings the service to your suitable home, office, or private garage location.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <CTABanner
+    image="cta_banner_utp6hb"
+    eyebrow="Ready to book?"
+    title="Schedule Mobile Detailing In Your Area"
+    description="Tell us your city, vehicle, and service goals so we can help confirm availability and recommend the right detail."
+    buttonText="Contact Duartes"
+    buttonHref="/contact"
+    variant="premium"
+  />
+</BaseLayout>

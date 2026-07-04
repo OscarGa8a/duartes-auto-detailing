@@ -1,6 +1,6 @@
 ---
 import { CldImage } from "astro-cloudinary";
-import { config } from "../../../data/config";
+import { config, formattedNumber } from "../../../data/config";
 
 ---
 
@@ -41,7 +41,7 @@ import { config } from "../../../data/config";
           More than a service - it's a disciplined restoration experience.
         </p>
         <p class="text-text-secondary leading-relaxed max-w-2xl">
-          At Duartes Auto Detailing, we understand that your vehicle is a meaningful investment. Over the past three years, we have detailed more than 5,000 vehicles across over 1,000 Bay Area locations, combining convenience, premium products, and a level of care designed to leave every finish richer, cleaner, and better protected.
+          At Duartes Auto Detailing, we understand that your vehicle is a meaningful investment. With {config.yearsOfExperience}+ years of experience, we have detailed more than {formattedNumber(config.vehiclesDetailed)} vehicles across over {formattedNumber(config.bayAreaLocations)} Bay Area locations, combining convenience, premium products, and a level of care designed to leave every finish richer, cleaner, and better protected.
         </p>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
