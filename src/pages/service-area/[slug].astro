@@ -1,0 +1,148 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/ui/PageHero.astro';
+import CTABanner from '../../components/ui/CTABanner.astro';
+import { services, type Service } from '../../data/services';
+import { priorityServiceAreaCities, type ServiceAreaCity } from '../../data/service-areas';
+import {
+  getBreadcrumbListJsonLd,
+  getCityServiceAreaJsonLd,
+  getLocalBusinessJsonLd,
+} from '../../data/business';
+
+export function getStaticPaths() {
+  return priorityServiceAreaCities.map((city) => ({
+    params: { slug: city.slug },
+    props: { city },
+  }));
+}
+
+const { city } = Astro.props as { city: ServiceAreaCity };
+const site = Astro.site ?? new URL('https://duartesautodetailing.com');
+const highlightedServices = city.serviceHighlights
+  .map((slug) => services.find((service) => service.slug === slug))
+  .filter((service): service is Service => Boolean(service));
+const relatedCities = priorityServiceAreaCities.filter((item) => item.slug !== city.slug).slice(0, 3);
+const structuredData = [
+  getLocalBusinessJsonLd(site),
+  getCityServiceAreaJsonLd(site, city),
+  getBreadcrumbListJsonLd(site, [
+    { name: 'Home', path: '/' },
+    { name: 'Service Area', path: '/service-area/bay-area/' },
+    { name: city.name, path: `/service-area/${city.slug}/` },
+  ]),
+];
+---
+
+<BaseLayout
+  title={city.metaTitle}
+  description={city.metaDescription}
+  imageAlt={`Duartes Auto Detailing mobile service in ${city.name}`}
+  structuredData={structuredData}
+>
+  <PageHero
+    title={`Mobile Auto Detailing in ${city.name}`}
+    backgroundImage={{ mobile: 'banner-services-mobile_opaa4u', desktop: 'banner-services-web_feprye' }}
+    eyebrow={`${city.region} service area`}
+    description={city.heroDescription}
+  />
+
+  <section class="bg-black py-10 lg:py-16 border-b border-border-soft relative overflow-hidden">
+    <div class="motion-drift absolute -left-12 top-14 h-64 w-64 rounded-full bg-gold/10 blur-3xl"></div>
+    <div class="motion-drift absolute right-0 bottom-0 h-64 w-64 rounded-full bg-wine/12 blur-3xl" style="--float-delay: 1.2s"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-8 lg:grid-cols-[1fr_0.8fr] lg:items-start">
+      <div data-reveal="up" class="flex flex-col gap-4">
+        <span class="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold">
+          <span class="h-px w-10 bg-gold"></span>
+          Local mobile service
+        </span>
+        <h2 class="text-h2 font-bold text-text-primary">Detailing that fits your {city.name} schedule.</h2>
+        <p class="text-text-secondary leading-relaxed">{city.intro}</p>
+        <p class="text-text-secondary leading-relaxed">{city.customerAngle}</p>
+      </div>
+
+      <aside data-reveal="scale" class="rounded-4xl border border-gold/16 bg-surface/80 p-5 shadow-lg lg:p-7">
+        <h2 class="text-h3 font-bold text-text-primary">Helpful appointment notes</h2>
+        <ul class="mt-4 grid gap-3 text-sm leading-relaxed text-text-secondary">
+          <li class="rounded-2xl border border-white/8 bg-black/28 p-4">Mobile service works best with safe parking and enough room around the vehicle.</li>
+          <li class="rounded-2xl border border-white/8 bg-black/28 p-4">Share vehicle condition, service goals, and access details before booking.</li>
+          <li class="rounded-2xl border border-white/8 bg-black/28 p-4">Availability can vary by service type, distance, and appointment schedule.</li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+
+  <section class="bg-off-white py-10 lg:py-16 border-b border-divider-light/70">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+      <div data-reveal="up" class="flex flex-col gap-3">
+        <span class="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold-deep">
+          <span class="h-px w-10 bg-gold"></span>
+          Recommended services
+        </span>
+        <h2 class="text-text-dark font-bold text-h2">Popular detailing options for {city.name} drivers.</h2>
+        <p class="text-text-dark/72 leading-relaxed">
+          Start with one of these core services, or contact Duartes Auto Detailing for help matching the detail to your vehicle condition and goals.
+        </p>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        {highlightedServices.map((service, index) => (
+          <a
+            data-reveal="up"
+            style={`--reveal-delay: ${index * 80}ms`}
+            href={`/services/${service.slug}`}
+            class="rounded-3xl border border-divider-light bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-gold/60 hover:shadow-lg"
+          >
+            <h3 class="text-lg font-bold text-text-dark">{service.name.trim()}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-text-dark/68">{service.tagline}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-black py-10 lg:py-16 border-b border-border-soft">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-8 lg:grid-cols-[1fr_0.85fr]">
+      <div data-reveal="up" class="flex flex-col gap-5">
+        <span class="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold">
+          <span class="h-px w-10 bg-gold"></span>
+          Questions
+        </span>
+        <h2 class="text-h2 font-bold text-text-primary">{city.name} mobile detailing FAQ</h2>
+        <div class="grid gap-4">
+          {city.faqs.map((faq) => (
+            <details class="rounded-3xl border border-white/8 bg-surface p-5">
+              <summary class="cursor-pointer text-base font-semibold text-text-primary">{faq.question}</summary>
+              <p class="mt-3 text-sm leading-relaxed text-text-secondary">{faq.answer}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+
+      <aside data-reveal="up" style="--reveal-delay: 120ms" class="rounded-4xl border border-gold/16 bg-[linear-gradient(180deg,rgba(30,32,36,0.96),rgba(79,29,30,0.22))] p-6 lg:p-8 self-start">
+        <h2 class="text-h3 font-bold text-text-primary">Explore nearby priority pages</h2>
+        <p class="mt-3 text-sm leading-relaxed text-text-secondary">
+          Compare other Bay Area service pages or return to the main service-area hub.
+        </p>
+        <div class="mt-5 grid gap-3">
+          <a class="rounded-2xl border border-white/8 bg-black/28 p-4 text-sm font-semibold text-gold transition-colors hover:border-gold/36" href="/service-area/bay-area/">Bay Area service-area hub</a>
+          {relatedCities.map((relatedCity) => (
+            <a class="rounded-2xl border border-white/8 bg-black/28 p-4 text-sm font-semibold text-text-primary transition-colors hover:border-gold/36 hover:text-gold" href={`/service-area/${relatedCity.slug}/`}>
+              {relatedCity.name} mobile auto detailing
+            </a>
+          ))}
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <CTABanner
+    image="cta_banner_utp6hb"
+    eyebrow={`${city.name} mobile detailing`}
+    title="Book A Detail At Your Location"
+    description={`Tell us your vehicle, service goals, and ${city.name} appointment setup so we can help recommend the right package.`}
+    buttonText="Contact Duartes"
+    buttonHref="/contact"
+    variant="premium"
+  />
+</BaseLayout>

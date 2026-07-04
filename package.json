@@ -8,6 +8,9 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "check": "astro check",
+    "test:seo": "pnpm run build && pnpm run verify:seo",
+    "verify:seo": "node scripts/verify-seo-output.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },

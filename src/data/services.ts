@@ -31,7 +31,7 @@ export interface Service {
 export const services: Service[] = [
   {
     slug: "interior-detailing",
-    name: " Interior Detail",
+    name: "Interior Detail",
     tagline:
       "Detailed interior care focused on cleanliness, comfort, and presentation.",
     description:

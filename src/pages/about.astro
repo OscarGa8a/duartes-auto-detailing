@@ -5,21 +5,21 @@ import StandardSection from '../components/sections/about/StandardSection.astro'
 import PillarsSection from '../components/sections/about/PillarsSection.astro';
 import BehindTheShine from '../components/sections/about/BehindTheShine.astro';
 import CTABanner from '../components/ui/CTABanner.astro';
-import { config } from '../data/config';
+import { config, formattedNumber } from '../data/config';
 
 const phoneMessage = encodeURIComponent(`Hello, I'd like to learn more about your services. Could you provide me with more information?`);
 const phoneUrl = `sms:${config.phoneUSE164}?body=${phoneMessage}`;
 ---
 
 <BaseLayout
-  title="About Us | Duartes Auto Detailing"
-  description="Meet Duartes Auto Detailing — 3 years in business, with over 5,000 vehicles detailed throughout the Bay Area, California."
+  title="About Duartes Auto Detailing"
+  description={`Meet Duartes Auto Detailing — ${config.yearsOfExperience}+ years of experience, with over ${formattedNumber(config.vehiclesDetailed)} vehicles detailed throughout the Bay Area, California.`}
 >
   <PageHero
     title="Built Around Precision"
     backgroundImage={{ mobile: 'banner-about-mobile_hgfxrs', desktop: 'banner_about-web_yivhwv' }}
     eyebrow="About Duartes"
-    description="For more than three years, Duartes Auto Detailing has delivered mobile detailing with the discipline, polish, and premium care Bay Area owners expect from a true luxury service experience."
+    description={`For more than ${config.yearsOfExperience} years, Duartes Auto Detailing has delivered mobile detailing with the discipline, polish, and premium care Bay Area owners expect from a true luxury service experience.`}
   />
   <StandardSection />
   <PillarsSection />

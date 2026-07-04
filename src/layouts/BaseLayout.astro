@@ -1,21 +1,26 @@
 ---
 import SEOHead from '../components/seo/SEOHead.astro';
+import StructuredData from '../components/seo/StructuredData.astro';
 import Navbar from '../components/layout/Navbar.astro';
 import Footer from '../components/layout/Footer.astro';
 import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 
+type JsonLd = Record<string, unknown> | Record<string, unknown>[];
+
 interface Props {
   title: string;
   description: string;
   ogImage?: string;
+  imageAlt?: string;
+  structuredData?: JsonLd;
 }
 
-const { title, description, ogImage } = Astro.props;
+const { title, description, ogImage, imageAlt, structuredData } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang="en-US">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -34,7 +39,8 @@ const { title, description, ogImage } = Astro.props;
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <SEOHead title={title} description={description} ogImage={ogImage} />
+    <SEOHead title={title} description={description} ogImage={ogImage} imageAlt={imageAlt} />
+    {structuredData && <StructuredData data={structuredData} />}
     <style>
       .gslide-media {
         height: auto !important;
