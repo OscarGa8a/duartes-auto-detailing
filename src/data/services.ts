@@ -15,6 +15,14 @@ export interface ServiceExternalVideo {
 
 export type ServiceVideo = ServiceCloudinaryVideo | ServiceExternalVideo;
 
+export interface GalleryMediaItem {
+  src: string; // Cloudinary public_id for the poster/thumbnail (always an image)
+  alt?: string;
+  isVideo?: boolean;
+  mediaSrc?: string; // Cloudinary public_id for the video (only when isVideo is true)
+  gridArea?: string; // Optional CSS grid area for layout purposes
+}
+
 export interface Service {
   slug: string;
   name: string;
@@ -23,6 +31,8 @@ export interface Service {
   includes: string[];
   ctaLine?: string;
   images: string[];
+  /** Mixed media gallery (images + Cloudinary videos). Falls back to `images` when omitted. */
+  media?: GalleryMediaItem[];
   video?: ServiceVideo;
   relatedSlugs: string[];
   ogImage?: string;
@@ -63,6 +73,50 @@ export const services: Service[] = [
       "img11_w1mqb7",
       "img12_fg2gex",
       "img13_b1q4kp",
+    ],
+    media: [
+      {
+        src: "img14_yapstm",
+      },
+      {
+        src: "img1_v0uity",
+      },
+      {
+        src: "img2_tbgr2k",
+      },
+      {
+        src: "img3_br8fyb",
+      },
+      {
+        src: "img4_m28lp9",
+      },
+      {
+        src: "img5_nzwru7",
+      },
+      {
+        src: "img6_m3mhzp",
+      },
+      {
+        src: "img7_joell2",
+      },
+      {
+        src: "img8_k96ixi",
+      },
+      {
+        src: "img9_su7y7q",
+      },
+      {
+        src: "img10_zmesw9",
+      },
+      {
+        src: "img11_w1mqb7",
+      },
+      {
+        src: "img12_fg2gex",
+      },
+      {
+        src: "img13_b1q4kp",
+      },
     ],
     relatedSlugs: [
       "seat-upholstery-deep-cleaning",
@@ -107,6 +161,53 @@ export const services: Service[] = [
       "img14_oywexs",
       "img15_n4rs66",
     ],
+    media: [
+      {
+        src: "img10_ny7bbo",
+      },
+      {
+        src: "img1_hadcgm",
+      },
+      {
+        src: "img2_a8flus",
+      },
+      {
+        src: "img3_ql6e3y",
+      },
+      {
+        src: "img4_avn0rw",
+      },
+      {
+        src: "img5_mf21k7",
+      },
+      {
+        src: "img6_bgc7p1",
+      },
+      {
+        src: "img7_nuvkck",
+      },
+      {
+        src: "img8_dhzgxw",
+      },
+      {
+        src: "img9_bz9scj",
+      },
+      {
+        src: "img11_djasz8",
+      },
+      {
+        src: "img12_ayuwfe",
+      },
+      {
+        src: "img13_ptobt1",
+      },
+      {
+        src: "img14_oywexs",
+      },
+      {
+        src: "img15_n4rs66",
+      },
+    ],
     relatedSlugs: [
       "full-detailing",
       "clay-bar-decontamination",
@@ -140,6 +241,38 @@ export const services: Service[] = [
       "img8_rfnxk8",
       "img9_whvozj",
       "img10_krezlr",
+    ],
+    media: [
+      {
+        src: "img1_pl62ks",
+      },
+      {
+        src: "img2_pahdef",
+      },
+      {
+        src: "img3_makqun",
+      },
+      {
+        src: "img4_ub21qo",
+      },
+      {
+        src: "img5_t3aza9",
+      },
+      {
+        src: "img6_sb944p",
+      },
+      {
+        src: "img7_ich3fc",
+      },
+      {
+        src: "img8_rfnxk8",
+      },
+      {
+        src: "img9_whvozj",
+      },
+      {
+        src: "img10_krezlr",
+      },
     ],
     relatedSlugs: [
       "ceramic-coating",
@@ -176,6 +309,46 @@ export const services: Service[] = [
       "img9_adf3ou",
       "img10_tear6u",
       "img11_jyegao",
+    ],
+    media: [
+      {
+        src: "img1_yqzcqr",
+      },
+      {
+        src: "ceramic_coating_z6motl",
+        isVideo: true,
+        mediaSrc: "ceramic_coating_le8l1u",
+      },
+      {
+        src: "img6_fsi6rv",
+      },
+      {
+        src: "img2_eahbl8",
+      },
+      {
+        src: "img3_fsyavv",
+      },
+      {
+        src: "img4_d857o5",
+      },
+      {
+        src: "img5_brw7kv",
+      },
+      {
+        src: "img7_rlx5ib",
+      },
+      {
+        src: "img8_lo7a5v",
+      },
+      {
+        src: "img9_adf3ou",
+      },
+      {
+        src: "img10_tear6u",
+      },
+      {
+        src: "img11_jyegao",
+      },
     ],
     relatedSlugs: [
       "paint-correction",
@@ -225,6 +398,43 @@ export const services: Service[] = [
       "img9_il97xr",
       "img10_yf3ll4",
     ],
+    media: [
+      {
+        src: "img5_tfs4mg",
+      },
+      {
+        src: "poster_before_after_zfilb5",
+        isVideo: true,
+        mediaSrc: "Before_After_Ford_ws4clf",
+      },
+      {
+        src: "img1_tmpx2c",
+      },
+      {
+        src: "img2_hezc6k",
+      },
+      {
+        src: "img3_qzyjjf",
+      },
+      {
+        src: "img4_vz0dz4",
+      },
+      {
+        src: "img6_pbb71l",
+      },
+      {
+        src: "img7_ku0uf3",
+      },
+      {
+        src: "img8_zu0yez",
+      },
+      {
+        src: "img9_il97xr",
+      },
+      {
+        src: "img10_yf3ll4",
+      },
+    ],
     relatedSlugs: ["ceramic-coating", "paint-correction", "interior-detailing"],
   },
   {
@@ -258,6 +468,41 @@ export const services: Service[] = [
       "img10_j23ucy",
       "img11_y8zkif",
     ],
+    media: [
+      {
+        src: "img4_yy8jcu",
+      },
+      {
+        src: "img1_qr10jv",
+      },
+      {
+        src: "img2_zulywq",
+      },
+      {
+        src: "img3_cluk0a",
+      },
+      {
+        src: "img5_ejnim5",
+      },
+      {
+        src: "img6_luk3wy",
+      },
+      {
+        src: "img7_yattit",
+      },
+      {
+        src: "img8_bzqo27",
+      },
+      {
+        src: "img9_fpexcy",
+      },
+      {
+        src: "img10_j23ucy",
+      },
+      {
+        src: "img11_y8zkif",
+      },
+    ],
     relatedSlugs: [
       "interior-detailing",
       "full-detailing",
@@ -290,6 +535,38 @@ export const services: Service[] = [
       "img9_zbuzr7",
       "img10_tj41rl",
     ],
+    media: [
+      {
+        src: "img1_q5lnkj",
+      },
+      {
+        src: "img2_aszfgq",
+      },
+      {
+        src: "img3_kxovdq",
+      },
+      {
+        src: "img4_pw5ucb",
+      },
+      {
+        src: "img5_aduvnf",
+      },
+      {
+        src: "img6_yimqlw",
+      },
+      {
+        src: "img7_cr3zfw",
+      },
+      {
+        src: "img8_zds3za",
+      },
+      {
+        src: "img9_zbuzr7",
+      },
+      {
+        src: "img10_tj41rl",
+      },
+    ],
     relatedSlugs: ["exterior-detailing", "paint-correction", "full-detailing"],
   },
   {
@@ -314,6 +591,32 @@ export const services: Service[] = [
       "img6_r6udyr",
       "img7_wv1gkb",
       "img8_idaeby",
+    ],
+    media: [
+      {
+        src: "img1_ufdvdm",
+      },
+      {
+        src: "img2_uoeryl",
+      },
+      {
+        src: "img3_atmj5i",
+      },
+      {
+        src: "img4_pt6i2k",
+      },
+      {
+        src: "img5_aaslrw",
+      },
+      {
+        src: "img6_r6udyr",
+      },
+      {
+        src: "img7_wv1gkb",
+      },
+      {
+        src: "img8_idaeby",
+      },
     ],
     relatedSlugs: ["paint-correction", "ceramic-coating", "exterior-detailing"],
   },
