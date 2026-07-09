@@ -2,16 +2,22 @@
 import 'glightbox/dist/css/glightbox.css';
 import Icon from '../../ui/Icon.astro';
 import { CldImage } from 'astro-cloudinary';
-import { getCloudinaryImageUrl } from '../../../helpers/cloudinary';
+import { getCloudinaryImageUrl, getCloudinaryVideoUrl } from '../../../helpers/cloudinary';
+import type { GalleryMediaItem } from '../../../data/services';
 
 interface Props {
-  images: string[];
+  media: GalleryMediaItem[];
   serviceName: string;
 }
 
-const { images, serviceName } = Astro.props;
-const galleryImages = Array.isArray(images) ? images.filter(Boolean) : [];
-const hasImages = galleryImages.length > 0;
+const { media, serviceName } = Astro.props;
+const galleryItems = Array.isArray(media) ? media.filter(Boolean) : [];
+const hasItems = galleryItems.length > 0;
+const imageCount = galleryItems.filter((item) => !item.isVideo).length;
+const videoCount = galleryItems.filter((item) => item.isVideo).length;
+const countLabel = videoCount > 0
+  ? `${imageCount} ${imageCount === 1 ? 'photo' : 'photos'}, ${videoCount} ${videoCount === 1 ? 'video' : 'videos'}`
+  : `${imageCount} ${imageCount === 1 ? 'photo' : 'photos'}`;
 
 ---
 
@@ -20,59 +26,75 @@ const hasImages = galleryImages.length > 0;
     <p class="text-gold font-semibold text-[0.72rem] uppercase tracking-[0.24em]">
       Real results. Zero filters.
     </p>
-    {hasImages && (
+    {hasItems && (
       <span class="rounded-full border border-wine-soft/20 bg-wine/14 px-3 py-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-wine-tint backdrop-blur-sm">
-        {galleryImages.length} photos
+        {countLabel}
       </span>
     )}
   </div>
 
-  {hasImages ? (
+  {hasItems ? (
     <>
-      <div class="embla service-gallery__main relative" role="region" aria-label={`${serviceName} image gallery`} tabindex="0">
+      <div class="embla service-gallery__main relative" role="region" aria-label={`${serviceName} media gallery`} tabindex="0">
         <div class="relative aspect-4/3 min-h-80 lg:min-h-120 w-full rounded-[1.5rem] border border-white/8 overflow-hidden">
           <div class="embla__viewport absolute inset-0 overflow-hidden bg-black" data-gallery-main-viewport>
             <div class="embla__container flex h-full">
-              {galleryImages.map((img, i) => (
-                <div class="embla__slide shrink-0 min-w-0 basis-full">
-                  <button
-                    type="button"
-                    class="gallery-main-trigger group relative block w-full h-full cursor-zoom-in"
-                    data-gallery-main-trigger
-                    data-gallery-index={i}
-                    data-gallery-src={getCloudinaryImageUrl(img, 'f_auto,q_auto,w_1800')}
-                    aria-label={`Open image ${i + 1} of ${galleryImages.length} in fullscreen`}
-                  >
-                    <CldImage
-                      src={img}
-                      alt={`${serviceName} — real result ${i + 1}`}
-                      width={1024}
-                      height={800}
-                      sizes="(max-width: 1024px) 100vw, 50vw"
-                      class="w-full h-full object-cover"
-                      loading={i === 0 ? 'eager' : 'lazy'}
-                    />
+              {galleryItems.map((item, i) => {
+                const isVideo = !!item.isVideo;
+                const imageUrl = getCloudinaryImageUrl(item.src, 'f_auto,q_auto,w_1800');
+                const videoUrl = isVideo ? getCloudinaryVideoUrl(item.mediaSrc ?? '') : '';
+                const labelPrefix = isVideo ? 'Play video' : 'Open image';
+                return (
+                  <div class="embla__slide shrink-0 min-w-0 basis-full">
+                    <button
+                      type="button"
+                      class={`gallery-main-trigger group relative block w-full h-full ${isVideo ? 'cursor-pointer' : 'cursor-zoom-in'}`}
+                      data-gallery-main-trigger
+                      data-gallery-index={i}
+                      data-gallery-src={imageUrl}
+                      data-gallery-type={isVideo ? 'video' : 'image'}
+                      data-gallery-media-src={videoUrl}
+                      aria-label={`${labelPrefix} ${i + 1} of ${galleryItems.length} in fullscreen`}
+                    >
+                      <CldImage
+                        src={item.src}
+                        alt={item.alt ?? `${serviceName} — real result ${i + 1}`}
+                        width={1024}
+                        height={800}
+                        sizes="(max-width: 1024px) 100vw, 50vw"
+                        class="w-full h-full object-cover"
+                        loading={i === 0 ? 'eager' : 'lazy'}
+                      />
 
-                    <div class="absolute inset-0 bg-black/6 transition-colors duration-300 group-hover:bg-wine/18" />
+                      <div class={`absolute inset-0 transition-colors duration-300 ${isVideo ? 'bg-black/20 group-hover:bg-black/40' : 'bg-black/6 group-hover:bg-wine/18'}`} />
 
-                      <div class="absolute right-3 bottom-3 bg-black/72 text-text-primary text-xs font-medium px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-wine-soft/18 backdrop-blur-sm">
-                      <Icon name="tabler:zoom-in" size='sm' />
-                      Full view
-                    </div>
-                  </button>
-                </div>
-              ))}
+                      {isVideo ? (
+                        <div class="absolute inset-0 flex items-center justify-center">
+                          <div class="w-14 h-14 rounded-full bg-gold flex items-center justify-center shadow-lg transition-transform duration-300 group-hover:scale-110">
+                            <Icon name="tabler:player-play-filled" class="text-text-dark" size="lg" />
+                          </div>
+                        </div>
+                      ) : (
+                        <div class="absolute right-3 bottom-3 bg-black/72 text-text-primary text-xs font-medium px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-wine-soft/18 backdrop-blur-sm">
+                          <Icon name="tabler:zoom-in" size='sm' />
+                          Full view
+                        </div>
+                      )}
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
 
-        {galleryImages.length > 1 && (
+        {galleryItems.length > 1 && (
           <>
             <button
               type="button"
               class="gallery-nav-btn absolute left-3 top-1/2 -translate-y-1/2 bg-black/68 hover:bg-wine/28 text-text-primary w-10 h-10 rounded-full flex items-center justify-center transition-all border border-white/10 backdrop-blur-sm"
               data-gallery-prev
-              aria-label="Previous image"
+              aria-label="Previous media"
             >
               <Icon name="tabler:chevron-left" />
             </button>
@@ -81,7 +103,7 @@ const hasImages = galleryImages.length > 0;
               type="button"
               class="gallery-nav-btn absolute right-3 top-1/2 -translate-y-1/2 bg-black/68 hover:bg-wine/28 text-text-primary w-10 h-10 rounded-full flex items-center justify-center transition-all border border-white/10 backdrop-blur-sm"
               data-gallery-next
-              aria-label="Next image"
+              aria-label="Next media"
             >
               <Icon name="tabler:chevron-right" />
             </button>
@@ -89,47 +111,55 @@ const hasImages = galleryImages.length > 0;
             <div class="absolute top-3 right-3 bg-black/70 text-text-primary text-xs font-semibold px-3 py-1 rounded-full border border-wine-soft/18 backdrop-blur-sm">
               <span data-gallery-current>1</span>
               <span aria-hidden="true"> / </span>
-              <span>{galleryImages.length}</span>
+              <span>{galleryItems.length}</span>
             </div>
           </>
         )}
       </div>
 
-      {galleryImages.length > 1 && (
-          <div class="embla-thumbs" data-gallery-thumbs>
-            <div class="embla-thumbs__viewport overflow-hidden" data-gallery-thumbs-viewport>
-              <div class="embla-thumbs__container flex gap-2">
-                {galleryImages.map((img, i) => (
-                <div class="embla-thumbs__slide shrink-0 py-2">
-                  <button
-                    type="button"
-                    class="gallery-thumb w-20 h-16 overflow-hidden rounded-xl border-2 cursor-pointer bg-black/40"
-                    data-gallery-thumb
-                    data-gallery-index={i}
-                    data-selected={i === 0 ? 'true' : 'false'}
-                    aria-label={`Show image ${i + 1}`}
-                    aria-current={i === 0 ? 'true' : 'false'}
-                  >
+      {galleryItems.length > 1 && (
+        <div class="embla-thumbs" data-gallery-thumbs>
+          <div class="embla-thumbs__viewport overflow-hidden" data-gallery-thumbs-viewport>
+            <div class="embla-thumbs__container flex gap-2">
+              {galleryItems.map((item, i) => {
+                const isVideo = !!item.isVideo;
+                return (
+                  <div class="embla-thumbs__slide shrink-0 py-2">
+                    <button
+                      type="button"
+                      class="gallery-thumb relative w-20 h-16 overflow-hidden rounded-xl border-2 cursor-pointer bg-black/40"
+                      data-gallery-thumb
+                      data-gallery-index={i}
+                      data-selected={i === 0 ? 'true' : 'false'}
+                      aria-label={`Show ${isVideo ? 'video' : 'image'} ${i + 1}`}
+                      aria-current={i === 0 ? 'true' : 'false'}
+                    >
+                      <CldImage
+                        src={item.src}
+                        alt={item.alt ?? `${serviceName} thumbnail ${i + 1}`}
+                        width={80}
+                        height={64}
+                        sizes="100px"
+                        class="w-full h-full object-cover"
+                        loading={i === 0 ? 'eager' : 'lazy'}
+                      />
 
-                    <CldImage
-                      src={img}
-                      alt={`${serviceName} thumbnail ${i + 1}`}
-                      width={80}
-                      height={64}
-                      sizes="100px"
-                      class="w-full h-full object-cover"
-                      loading={i === 0 ? 'eager' : 'lazy'}
-                    />
-                  </button>
-                </div>
-              ))}
+                      {isVideo && (
+                        <div class="absolute inset-0 flex items-center justify-center bg-black/30">
+                          <Icon name="tabler:player-play-filled" class="text-text-primary" size="sm" />
+                        </div>
+                      )}
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
       )}
     </>
   ) : (
-    <p class="text-sm text-text-secondary">No gallery images available yet for this service.</p>
+    <p class="text-sm text-text-secondary">No gallery media available yet for this service.</p>
   )}
 </div>
 
@@ -169,6 +199,8 @@ const hasImages = galleryImages.length > 0;
     if (root.dataset.initialized === 'true') return;
     root.dataset.initialized = 'true';
 
+    const galleryId = Math.random().toString(36).slice(2, 9);
+
     const mainViewport = root.querySelector<HTMLElement>('[data-gallery-main-viewport]');
     if (!mainViewport) return;
 
@@ -196,13 +228,29 @@ const hasImages = galleryImages.length > 0;
         })
       : null;
 
-    const lightboxElements = mainTriggers.map((trigger) => ({
-      href: trigger.dataset.gallerySrc ?? '',
-      type: 'image' as const,
-      alt: trigger.getAttribute('aria-label') ?? '',
-    }));
+    const lightboxElements = mainTriggers.map((trigger, index) => {
+      const isVideo = trigger.dataset.galleryType === 'video';
+      const mediaSrc = trigger.dataset.galleryMediaSrc ?? '';
+      if (isVideo) {
+        return {
+          content: `<video src="${mediaSrc}" controls playsinline autoplay
+            style="max-height:85dvh;" data-gallery-id="${galleryId}" class="service-gallery-video service-gallery-video-${index} block h-auto outline-none rounded-sm bg-black w-auto max-w-full">
+          </video>`,
+          width: 'auto',
+        };
+      }
+      return {
+        href: trigger.dataset.gallerySrc ?? '',
+        type: 'image' as const,
+        alt: trigger.getAttribute('aria-label') ?? '',
+      };
+    });
 
     let lightbox: ReturnType<typeof GLightbox> | null = null;
+
+    function stopAllVideos() {
+      document.querySelectorAll<HTMLVideoElement>(`.service-gallery-video[data-gallery-id="${galleryId}"]`).forEach((v) => v.pause());
+    }
 
     const openLightboxAt = (index: number) => {
       if (!lightboxElements.length) return;
@@ -220,6 +268,24 @@ const hasImages = galleryImages.length > 0;
       });
 
       lightbox.open();
+
+      lightbox.on('close', stopAllVideos);
+
+      lightbox.on(
+        'slide_before_change',
+        ((event: any) => {
+          const currentSlide = event.current;
+          stopAllVideos();
+          if (currentSlide?.slideConfig?.type !== 'image') {
+            const video = document.querySelector<HTMLVideoElement>(`.service-gallery-video-${currentSlide.slideIndex}[data-gallery-id="${galleryId}"]`);
+            if (video) video.play();
+          }
+        }) as () => void
+      );
+
+      if (mainTriggers[index]?.dataset.galleryType === 'image') {
+        stopAllVideos();
+      }
     };
 
     const updateUI = () => {

@@ -78,7 +78,7 @@ const phoneUrl = `sms:${config.phoneUSE164}?body=${phoneMessage}`;
     <div data-reveal="scale" class="relative w-full min-w-0">
       <div class="motion-float-slow relative rounded-xl border border-white/8 bg-surface px-4 py-4 sm:px-5 sm:py-5 shadow-lg">
         <div class="motion-glow-pulse absolute -right-6 -top-6 h-24 w-24 rounded-full bg-wine/12 blur-2xl"></div>
-        <ServiceGallery images={service.images} serviceName={service.name} />
+        <ServiceGallery media={service.media ? service.media : []} serviceName={service.name} />
       </div>
     </div>
   </div>

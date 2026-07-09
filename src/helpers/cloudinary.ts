@@ -24,7 +24,7 @@ export const getCloudinaryImageUrl = (
 };
 
 export const getCloudinaryVideoUrl = (
-  value: string,
+  value: string | undefined,
   transformations = "f_auto,q_auto",
 ) => {
   if (!value) return "";
