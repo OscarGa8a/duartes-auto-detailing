@@ -229,13 +229,21 @@ const items = [
     // Pausar video al cerrar o al cambiar de slide
     lb.on('close', stopAllVideos);
 
-    lb.on('slide_before_change', (event: any) => {
-      const currentSlide = event.current;
-      if (currentSlide.slideConfig.type === 'image') {
+    lb.on('slide_before_change', (...[event]: [event?: {
+      current?: {
+        slideConfig?: { type?: 'image' | 'video' | 'inline' };
+        slideIndex?: number;
+      };
+    }]) => {
+      const currentSlide = event?.current;
+      const slideType = currentSlide?.slideConfig?.type;
+      const slideIndex = currentSlide?.slideIndex;
+
+      if (slideType === 'image') {
         stopAllVideos();
-      } else {
-        const video = document.querySelector(`.video-${currentSlide.slideIndex}`) as HTMLVideoElement;
-        if (video) video.play();
+      } else if (typeof slideIndex === 'number') {
+        const video = document.querySelector(`.video-${slideIndex}`) as HTMLVideoElement | null;
+        video?.play();
       }
     });
 

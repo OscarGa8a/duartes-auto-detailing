@@ -107,9 +107,11 @@ const poster = cloudinaryVideo?.poster;
       return;
     }
 
-    const [{ default: cloudinary }] = await Promise.all([
+    const [cloudinary] = await Promise.all([
       import("cloudinary-video-player"),
+      // @ts-expect-error Cloudinary's runtime plugin entry point has no declaration file.
       import("cloudinary-video-player/adaptive-streaming"),
+      // @ts-expect-error Cloudinary's runtime plugin entry point has no declaration file.
       import("cloudinary-video-player/dash"),
     ]);
 
@@ -131,7 +133,7 @@ const poster = cloudinaryVideo?.poster;
       const streamingProfile = container.dataset.streamingProfile ?? "auto";
       const poster = container.dataset.poster?.trim();
 
-      const player = cloudinary.videoPlayer(videoElement, {
+      const player = cloudinary.videoPlayer(playerId, {
         cloudName,
         controls: true,
         fluid: true,
