@@ -668,7 +668,7 @@ for (const [from, to] of staticRedirects) {
 	}
 
 	const html = readFileSync(redirectFile, "utf8");
-	if (!html.includes(`http-equiv="refresh" content="0;url=${to.slice(0, -1)}"`)) {
+	if (!html.includes(`http-equiv="refresh" content="0;url=${to}"`)) {
 		fail(redirectFile, `must redirect to ${to}`);
 	}
 

@@ -13,7 +13,7 @@ export default defineConfig({
   output: "static",
   site,
   redirects: {
-    "/service-area/walnut": "/service-area/walnut-creek",
+    "/service-area/walnut": "/service-area/walnut-creek/",
   },
 
   env: {
