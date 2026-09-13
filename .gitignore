@@ -24,10 +24,14 @@ pnpm-debug.log*
 .idea/
 
 # local tooling/worktree artifacts
-.claude/worktrees/
 nul
-# Local Pi runtime state
-.atl/
 
-.pi/settings.json
+# AI agent tooling and generated metadata
+.agents/
+.claude/
+.atl/
+.codegraph/
+.pi/
 .pi-subagents/
+skill-lock.json
+skills-lock.json
