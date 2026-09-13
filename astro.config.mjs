@@ -12,6 +12,9 @@ const site = process.env.SITE_URL ?? "https://duartesautodetailing.com";
 export default defineConfig({
   output: "static",
   site,
+  redirects: {
+    "/service-area/walnut": "/service-area/walnut-creek",
+  },
 
   env: {
     schema: {

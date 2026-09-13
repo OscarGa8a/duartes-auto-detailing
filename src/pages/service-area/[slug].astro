@@ -7,6 +7,7 @@ import { priorityServiceAreaCities, type ServiceAreaCity } from '../../data/serv
 import {
   getBreadcrumbListJsonLd,
   getCityServiceAreaJsonLd,
+  getFaqPageJsonLd,
   getLocalBusinessJsonLd,
 } from '../../data/business';
 
@@ -22,10 +23,13 @@ const site = Astro.site ?? new URL('https://duartesautodetailing.com');
 const highlightedServices = city.serviceHighlights
   .map((slug) => services.find((service) => service.slug === slug))
   .filter((service): service is Service => Boolean(service));
-const relatedCities = priorityServiceAreaCities.filter((item) => item.slug !== city.slug).slice(0, 3);
+const relatedCities = city.relatedCitySlugs
+  .map((slug) => priorityServiceAreaCities.find((item) => item.slug === slug))
+  .filter((relatedCity): relatedCity is ServiceAreaCity => Boolean(relatedCity));
 const structuredData = [
   getLocalBusinessJsonLd(site),
   getCityServiceAreaJsonLd(site, city),
+  getFaqPageJsonLd(city.faqs),
   getBreadcrumbListJsonLd(site, [
     { name: 'Home', path: '/' },
     { name: 'Service Area', path: '/service-area/bay-area/' },
@@ -77,11 +81,11 @@ const structuredData = [
       <div data-reveal="up" class="flex flex-col gap-3">
         <span class="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold-deep">
           <span class="h-px w-10 bg-gold"></span>
-          Recommended services
+          Featured services
         </span>
-        <h2 class="text-text-dark font-bold text-h2">Popular detailing options for {city.name} drivers.</h2>
-        <p class="text-text-dark/72 leading-relaxed">
-          Start with one of these core services, or contact Duartes Auto Detailing for help matching the detail to your vehicle condition and goals.
+        <h2 class="text-text-dark font-bold text-h2">Featured services for {city.name}</h2>
+        <p data-city-service-guide class="text-text-dark/72 leading-relaxed">
+          Start with one of these core services, or contact Duartes Auto Detailing for help matching the detail to your vehicle condition and goals. {city.serviceGuidance}
         </p>
       </div>
 
@@ -120,7 +124,7 @@ const structuredData = [
       </div>
 
       <aside data-reveal="up" style="--reveal-delay: 120ms" class="rounded-4xl border border-gold/16 bg-[linear-gradient(180deg,rgba(30,32,36,0.96),rgba(79,29,30,0.22))] p-6 lg:p-8 self-start">
-        <h2 class="text-h3 font-bold text-text-primary">Explore nearby priority pages</h2>
+        <h2 class="text-h3 font-bold text-text-primary">Explore other service-area pages</h2>
         <p class="mt-3 text-sm leading-relaxed text-text-secondary">
           Compare other Bay Area service pages or return to the main service-area hub.
         </p>

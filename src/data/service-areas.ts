@@ -12,12 +12,11 @@ export interface ServiceAreaCity {
 	heroDescription: string;
 	intro: string;
 	customerAngle: string;
-	serviceHighlights: string[];
+	serviceGuidance: string;
+	serviceHighlights: ServiceHighlightSlug[];
+	relatedCitySlugs: string[];
 	faqs: ServiceAreaFaq[];
 }
-
-const coreServicesDescription =
-	"Core services include interior detailing, exterior detailing, full detailing, paint correction, ceramic coating, seat and upholstery deep cleaning, headlight restoration, and clay bar decontamination.";
 
 const serviceSlugs = {
 	interior: "interior-detailing",
@@ -30,381 +29,70 @@ const serviceSlugs = {
 	clayBar: "clay-bar-decontamination",
 } as const;
 
-const createCityFaqs = (cityName: string): ServiceAreaFaq[] => [
+type ServiceHighlightSlug =
+	(typeof serviceSlugs)[keyof typeof serviceSlugs];
+
+const serviceNames: Record<ServiceHighlightSlug, string> = {
+	"interior-detailing": "interior detailing",
+	"exterior-detailing": "exterior detailing",
+	"full-detailing": "full detailing",
+	"ceramic-coating": "ceramic coating",
+	"paint-correction": "paint correction",
+	"seat-upholstery-deep-cleaning": "seat and upholstery deep cleaning",
+	"headlight-restoration": "headlight restoration",
+	"clay-bar-decontamination": "clay bar decontamination",
+};
+
+type CityDefinition = Pick<
+	ServiceAreaCity,
+	"name" | "slug" | "region" | "serviceGuidance" | "serviceHighlights" | "relatedCitySlugs"
+>;
+
+const createCityFaqs = (cityName: string, serviceGuidance: string): ServiceAreaFaq[] => [
 	{
-		question: `Does Duartes Auto Detailing come to me in ${cityName}?`,
-		answer: `Yes. Duartes Auto Detailing is a mobile service for Bay Area drivers, so appointments in ${cityName} can be handled at a home, office, or private garage when there is safe access to the vehicle.`,
+		question: `Does Duartes Auto Detailing offer mobile appointments in ${cityName}?`,
+		answer: `Duartes Auto Detailing offers mobile appointments in ${cityName}. A home, office, or private garage appointment can be considered when there is safe access to the vehicle and enough room to work around it.`,
 	},
 	{
-		question: `Which detailing services are available in ${cityName}?`,
-		answer: coreServicesDescription,
+		question: `How should I choose a featured service for my vehicle in ${cityName}?`,
+		answer: serviceGuidance,
 	},
 	{
 		question: `How should I prepare for a mobile detailing appointment in ${cityName}?`,
 		answer:
-			"Please choose a safe parking area with enough room around the vehicle, remove personal belongings when possible, and share any parking or access details before the appointment.",
+			"Choose a safe parking area with enough room around the vehicle, remove personal belongings when possible, and share parking or access details before the appointment.",
 	},
 ];
 
-export const priorityServiceAreaCities: ServiceAreaCity[] = [
-	{
-		name: "Walnut",
-		slug: "walnut",
-		region: "Bay Area",
-		metaTitle: "Mobile Auto Detailing in Walnut",
-		metaDescription:
-			"Mobile auto detailing in Walnut with Duartes Auto Detailing. Book interior, exterior, full detail, paint correction, and ceramic coating options.",
-		heroDescription:
-			"Mobile auto detailing for Walnut drivers who want professional vehicle care brought to a suitable home, office, or private garage location.",
-		intro:
-			"Walnut customers may need flexible vehicle care that works around commuting, family schedules, and limited time for a shop visit. Duartes Auto Detailing helps make interior cleaning, exterior maintenance, and protection-focused detailing easier to schedule on-site.",
-		customerAngle:
-			"This page is intentionally written for the current service-city name. If the client later confirms Walnut Creek instead, the city label, slug, and route can be updated without changing the overall service-area structure.",
-		serviceHighlights: [
-			serviceSlugs.interior,
-			serviceSlugs.exterior,
-			serviceSlugs.full,
-			serviceSlugs.ceramic,
-		],
-		faqs: createCityFaqs("Walnut"),
-	},
-	{
-		name: "Alameda",
-		slug: "alameda",
-		region: "East Bay",
-		metaTitle: "Mobile Auto Detailing in Alameda",
-		metaDescription:
-			"Book mobile auto detailing in Alameda with Duartes Auto Detailing for interior cleaning, exterior detailing, full details, paint correction, and ceramic coating.",
-		heroDescription:
-			"Convenient mobile detailing for Alameda drivers who want professional care without leaving their home, office, or private garage setup.",
-		intro:
-			"Alameda vehicles often balance daily commuting, shoreline exposure, family use, and weekend driving across the East Bay. Duartes Auto Detailing brings mobile service to suitable locations so the vehicle can be cleaned and protected without adding another stop to the day.",
-		customerAngle:
-			"The service is a strong fit for maintenance details, interior refreshes, and exterior work that helps remove regular road film while improving gloss and presentation.",
-		serviceHighlights: [
-			serviceSlugs.interior,
-			serviceSlugs.exterior,
-			serviceSlugs.full,
-			serviceSlugs.clayBar,
-		],
-		faqs: createCityFaqs("Alameda"),
-	},
-	{
-		name: "Fremont",
-		slug: "fremont",
-		region: "East Bay",
-		metaTitle: "Mobile Auto Detailing in Fremont",
-		metaDescription:
-			"Duartes Auto Detailing serves Fremont with mobile auto detailing, exterior detailing, full details, paint correction, and ceramic coating services.",
-		heroDescription:
-			"Mobile auto detailing in Fremont for drivers who want professional vehicle care at home, work, or a private garage.",
-		intro:
-			"Fremont drivers often rely on their vehicles for commuting, school schedules, errands, and weekend travel. Mobile detailing helps keep the vehicle clean and protected without adding another stop to the calendar.",
-		customerAngle:
-			"Duartes Auto Detailing can help with maintenance details for regular-use vehicles, deeper interior refreshes, and exterior services that improve gloss and presentation.",
-		serviceHighlights: [
-			serviceSlugs.exterior,
-			serviceSlugs.full,
-			serviceSlugs.clayBar,
-			serviceSlugs.paintCorrection,
-		],
-		faqs: createCityFaqs("Fremont"),
-	},
-	{
-		name: "Hayward",
-		slug: "hayward",
-		region: "East Bay",
-		metaTitle: "Mobile Auto Detailing in Hayward",
-		metaDescription:
-			"Schedule mobile auto detailing in Hayward for interior detailing, exterior detailing, full details, seat cleaning, paint correction, and ceramic coating.",
-		heroDescription:
-			"Professional mobile auto detailing for Hayward drivers who need reliable interior cleanup, exterior refreshes, and on-site convenience.",
-		intro:
-			"Hayward drivers move between East Bay commutes, family routines, work vehicles, and weekend travel. Duartes Auto Detailing helps keep vehicles presentable and comfortable with mobile detailing at a suitable service location.",
-		customerAngle:
-			"This city page is useful for daily drivers, family SUVs, and vehicles that need practical interior recovery or a clean exterior finish without arranging a shop drop-off.",
-		serviceHighlights: [
-			serviceSlugs.interior,
-			serviceSlugs.full,
-			serviceSlugs.seatCleaning,
-			serviceSlugs.exterior,
-		],
-		faqs: createCityFaqs("Hayward"),
-	},
-	{
-		name: "Oakland",
-		slug: "oakland",
-		region: "East Bay",
-		metaTitle: "Mobile Auto Detailing in Oakland",
-		metaDescription:
-			"Schedule mobile auto detailing in Oakland with Duartes Auto Detailing. Interior, exterior, full detail, paint correction, and ceramic coating options available.",
-		heroDescription:
-			"Professional mobile auto detailing for Oakland drivers who want cleaner interiors, glossier exteriors, and convenient on-site service.",
-		intro:
-			"Oakland drivers use their vehicles for work, family routines, commuting, and weekend plans. Duartes Auto Detailing brings a detail-focused mobile service to homes, offices, and private garages when the setup is safe for the vehicle and crew.",
-		customerAngle:
-			"The service is useful for restoring daily-use interiors, refreshing exterior presentation, or preparing a vehicle for a cleaner, more protected finish.",
-		serviceHighlights: [
-			serviceSlugs.full,
-			serviceSlugs.interior,
-			serviceSlugs.exterior,
-			serviceSlugs.seatCleaning,
-		],
-		faqs: createCityFaqs("Oakland"),
-	},
-	{
-		name: "Berkeley",
-		slug: "berkeley",
-		region: "East Bay",
-		metaTitle: "Mobile Auto Detailing in Berkeley",
-		metaDescription:
-			"Mobile auto detailing in Berkeley for interior cleaning, exterior details, full details, paint correction, and ceramic coating by Duartes Auto Detailing.",
-		heroDescription:
-			"Mobile detailing for Berkeley drivers who want a cleaner vehicle while avoiding the logistics of a traditional shop visit.",
-		intro:
-			"Berkeley vehicles can see a mix of city parking, campus-area driving, errands, and regular East Bay commuting. Duartes Auto Detailing offers mobile service for customers who have safe access and enough room for professional vehicle care on-site.",
-		customerAngle:
-			"Appointments are especially practical for interior cleanup, exterior maintenance, and vehicles that need a better finish before a busy week of local driving.",
-		serviceHighlights: [
-			serviceSlugs.interior,
-			serviceSlugs.exterior,
-			serviceSlugs.full,
-			serviceSlugs.paintCorrection,
-		],
-		faqs: createCityFaqs("Berkeley"),
-	},
-	{
-		name: "Richmond",
-		slug: "richmond",
-		region: "East Bay",
-		metaTitle: "Mobile Auto Detailing in Richmond",
-		metaDescription:
-			"Book mobile auto detailing in Richmond with Duartes Auto Detailing for interior, exterior, full detail, headlight restoration, and paint correction services.",
-		heroDescription:
-			"On-site mobile auto detailing for Richmond drivers who need dependable cleaning, restoration, and protection options.",
-		intro:
-			"Richmond drivers often deal with daily-use interiors, road grime, and vehicles that need both comfort and exterior presentation. Duartes Auto Detailing brings mobile care to suitable homes, offices, and private garages when access is safe.",
-		customerAngle:
-			"The service can help with practical cleanup, improved visibility through headlight restoration, and exterior detailing that supports a cleaner, more polished vehicle.",
-		serviceHighlights: [
-			serviceSlugs.full,
-			serviceSlugs.interior,
-			serviceSlugs.headlightRestoration,
-			serviceSlugs.exterior,
-		],
-		faqs: createCityFaqs("Richmond"),
-	},
-	{
-		name: "Livermore",
-		slug: "livermore",
-		region: "Tri-Valley",
-		metaTitle: "Mobile Auto Detailing in Livermore",
-		metaDescription:
-			"Duartes Auto Detailing offers mobile auto detailing in Livermore, including exterior detailing, full details, paint correction, ceramic coating, and interior care.",
-		heroDescription:
-			"Mobile detailing for Livermore drivers who want professional care at a convenient home, office, or private garage location.",
-		intro:
-			"Livermore vehicles often cover longer commutes, family routes, and weekend drives through the Tri-Valley. Mobile detailing helps customers maintain a cleaner cabin and better exterior finish without setting aside time for a shop appointment.",
-		customerAngle:
-			"This page focuses on drivers who want exterior gloss, interior comfort, and protection-oriented services such as paint correction planning or ceramic coating.",
-		serviceHighlights: [
-			serviceSlugs.exterior,
-			serviceSlugs.full,
-			serviceSlugs.paintCorrection,
-			serviceSlugs.ceramic,
-		],
-		faqs: createCityFaqs("Livermore"),
-	},
-	{
-		name: "Palo Alto",
-		slug: "palo-alto",
-		region: "Peninsula",
-		metaTitle: "Mobile Auto Detailing in Palo Alto",
-		metaDescription:
-			"Book mobile auto detailing in Palo Alto with Duartes Auto Detailing for interior, exterior, full detail, paint correction, and ceramic coating services.",
-		heroDescription:
-			"Premium mobile detailing for Palo Alto drivers who want a cleaner, better-maintained vehicle without a shop visit.",
-		intro:
-			"Palo Alto customers often need vehicle care that works around a packed day. Duartes Auto Detailing provides mobile service for drivers who want professional interior and exterior care at a suitable home, office, or private garage location.",
-		customerAngle:
-			"This is especially helpful for workday appointments, household vehicles, and drivers who want higher-finish services such as paint correction or ceramic coating planning.",
-		serviceHighlights: [
-			serviceSlugs.ceramic,
-			serviceSlugs.paintCorrection,
-			serviceSlugs.interior,
-			serviceSlugs.full,
-		],
-		faqs: createCityFaqs("Palo Alto"),
-	},
-	{
-		name: "San Jose",
-		slug: "san-jose",
-		region: "South Bay",
-		metaTitle: "Mobile Auto Detailing in San Jose",
-		metaDescription:
-			"Book mobile auto detailing in San Jose with Duartes Auto Detailing. Interior, exterior, full detail, paint correction, and ceramic coating service options.",
-		heroDescription:
-			"Premium mobile auto detailing for San Jose drivers who want professional care brought to their driveway, office parking, or private garage.",
-		intro:
-			"San Jose drivers deal with daily commuting, busy schedules, and vehicles that often need both comfort and presentation. Duartes Auto Detailing brings mobile detailing directly to you so you can care for your vehicle without rearranging the whole day.",
-		customerAngle:
-			"This is a practical fit for commuters, family vehicles, and multi-car households that need dependable interior cleanup, exterior maintenance, or deeper paint-focused services without a shop drop-off.",
-		serviceHighlights: [
-			serviceSlugs.interior,
-			serviceSlugs.exterior,
-			serviceSlugs.full,
-			serviceSlugs.ceramic,
-		],
-		faqs: createCityFaqs("San Jose"),
-	},
-	{
-		name: "San Mateo",
-		slug: "san-mateo",
-		region: "Peninsula",
-		metaTitle: "Mobile Auto Detailing in San Mateo",
-		metaDescription:
-			"Mobile auto detailing in San Mateo by Duartes Auto Detailing. Choose interior detailing, exterior detailing, full details, paint correction, and ceramic coating.",
-		heroDescription:
-			"Convenient mobile detailing for San Mateo drivers who want clean interiors, polished exteriors, and professional care brought to them.",
-		intro:
-			"San Mateo drivers balance commuting, family schedules, and regular vehicle use across the Peninsula and Bay Area. Duartes Auto Detailing makes it easier to keep a vehicle clean and protected with mobile service at a suitable location.",
-		customerAngle:
-			"The service is a practical choice for maintenance details, deeper interior cleaning, exterior refreshes, and protection-focused appointments.",
-		serviceHighlights: [
-			serviceSlugs.interior,
-			serviceSlugs.exterior,
-			serviceSlugs.full,
-			serviceSlugs.headlightRestoration,
-		],
-		faqs: createCityFaqs("San Mateo"),
-	},
-	{
-		name: "Pleasanton",
-		slug: "pleasanton",
-		region: "Tri-Valley",
-		metaTitle: "Mobile Auto Detailing in Pleasanton",
-		metaDescription:
-			"Schedule mobile auto detailing in Pleasanton for interior detailing, exterior detailing, full details, ceramic coating, and paint correction services.",
-		heroDescription:
-			"Mobile detailing for Pleasanton drivers who want polished, comfortable vehicles cared for at a suitable on-site location.",
-		intro:
-			"Pleasanton drivers often want vehicle care that fits around work, school, commuting, and weekend plans. Duartes Auto Detailing brings mobile service to suitable locations so customers can maintain a clean, protected vehicle without a shop visit.",
-		customerAngle:
-			"This is a helpful fit for family vehicles, commuter cars, and owners who want a premium exterior finish or interior reset before a busy week.",
-		serviceHighlights: [
-			serviceSlugs.full,
-			serviceSlugs.interior,
-			serviceSlugs.ceramic,
-			serviceSlugs.paintCorrection,
-		],
-		faqs: createCityFaqs("Pleasanton"),
-	},
-	{
-		name: "Union City",
-		slug: "union-city",
-		region: "East Bay",
-		metaTitle: "Mobile Auto Detailing in Union City",
-		metaDescription:
-			"Book mobile auto detailing in Union City with Duartes Auto Detailing for full details, interior cleaning, exterior detailing, and paint protection options.",
-		heroDescription:
-			"On-site auto detailing for Union City drivers who want cleaner interiors, refreshed exteriors, and service that fits their schedule.",
-		intro:
-			"Union City vehicles often serve commuting, school routes, shopping trips, and weekend travel across the East Bay. Duartes Auto Detailing provides mobile care for customers with safe parking access and room to work around the vehicle.",
-		customerAngle:
-			"The service is designed for drivers who need practical cleanup, better exterior presentation, or a more complete detail before upcoming travel or daily use.",
-		serviceHighlights: [
-			serviceSlugs.full,
-			serviceSlugs.interior,
-			serviceSlugs.exterior,
-			serviceSlugs.clayBar,
-		],
-		faqs: createCityFaqs("Union City"),
-	},
-	{
-		name: "San Leandro",
-		slug: "san-leandro",
-		region: "East Bay",
-		metaTitle: "Mobile Auto Detailing in San Leandro",
-		metaDescription:
-			"Mobile auto detailing in San Leandro for interior detailing, exterior detailing, full details, seat cleaning, headlight restoration, and paint correction.",
-		heroDescription:
-			"Professional mobile detailing for San Leandro drivers who want convenient on-site vehicle care and a cleaner finish.",
-		intro:
-			"San Leandro drivers use their vehicles for East Bay commutes, family errands, work needs, and weekend plans. Mobile detailing helps restore comfort and presentation without requiring a separate trip to a detailing shop.",
-		customerAngle:
-			"This location page is especially relevant for interior resets, full details, headlight restoration, and exterior services that make a daily driver feel easier to maintain.",
-		serviceHighlights: [
-			serviceSlugs.interior,
-			serviceSlugs.full,
-			serviceSlugs.headlightRestoration,
-			serviceSlugs.exterior,
-		],
-		faqs: createCityFaqs("San Leandro"),
-	},
-	{
-		name: "Dublin",
-		slug: "dublin",
-		region: "Tri-Valley",
-		metaTitle: "Mobile Auto Detailing in Dublin",
-		metaDescription:
-			"Duartes Auto Detailing serves Dublin with mobile auto detailing, full details, interior cleaning, exterior detailing, paint correction, and ceramic coating.",
-		heroDescription:
-			"Mobile detailing in Dublin for drivers who want professional vehicle care at home, work, or another suitable private location.",
-		intro:
-			"Dublin customers often need clean, comfortable vehicles for commuting, family schedules, and regular travel around the Tri-Valley. Duartes Auto Detailing brings mobile service to suitable locations so professional care is easier to plan.",
-		customerAngle:
-			"The service can support maintenance details, deeper interior cleaning, and finish-focused work for owners who want a cleaner look and longer-lasting protection.",
-		serviceHighlights: [
-			serviceSlugs.full,
-			serviceSlugs.interior,
-			serviceSlugs.paintCorrection,
-			serviceSlugs.ceramic,
-		],
-		faqs: createCityFaqs("Dublin"),
-	},
-	{
-		name: "Castro Valley",
-		slug: "castro-valley",
-		region: "East Bay",
-		metaTitle: "Mobile Auto Detailing in Castro Valley",
-		metaDescription:
-			"Book mobile auto detailing in Castro Valley for interior detailing, exterior detailing, full details, seat cleaning, ceramic coating, and paint correction.",
-		heroDescription:
-			"Convenient mobile detailing for Castro Valley drivers who want professional vehicle care brought to a suitable appointment location.",
-		intro:
-			"Castro Valley vehicles often handle family driving, East Bay commutes, outdoor plans, and regular errands. Duartes Auto Detailing helps customers keep cabins cleaner and exterior finishes better maintained through mobile service.",
-		customerAngle:
-			"This page is a practical match for family SUVs, commuter cars, and vehicles that need deeper interior cleaning or a more polished exterior appearance.",
-		serviceHighlights: [
-			serviceSlugs.interior,
-			serviceSlugs.seatCleaning,
-			serviceSlugs.full,
-			serviceSlugs.exterior,
-		],
-		faqs: createCityFaqs("Castro Valley"),
-	},
-	{
-		name: "San Francisco",
-		slug: "san-francisco",
-		region: "San Francisco",
-		metaTitle: "Mobile Auto Detailing in San Francisco",
-		metaDescription:
-			"Mobile auto detailing in San Francisco for interior cleaning, exterior detailing, full details, paint correction, and ceramic coating by Duartes Auto Detailing.",
-		heroDescription:
-			"Mobile detailing for San Francisco drivers who want a cleaner vehicle without giving up time to drive across the city for service.",
-		intro:
-			"San Francisco vehicles can pick up city dust, interior wear, and exterior grime quickly. Duartes Auto Detailing helps drivers schedule mobile service where safe vehicle access is available, making professional detailing easier to fit into the week.",
-		customerAngle:
-			"Appointments work best when there is suitable parking and room to work around the vehicle, such as a driveway, private garage, or approved office parking area.",
-		serviceHighlights: [
-			serviceSlugs.interior,
-			serviceSlugs.full,
-			serviceSlugs.paintCorrection,
-			serviceSlugs.ceramic,
-		],
-		faqs: createCityFaqs("San Francisco"),
-	},
+const cityDefinitions: CityDefinition[] = [
+	{ name: "Walnut Creek", slug: "walnut-creek", region: "Bay Area", serviceGuidance: "Choose an Interior Detail when the cabin needs cleaning, conditioning, and a refreshed presentation, or an Exterior Detail when the goal is cleaner paint, wheels, glass, and trim. A Full Detail combines both directions for a complete interior and exterior reset. Ceramic coating is a protection-focused option for paint after discussing surface condition and the finish you want to maintain.", serviceHighlights: [serviceSlugs.interior, serviceSlugs.exterior, serviceSlugs.full, serviceSlugs.ceramic], relatedCitySlugs: ["pleasanton", "dublin", "livermore"] },
+	{ name: "Alameda", slug: "alameda", region: "East Bay", serviceGuidance: "Start with an Interior Detail for a cabin-focused refresh or an Exterior Detail for paint, wheel, glass, and trim cleaning. Select a Full Detail when both areas need attention in one appointment. If the paint feels rough after washing, clay bar decontamination addresses bonded surface contamination and can prepare the paint for later polishing or protection.", serviceHighlights: [serviceSlugs.interior, serviceSlugs.exterior, serviceSlugs.full, serviceSlugs.clayBar], relatedCitySlugs: ["oakland", "berkeley", "san-leandro"] },
+	{ name: "Fremont", slug: "fremont", region: "East Bay", serviceGuidance: "Choose an Exterior Detail for a cleaner, glossier presentation across paint, wheels, tires, glass, and trim; choose a Full Detail when the interior also needs a complete refresh. Clay bar decontamination is useful when bonded contamination leaves paint rough. For swirl marks, light scratches, oxidation, water spots, or dullness, discuss paint correction, which is evaluated against the surface condition.", serviceHighlights: [serviceSlugs.exterior, serviceSlugs.full, serviceSlugs.clayBar, serviceSlugs.paintCorrection], relatedCitySlugs: ["union-city", "hayward", "castro-valley"] },
+	{ name: "Hayward", slug: "hayward", region: "East Bay", serviceGuidance: "For cloth seats, carpets, mats, or fabric upholstery with stains, spills, odors, or embedded buildup, seat and upholstery deep cleaning is the focused choice. An Interior Detail covers broader cabin cleaning and conditioning. Select a Full Detail for both interior and exterior work, or an Exterior Detail when paint, wheels, tires, glass, and trim are the priority.", serviceHighlights: [serviceSlugs.interior, serviceSlugs.full, serviceSlugs.seatCleaning, serviceSlugs.exterior], relatedCitySlugs: ["castro-valley", "union-city", "fremont"] },
+	{ name: "Oakland", slug: "oakland", region: "East Bay", serviceGuidance: "A Full Detail is the clearest starting point when you want the interior and exterior addressed together. Choose an Interior Detail for vacuuming, shampooing, trim, glass, and cabin surfaces, or an Exterior Detail for a refined clean across paint, wheels, tires, glass, and trim. For fabric seats, carpets, or upholstery needing more than regular surface cleaning, ask about the dedicated deep-cleaning service.", serviceHighlights: [serviceSlugs.full, serviceSlugs.interior, serviceSlugs.exterior, serviceSlugs.seatCleaning], relatedCitySlugs: ["alameda", "berkeley", "san-leandro"] },
+	{ name: "Berkeley", slug: "berkeley", region: "East Bay", serviceGuidance: "Use an Interior Detail when cleanliness, comfort, and cabin presentation are the goal, and an Exterior Detail when you want a cleaner exterior finish. A Full Detail combines those services for a broader refresh. If the main concern is swirl marks, light scratches, oxidation, water spots, or dull paint, paint correction is the more specific option; expected results depend on an individual surface evaluation.", serviceHighlights: [serviceSlugs.interior, serviceSlugs.exterior, serviceSlugs.full, serviceSlugs.paintCorrection], relatedCitySlugs: ["oakland", "alameda", "richmond"] },
+	{ name: "Richmond", slug: "richmond", region: "East Bay", serviceGuidance: "Choose a Full Detail for a complete interior and exterior transformation, or narrow the scope with an Interior Detail or Exterior Detail when one area is the priority. Headlight restoration is a separate choice for cloudy, yellowed, or oxidized lenses when restoring clarity and improving light output are the goal. It can be discussed alongside a broader detail without treating it as a substitute for interior or paint care.", serviceHighlights: [serviceSlugs.full, serviceSlugs.interior, serviceSlugs.headlightRestoration, serviceSlugs.exterior], relatedCitySlugs: ["berkeley", "oakland", "alameda"] },
+	{ name: "Livermore", slug: "livermore", region: "Tri-Valley", serviceGuidance: "An Exterior Detail is appropriate when the goal is a cleaner, glossier exterior, while a Full Detail adds complete interior care. Paint correction addresses visible swirl marks, light scratches, oxidation, water spots, and dullness through machine polishing after the surface is evaluated. Ceramic coating is for longer-term paint protection and easier maintenance; discuss it after deciding whether the paint needs correction first.", serviceHighlights: [serviceSlugs.exterior, serviceSlugs.full, serviceSlugs.paintCorrection, serviceSlugs.ceramic], relatedCitySlugs: ["pleasanton", "dublin", "walnut-creek"] },
+	{ name: "Palo Alto", slug: "palo-alto", region: "Peninsula", serviceGuidance: "Consider ceramic coating when you want a protection-focused paint finish with enhanced gloss and easier maintenance. If paint has swirl marks, light scratches, oxidation, water spots, or dullness, ask whether paint correction should be evaluated before coating. Choose an Interior Detail for cabin care, or a Full Detail when both the interior and exterior need attention in the same service.", serviceHighlights: [serviceSlugs.ceramic, serviceSlugs.paintCorrection, serviceSlugs.interior, serviceSlugs.full], relatedCitySlugs: ["san-mateo", "san-jose", "san-francisco"] },
+	{ name: "San Jose", slug: "san-jose", region: "South Bay", serviceGuidance: "Select an Interior Detail for complete vacuuming, shampooing, surface cleaning, and conditioning, or an Exterior Detail for a clean and polished presentation outside. A Full Detail is the combined option when both areas need work. Ceramic coating is suited to a protection-focused paint plan that emphasizes gloss and easier regular maintenance, following a discussion of the paint’s condition and desired result.", serviceHighlights: [serviceSlugs.interior, serviceSlugs.exterior, serviceSlugs.full, serviceSlugs.ceramic], relatedCitySlugs: ["fremont", "palo-alto", "san-mateo"] },
+	{ name: "San Mateo", slug: "san-mateo", region: "Peninsula", serviceGuidance: "Choose an Interior Detail for a refreshed cabin or an Exterior Detail for paint, wheel, tire, glass, and trim care; a Full Detail addresses both sides together. When headlights are cloudy, yellowed, or oxidized, headlight restoration is the focused service for recovering lens clarity and improving light output. That lens work answers a different condition than a general interior or exterior detail.", serviceHighlights: [serviceSlugs.interior, serviceSlugs.exterior, serviceSlugs.full, serviceSlugs.headlightRestoration], relatedCitySlugs: ["palo-alto", "san-francisco", "san-jose"] },
+	{ name: "Pleasanton", slug: "pleasanton", region: "Tri-Valley", serviceGuidance: "A Full Detail is useful when the vehicle needs comprehensive interior and exterior care, while an Interior Detail focuses on cabin surfaces, carpets, mats, and glass. For a paint-focused plan, correction can reduce swirl marks, light scratches, oxidation, water spots, and dullness after an evaluation. Ceramic coating is the longer-term protection option to consider once the desired paint condition and finish are clear.", serviceHighlights: [serviceSlugs.full, serviceSlugs.interior, serviceSlugs.ceramic, serviceSlugs.paintCorrection], relatedCitySlugs: ["dublin", "livermore", "walnut-creek"] },
+	{ name: "Union City", slug: "union-city", region: "East Bay", serviceGuidance: "Choose a Full Detail for combined interior and exterior care, or select an Interior Detail or Exterior Detail when the goal is limited to one part of the vehicle. If normal washing leaves the paint feeling rough, clay bar decontamination removes bonded contaminants that a standard wash cannot. It is a preparation step for a smoother surface before considering polishing, sealants, or ceramic coating.", serviceHighlights: [serviceSlugs.full, serviceSlugs.interior, serviceSlugs.exterior, serviceSlugs.clayBar], relatedCitySlugs: ["fremont", "hayward", "castro-valley"] },
+	{ name: "San Leandro", slug: "san-leandro", region: "East Bay", serviceGuidance: "An Interior Detail is the focused option for cabin cleaning, shampooing, trim, windows, and conditioning; a Full Detail adds exterior paint, wheel, tire, glass, and trim care. Headlight restoration is appropriate for cloudy or oxidized lenses when clarity and light output need attention. Choose an Exterior Detail instead when the vehicle’s interior is already in good shape and the desired outcome is a cleaner exterior presentation.", serviceHighlights: [serviceSlugs.interior, serviceSlugs.full, serviceSlugs.headlightRestoration, serviceSlugs.exterior], relatedCitySlugs: ["hayward", "oakland", "alameda"] },
+	{ name: "Dublin", slug: "dublin", region: "Tri-Valley", serviceGuidance: "Use a Full Detail for a complete interior-and-exterior refresh, or an Interior Detail for cabin cleaning and conditioning without exterior work. Paint correction is the specialized route for reducing swirl marks, light scratches, oxidation, water spots, and dullness, with results based on the surface evaluation. Ceramic coating can follow a paint-focused plan when longer-term protection, gloss, and easier maintenance are the priorities.", serviceHighlights: [serviceSlugs.full, serviceSlugs.interior, serviceSlugs.paintCorrection, serviceSlugs.ceramic], relatedCitySlugs: ["pleasanton", "livermore", "walnut-creek"] },
+	{ name: "Castro Valley", slug: "castro-valley", region: "East Bay", serviceGuidance: "Choose seat and upholstery deep cleaning for cloth seats, carpets, mats, or fabric upholstery with embedded dirt, spills, odors, heavy buildup, or visible staining. An Interior Detail is the broader cabin-care option, while a Full Detail includes both interior and exterior work. Select an Exterior Detail when the desired improvement is limited to the vehicle’s paint, wheels, tires, glass, and trim.", serviceHighlights: [serviceSlugs.interior, serviceSlugs.seatCleaning, serviceSlugs.full, serviceSlugs.exterior], relatedCitySlugs: ["hayward", "san-leandro", "union-city"] },
+	{ name: "San Francisco", slug: "san-francisco", region: "San Francisco", serviceGuidance: "Start with an Interior Detail for a cleaner, conditioned cabin, or choose a Full Detail when the exterior also needs a complete refresh. Paint correction is for improving the appearance of swirl marks, light scratches, oxidation, water spots, and dullness through polishing after the paint is evaluated. Ceramic coating is a separate protection option for maintaining gloss and simplifying regular paint care after the desired finish is discussed.", serviceHighlights: [serviceSlugs.interior, serviceSlugs.full, serviceSlugs.paintCorrection, serviceSlugs.ceramic], relatedCitySlugs: ["san-mateo", "palo-alto", "oakland"] },
 ];
+
+export const priorityServiceAreaCities: ServiceAreaCity[] = cityDefinitions.map((city) => ({
+	...city,
+	metaTitle: `Mobile Auto Detailing in ${city.name}`,
+	metaDescription: `Mobile auto detailing in ${city.name} from Duartes Auto Detailing. Explore interior, exterior, full detailing, correction, and coating service options.`,
+	heroDescription: `Mobile auto detailing service available in ${city.name} for appointments at a home, office, or private garage with safe vehicle access.`,
+	intro: `Duartes Auto Detailing offers mobile auto detailing appointments in ${city.name} as part of its ${city.region} service area. Service is available when the vehicle can be accessed safely at a suitable appointment location.`,
+	customerAngle: `This page features ${city.serviceHighlights.map((slug) => serviceNames[slug]).join(", ")}. Share your vehicle condition, service goals, and appointment access details so availability and a suitable service option can be confirmed.`,
+	faqs: createCityFaqs(city.name, city.serviceGuidance),
+}));
 
 export const additionalServiceAreaCityNames = [] as const;
 
@@ -413,7 +101,7 @@ export const serviceAreaHub = {
 	slug: "bay-area",
 	metaTitle: "Bay Area Mobile Auto Detailing Service Area",
 	metaDescription:
-		"Explore Bay Area mobile auto detailing service pages for San Jose, San Francisco, Oakland, Fremont, Alameda, Hayward, Berkeley, Walnut, and more.",
+		"Explore Bay Area mobile auto detailing service pages for San Jose, San Francisco, Oakland, Fremont, Alameda, Hayward, Berkeley, Walnut Creek, and more.",
 	heroDescription:
 		"Mobile auto detailing across the Bay Area, with city guides for drivers looking for professional interior, exterior, protection, and correction services.",
 };
