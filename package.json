@@ -11,6 +11,7 @@
     "check": "astro check",
     "test:seo": "pnpm run build && pnpm run verify:seo",
     "verify:seo": "node scripts/verify-seo-output.mjs",
+    "audit:lighthouse:production": "node scripts/run-lighthouse.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
@@ -30,6 +31,8 @@
     "@astrojs/check": "^0.9.9",
     "@astrojs/language-server": "^2.16.8",
     "@iconify-json/tabler": "^1.2.33",
+    "lighthouse": "13.4.1",
+    "playwright-core": "^1.63.0",
     "typescript": "^5.9.3"
   }
 }
