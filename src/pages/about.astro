@@ -6,14 +6,20 @@ import PillarsSection from '../components/sections/about/PillarsSection.astro';
 import BehindTheShine from '../components/sections/about/BehindTheShine.astro';
 import CTABanner from '../components/ui/CTABanner.astro';
 import { config, formattedNumber } from '../data/config';
+import { getPageJsonLd } from '../data/business';
 
+const pageTitle = 'About Duartes Auto Detailing';
+const pageDescription = `Meet Duartes Auto Detailing — ${config.yearsOfExperience}+ years of experience, with over ${formattedNumber(config.vehiclesDetailed)} vehicles detailed throughout the Bay Area, California.`;
+const site = Astro.site ?? new URL('https://duartesautodetailing.com');
+const structuredData = [getPageJsonLd(site, 'AboutPage', '/about/', pageTitle, pageDescription)];
 const phoneMessage = encodeURIComponent(`Hello, I'd like to learn more about your services. Could you provide me with more information?`);
 const phoneUrl = `sms:${config.phoneUSE164}?body=${phoneMessage}`;
 ---
 
 <BaseLayout
-  title="About Duartes Auto Detailing"
-  description={`Meet Duartes Auto Detailing — ${config.yearsOfExperience}+ years of experience, with over ${formattedNumber(config.vehiclesDetailed)} vehicles detailed throughout the Bay Area, California.`}
+  title={pageTitle}
+  description={pageDescription}
+  structuredData={structuredData}
 >
   <PageHero
     title="Built Around Precision"

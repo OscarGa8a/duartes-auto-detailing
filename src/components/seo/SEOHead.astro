@@ -20,8 +20,9 @@ const fullTitle = title.includes('Duartes Auto Detailing')
   : `${title} | Duartes Auto Detailing`;
 const siteBase = Astro.site ?? Astro.url;
 const canonicalHref = canonicalURL ?? new URL(Astro.url.pathname, siteBase).href;
-const imageHref = ogImage ? new URL(ogImage, siteBase).href : undefined;
-const twitterCard = imageHref ? 'summary_large_image' : 'summary';
+const fallbackOgImage = 'https://res.cloudinary.com/dkq4plo7s/image/upload/f_auto,q_auto,w_1200,h_630,c_fill/og-image_usi1ab';
+const imageHref = new URL(ogImage ?? fallbackOgImage, siteBase).href;
+const twitterCard = 'summary_large_image';
 ---
 
 <title>{fullTitle}</title>
@@ -35,12 +36,8 @@ const twitterCard = imageHref ? 'summary_large_image' : 'summary';
 <meta property="og:url" content={canonicalHref} />
 <meta property="og:title" content={fullTitle} />
 <meta property="og:description" content={description} />
-{imageHref && (
-  <>
-    <meta property="og:image" content={imageHref} />
-    <meta property="og:image:alt" content={imageAlt} />
-  </>
-)}
+<meta property="og:image" content={imageHref} />
+<meta property="og:image:alt" content={imageAlt} />
 <meta property="og:locale" content="en_US" />
 <meta property="og:site_name" content="Duartes Auto Detailing" />
 
@@ -48,12 +45,8 @@ const twitterCard = imageHref ? 'summary_large_image' : 'summary';
 <meta name="twitter:card" content={twitterCard} />
 <meta name="twitter:title" content={fullTitle} />
 <meta name="twitter:description" content={description} />
-{imageHref && (
-  <>
-    <meta name="twitter:image" content={imageHref} />
-    <meta name="twitter:image:alt" content={imageAlt} />
-  </>
-)}
+<meta name="twitter:image" content={imageHref} />
+<meta name="twitter:image:alt" content={imageAlt} />
 
 <!-- Favicons -->
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

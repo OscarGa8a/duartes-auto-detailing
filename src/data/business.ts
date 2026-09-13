@@ -17,6 +17,8 @@ type BreadcrumbItem = {
   path: string;
 };
 
+type PageSchemaType = "AboutPage" | "ContactPage";
+
 const serviceArea = {
   "@type": "AdministrativeArea",
   name: "Bay Area, California",
@@ -27,6 +29,26 @@ const getCityAreaServed = (city: ServiceAreaCity) => ({
   name: `${city.name}, California`,
   containedInPlace: serviceArea,
 });
+
+const localBusinessAreaServed = [
+  serviceArea,
+  ...priorityServiceAreaCities.map(getCityAreaServed),
+];
+
+const openingHoursSpecification = {
+  "@type": "OpeningHoursSpecification",
+  dayOfWeek: [
+    "https://schema.org/Monday",
+    "https://schema.org/Tuesday",
+    "https://schema.org/Wednesday",
+    "https://schema.org/Thursday",
+    "https://schema.org/Friday",
+    "https://schema.org/Saturday",
+    "https://schema.org/Sunday",
+  ],
+  opens: "06:00",
+  closes: "20:00",
+};
 
 export const business = {
   name: "Duartes Auto Detailing",
@@ -49,7 +71,8 @@ export const getLocalBusinessJsonLd = (site: URL) => ({
   telephone: config.phoneUSE164,
   image: getUrl(site, logoPath),
   logo: getUrl(site, logoPath),
-  areaServed: serviceArea,
+  openingHoursSpecification: [openingHoursSpecification],
+  areaServed: localBusinessAreaServed,
   sameAs,
   makesOffer: services.map((service) => ({
     "@type": "Offer",
@@ -103,6 +126,32 @@ export const getServiceJsonLd = (site: URL, service: Service) => ({
   },
 });
 
+export const getPageJsonLd = (
+  site: URL,
+  type: PageSchemaType,
+  path: string,
+  name: string,
+  description: string,
+) => {
+  const relationship = type === "AboutPage" ? "about" : "mainEntity";
+  const url = getUrl(site, path);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": type,
+    "@id": new URL("#webpage", url).href,
+    name,
+    description,
+    url,
+    isPartOf: {
+      "@id": getWebsiteId(site),
+    },
+    [relationship]: {
+      "@id": getBusinessId(site),
+    },
+  };
+};
+
 export const getBreadcrumbListJsonLd = (site: URL, items: BreadcrumbItem[]) => ({
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
@@ -111,6 +160,19 @@ export const getBreadcrumbListJsonLd = (site: URL, items: BreadcrumbItem[]) => (
     position: index + 1,
     name: item.name,
     item: getUrl(site, item.path),
+  })),
+});
+
+export const getFaqPageJsonLd = (faqs: ServiceAreaCity["faqs"]) => ({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.answer,
+    },
   })),
 });
 

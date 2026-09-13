@@ -3,11 +3,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/ui/PageHero.astro';
 import ServiceMap from '../components/sections/contact/ServiceMap.astro';
 import ContactSection from '../components/sections/contact/ContactSection.astro';
+import { getPageJsonLd } from '../data/business';
+
+const pageTitle = 'Contact Duartes Auto Detailing';
+const pageDescription = 'Book Bay Area mobile auto detailing via WhatsApp, text message, Instagram, or email. Duartes Auto Detailing is a 100% mobile service.';
+const site = Astro.site ?? new URL('https://duartesautodetailing.com');
+const structuredData = [getPageJsonLd(site, 'ContactPage', '/contact/', pageTitle, pageDescription)];
 ---
 
 <BaseLayout
-  title="Contact Duartes Auto Detailing"
-  description="Book Bay Area mobile auto detailing via WhatsApp, text message, Instagram, or email. Duartes Auto Detailing is a 100% mobile service."
+  title={pageTitle}
+  description={pageDescription}
+  structuredData={structuredData}
 >
   <PageHero
     title="Reach Out The Premium Way"
