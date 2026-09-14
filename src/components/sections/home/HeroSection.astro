@@ -159,9 +159,9 @@ const heroSlides: HeroSlide[] = [
         ))}
       </div>
       <ul class="flex items-center gap-3">
-        {socialNetworks.map(({ name, href }) => (
+        {socialNetworks.map(({ name, href, accessibleLabel }) => (
           <li class="motion-card-hover motion-glow-pulse rounded-full border border-gold/20 bg-surface-2/92 p-2.5 transition-colors hover:border-gold/50 hover:bg-surface-3" style="--float-delay: 0.8s">
-            <a href={href} target="_blank" class="text-gold">
+            <a href={href} target="_blank" rel="noopener noreferrer" aria-label={accessibleLabel} class="text-gold">
               <Icon name={name} size="xl" />
             </a>
           </li>
