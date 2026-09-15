@@ -1,5 +1,4 @@
 ---
-import 'glightbox/dist/css/glightbox.css';
 import Icon from '../../ui/Icon.astro';
 import { CldImage } from 'astro-cloudinary';
 import { getCloudinaryImageUrl, getCloudinaryVideoUrl } from '../../../helpers/cloudinary';
@@ -193,7 +192,10 @@ const countLabel = videoCount > 0
 
 <script>
   import EmblaCarousel from 'embla-carousel';
-  import GLightbox from 'glightbox';
+  import { loadGLightbox, type GLightboxFactory } from '../../../lib/load-glightbox';
+
+  type GLightboxInstance = ReturnType<GLightboxFactory>;
+  const busyGalleries = new WeakSet<HTMLElement>();
 
   function initServiceGallery(root: HTMLElement) {
     if (root.dataset.initialized === 'true') return;
@@ -246,45 +248,65 @@ const countLabel = videoCount > 0
       };
     });
 
-    let lightbox: ReturnType<typeof GLightbox> | null = null;
+    let lightbox: GLightboxInstance | null = null;
+    let disposed = false;
 
     function stopAllVideos() {
       document.querySelectorAll<HTMLVideoElement>(`.service-gallery-video[data-gallery-id="${galleryId}"]`).forEach((v) => v.pause());
     }
 
-    const openLightboxAt = (index: number) => {
-      if (!lightboxElements.length) return;
+    const openLightboxAt = async (trigger: HTMLButtonElement, index: number) => {
+      if (!lightboxElements.length || disposed || busyGalleries.has(root)) return;
 
-      lightbox?.destroy();
-      lightbox = GLightbox({
-        elements: lightboxElements as Parameters<typeof GLightbox>[0]['elements'],
-        touchNavigation: true,
-        loop: true,
-        zoomable: true,
-        draggable: true,
-        openEffect: 'fade',
-        closeEffect: 'fade',
-        startAt: index,
-      });
+      busyGalleries.add(root);
+      trigger.disabled = true;
 
-      lightbox.open();
+      try {
+        const GLightbox = await loadGLightbox();
+        if (
+          disposed ||
+          !root.isConnected ||
+          !trigger.isConnected ||
+          !root.contains(trigger) ||
+          !Array.from(document.querySelectorAll<HTMLElement>('[data-service-gallery]')).includes(root)
+        ) return;
 
-      lightbox.on('close', stopAllVideos);
+        lightbox?.destroy();
+        lightbox = GLightbox({
+          elements: lightboxElements as Parameters<GLightboxFactory>[0]['elements'],
+          touchNavigation: true,
+          loop: true,
+          zoomable: true,
+          draggable: true,
+          openEffect: 'fade',
+          closeEffect: 'fade',
+          startAt: index,
+        });
 
-      lightbox.on(
-        'slide_before_change',
-        ((event: any) => {
-          const currentSlide = event.current;
+        lightbox.open();
+
+        lightbox.on('close', stopAllVideos);
+
+        lightbox.on(
+          'slide_before_change',
+          ((event: any) => {
+            const currentSlide = event.current;
+            stopAllVideos();
+            if (currentSlide?.slideConfig?.type !== 'image') {
+              const video = document.querySelector<HTMLVideoElement>(`.service-gallery-video-${currentSlide.slideIndex}[data-gallery-id="${galleryId}"]`);
+              if (video) video.play();
+            }
+          }) as () => void
+        );
+
+        if (mainTriggers[index]?.dataset.galleryType === 'image') {
           stopAllVideos();
-          if (currentSlide?.slideConfig?.type !== 'image') {
-            const video = document.querySelector<HTMLVideoElement>(`.service-gallery-video-${currentSlide.slideIndex}[data-gallery-id="${galleryId}"]`);
-            if (video) video.play();
-          }
-        }) as () => void
-      );
-
-      if (mainTriggers[index]?.dataset.galleryType === 'image') {
-        stopAllVideos();
+        }
+      } catch (error) {
+        console.error('Unable to load the service gallery lightbox.', error);
+      } finally {
+        busyGalleries.delete(root);
+        if (trigger.isConnected) trigger.disabled = false;
       }
     };
 
@@ -317,7 +339,7 @@ const countLabel = videoCount > 0
     mainTriggers.forEach((trigger) => {
       trigger.addEventListener('click', () => {
         const index = Number.parseInt(trigger.dataset.galleryIndex ?? '0', 10);
-        openLightboxAt(index);
+        void openLightboxAt(trigger, index);
       });
     });
 
@@ -338,6 +360,7 @@ const countLabel = videoCount > 0
     document.addEventListener(
       'astro:before-preparation',
       () => {
+        disposed = true;
         root.removeEventListener('keydown', onKeydown);
         lightbox?.destroy();
         thumbsEmbla?.destroy();
@@ -351,5 +374,6 @@ const countLabel = videoCount > 0
     document.querySelectorAll<HTMLElement>('[data-service-gallery]').forEach(initServiceGallery);
   }
 
+  initServiceGalleries();
   document.addEventListener('astro:page-load', initServiceGalleries);
 </script>

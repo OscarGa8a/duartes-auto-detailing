@@ -1,7 +1,6 @@
 ---
 import { CldImage } from 'astro-cloudinary';
 import Icon from "../../ui/Icon.astro";
-import 'glightbox/dist/css/glightbox.css';
 import { getCloudinaryImageUrl, getCloudinaryVideoUrl } from '../../../helpers/cloudinary';
 
 const items = [
@@ -159,7 +158,13 @@ const items = [
 </style>
 
 <script>
-  import GLightbox from 'glightbox';
+  import { loadGLightbox, type GLightboxFactory } from '../../../lib/load-glightbox';
+
+  type GLightboxInstance = ReturnType<GLightboxFactory>;
+
+  let activeLightbox: GLightboxInstance | null = null;
+  let homepageTransitioning = false;
+  const busyGalleries = new WeakSet<HTMLElement>();
 
   function applyGridAreas() {
     const items = document.querySelectorAll<HTMLElement>('.gallery-item--placed');
@@ -177,7 +182,10 @@ const items = [
 
   // applyGridAreas corre en cada navegación (módulo se ejecuta 1 vez,
   // pero astro:page-load dispara en cada navegación)
-  document.addEventListener('astro:page-load', applyGridAreas);
+  document.addEventListener('astro:page-load', () => {
+    if (document.querySelector('#gallery-section')) homepageTransitioning = false;
+    applyGridAreas();
+  });
   window.addEventListener('resize', applyGridAreas);
   applyGridAreas();
 
@@ -185,68 +193,94 @@ const items = [
     document.querySelectorAll('.gslide video').forEach((v) => (v as HTMLVideoElement).pause());
   }
 
-  document.addEventListener('click', (e) => {
+  document.addEventListener('click', async (e) => {
     const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('#gallery-section .gallery-item');
-    if (!btn) return;
+    const root = btn?.closest<HTMLElement>('#gallery-section');
+    if (!btn || !root || busyGalleries.has(root)) return;
 
-    const buttons = Array.from(
-      document.querySelectorAll<HTMLButtonElement>('#gallery-section .gallery-item')
-    );
-    const startAt = buttons.indexOf(btn);
+    busyGalleries.add(root);
+    btn.disabled = true;
 
-    // Construimos los elementos: imágenes como 'image', video como 'html' con <video> nativo
-    // Así GLightbox no activa Plyr y el carousel incluye el video sin CSS externo
-    const elements = buttons.map((b, index) => {
-      const media = b.dataset.media ?? '';
-      if (b.dataset.type === 'video') {
+    try {
+      const GLightbox = await loadGLightbox();
+      if (
+        homepageTransitioning ||
+        !root.isConnected ||
+        !btn.isConnected ||
+        btn.closest('#gallery-section') !== root ||
+        document.querySelector('#gallery-section') !== root
+      ) return;
+
+      const buttons = Array.from(root.querySelectorAll<HTMLButtonElement>('.gallery-item'));
+      const startAt = buttons.indexOf(btn);
+      if (startAt < 0) return;
+
+      // Construimos los elementos: imágenes como 'image', video como 'html' con <video> nativo
+      // Así GLightbox no activa Plyr y el carousel incluye el video sin CSS externo
+      const elements = buttons.map((b, index) => {
+        const media = b.dataset.media ?? '';
+        if (b.dataset.type === 'video') {
+          return {
+            content: `<video src="${media}" controls playsinline autoplay
+              style="max-height:85dvh;" class="video-${index} block h-auto outline-none rounded-sm bg-black w-auto max-w-full">
+            </video>`,
+            width: 'auto',
+          };
+        }
         return {
-          content: `<video src="${media}" controls playsinline autoplay
-            style="max-height:85dvh;" class="video-${index} block h-auto outline-none rounded-sm bg-black w-auto max-w-full">
-          </video>`,
-          width: 'auto',
+          href: media,
+          type: 'image' as const,
+          alt: b.getAttribute('aria-label') ?? '',
         };
-      }
-      return {
-        href: media,
-        type: 'image' as const,
-        alt: b.getAttribute('aria-label') ?? '',
-      };
-    });
+      });
 
-    const lb = GLightbox({
-      elements: elements as Parameters<typeof GLightbox>[0]['elements'],
-      touchNavigation: true,
-      loop: true,
-      zoomable: true,
-      draggable: true,
-      openEffect: 'fade',
-      closeEffect: 'fade',
-      startAt,
-    });
+      activeLightbox?.destroy();
+      activeLightbox = GLightbox({
+        elements: elements as Parameters<GLightboxFactory>[0]['elements'],
+        touchNavigation: true,
+        loop: true,
+        zoomable: true,
+        draggable: true,
+        openEffect: 'fade',
+        closeEffect: 'fade',
+        startAt,
+      });
 
-    lb.open();
+      activeLightbox.open();
 
-    // Pausar video al cerrar o al cambiar de slide
-    lb.on('close', stopAllVideos);
+      // Pausar video al cerrar o al cambiar de slide
+      activeLightbox.on('close', stopAllVideos);
 
-    lb.on('slide_before_change', (...[event]: [event?: {
-      current?: {
-        slideConfig?: { type?: 'image' | 'video' | 'inline' };
-        slideIndex?: number;
-      };
-    }]) => {
-      const currentSlide = event?.current;
-      const slideType = currentSlide?.slideConfig?.type;
-      const slideIndex = currentSlide?.slideIndex;
+      activeLightbox.on('slide_before_change', (...[event]: [event?: {
+        current?: {
+          slideConfig?: { type?: 'image' | 'video' | 'inline' };
+          slideIndex?: number;
+        };
+      }]) => {
+        const currentSlide = event?.current;
+        const slideType = currentSlide?.slideConfig?.type;
+        const slideIndex = currentSlide?.slideIndex;
 
-      if (slideType === 'image') {
-        stopAllVideos();
-      } else if (typeof slideIndex === 'number') {
-        const video = document.querySelector(`.video-${slideIndex}`) as HTMLVideoElement | null;
-        video?.play();
-      }
-    });
+        if (slideType === 'image') {
+          stopAllVideos();
+        } else if (typeof slideIndex === 'number') {
+          const video = document.querySelector(`.video-${slideIndex}`) as HTMLVideoElement | null;
+          video?.play();
+        }
+      });
 
-    if (btn.dataset.type === 'image') stopAllVideos();
+      if (btn.dataset.type === 'image') stopAllVideos();
+    } catch (error) {
+      console.error('Unable to load the gallery lightbox.', error);
+    } finally {
+      busyGalleries.delete(root);
+      if (btn.isConnected) btn.disabled = false;
+    }
+  });
+
+  document.addEventListener('astro:before-preparation', () => {
+    homepageTransitioning = true;
+    activeLightbox?.destroy();
+    activeLightbox = null;
   });
 </script>
