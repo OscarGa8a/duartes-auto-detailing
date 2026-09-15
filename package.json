@@ -9,6 +9,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "check": "astro check",
+    "verify:i18n-source": "node scripts/verify-localization-source.mjs",
     "test:seo": "pnpm run build && pnpm run verify:seo",
     "verify:seo": "node scripts/verify-seo-output.mjs",
     "audit:lighthouse:production": "node scripts/run-lighthouse.mjs",
