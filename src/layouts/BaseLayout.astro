@@ -37,8 +37,6 @@ const { title, description, ogImage, imageAlt, structuredData } = Astro.props;
     <script is:inline>
       document.documentElement.classList.add('js');
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <SEOHead title={title} description={description} ogImage={ogImage} imageAlt={imageAlt} />
     {structuredData && <StructuredData data={structuredData} />}
     <style>
