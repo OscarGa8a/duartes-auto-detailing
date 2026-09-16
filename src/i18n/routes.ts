@@ -16,3 +16,13 @@ export const candidateRoutePairs: readonly CandidateRoutePair[] = [
 
 export const getCandidateRoutePair = (pageId: PageId) => candidateRoutePairs.find((pair) => pair.pageId === pageId);
 export const getCandidateRouteByPath = (path: RoutePath) => candidateRoutePairs.find((pair) => pair.en.path === path || pair.es.path === path);
+
+// WU-9 may add a page ID here only when its Spanish route is published.
+export const publishedSpanishPageIds: readonly PageId[] = [];
+
+export const getPublishedCounterpart = (pageId: PageId | undefined, locale: Locale) => {
+  if (!pageId || !publishedSpanishPageIds.includes(pageId)) return undefined;
+
+  const pair = getCandidateRoutePair(pageId);
+  return pair ? (locale === "en-US" ? pair.es : pair.en) : undefined;
+};

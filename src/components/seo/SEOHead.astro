@@ -1,10 +1,15 @@
 ---
+import { localeDefinitions, type Locale } from '../../i18n/locales';
+import { getPublishedCounterpart, type PageId } from '../../i18n/routes';
+
 interface Props {
   title: string;
   description: string;
   ogImage?: string;
   imageAlt?: string;
   canonicalURL?: string;
+  locale?: Locale;
+  pageId?: PageId;
 }
 
 const {
@@ -13,6 +18,8 @@ const {
   ogImage,
   imageAlt = 'Duartes Auto Detailing mobile detailing service',
   canonicalURL,
+  locale = 'en-US',
+  pageId,
 } = Astro.props;
 
 const fullTitle = title.includes('Duartes Auto Detailing')
@@ -23,6 +30,9 @@ const canonicalHref = canonicalURL ?? new URL(Astro.url.pathname, siteBase).href
 const fallbackOgImage = 'https://res.cloudinary.com/dkq4plo7s/image/upload/f_auto,q_auto,w_1200,h_630,c_fill/og-image_usi1ab';
 const imageHref = new URL(ogImage ?? fallbackOgImage, siteBase).href;
 const twitterCard = 'summary_large_image';
+const localeDefinition = localeDefinitions[locale];
+const counterpart = getPublishedCounterpart(pageId, locale);
+const counterpartHref = counterpart ? new URL(counterpart.path, siteBase).href : undefined;
 ---
 
 <title>{fullTitle}</title>
@@ -30,6 +40,12 @@ const twitterCard = 'summary_large_image';
 <meta name="robots" content="index, follow, max-image-preview:large" />
 <link rel="canonical" href={canonicalHref} />
 <link rel="sitemap" href="/sitemap-index.xml" />
+{counterpartHref && (
+  <>
+    <link rel="alternate" hreflang={localeDefinition.htmlLang} href={canonicalHref} />
+    <link rel="alternate" hreflang={localeDefinitions[counterpart!.locale].htmlLang} href={counterpartHref} />
+  </>
+)}
 
 <!-- Open Graph -->
 <meta property="og:type" content="website" />
@@ -38,7 +54,7 @@ const twitterCard = 'summary_large_image';
 <meta property="og:description" content={description} />
 <meta property="og:image" content={imageHref} />
 <meta property="og:image:alt" content={imageAlt} />
-<meta property="og:locale" content="en_US" />
+<meta property="og:locale" content={localeDefinition.ogLocale} />
 <meta property="og:site_name" content="Duartes Auto Detailing" />
 
 <!-- Twitter / X Card -->

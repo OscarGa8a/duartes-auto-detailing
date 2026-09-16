@@ -4,6 +4,13 @@ import { resolve } from "node:path";
 
 const root = process.cwd();
 const reviewRoot = resolve(root, "localization/es-US");
+const shellFiles = [
+  "src/i18n/routes.ts",
+  "src/layouts/BaseLayout.astro",
+  "src/components/seo/SEOHead.astro",
+  "src/components/layout/Navbar.astro",
+  "src/components/layout/Footer.astro",
+].map((file) => resolve(root, file));
 const ledgerPath = resolve(reviewRoot, "approval-ledger.json");
 const claimLedgerPath = resolve(reviewRoot, "claim-ledger.md");
 const manifestPath = resolve(root, "src/content/i18n/es-US/publication-manifest.json");
@@ -42,6 +49,19 @@ const verifyDraftBoundary = () => {
   for (const file of sources) if (/localization\/es-US\/drafts?\//.test(readFileSync(file, "utf8"))) fail(`Deployable source references review drafts: ${file}`);
   const deployable = files(resolve(root, "src/content/i18n/es-US"));
   if (!existsSync(manifestPath) && deployable.length) fail("Deployable Spanish content requires a publication manifest.");
+  if (existsSync(resolve(root, "src/pages/es"))) fail("Spanish pages must not exist before publication.");
+};
+const verifyShellContracts = () => {
+  const [routes, layout, seoHead, navbar, footer] = shellFiles.map((file) => readFileSync(file, "utf8"));
+  const shellSources = [layout, seoHead, navbar, footer];
+  if (!routes.includes("export const publishedSpanishPageIds: readonly PageId[] = [];")) fail("Published Spanish route registry must remain empty during WU-2.");
+  if (!routes.includes("getPublishedCounterpart") || !routes.includes("getCandidateRoutePair(pageId)")) fail("Published counterparts must resolve from the candidate route registry.");
+  if (/\bPublishedCounterpart\b/.test(routes) || shellSources.some((source) => /state:\s*[\"']published[\"']|\bPublishedCounterpart\b|counterpart\?:/.test(source))) fail("Shell callers must not be able to assert counterpart publication.");
+  if (!layout.includes("locale = 'en-US'") || !layout.includes('lang={localeDefinition.htmlLang}') || !layout.includes("pageId?: PageId")) fail("Base layout must default to English and accept only a logical page ID.");
+  if (!seoHead.includes("locale = 'en-US'") || !seoHead.includes('content={localeDefinition.ogLocale}') || !seoHead.includes("getPublishedCounterpart(pageId, locale)") || !seoHead.includes('{counterpartHref && (')) fail("SEO alternates must resolve a published counterpart from the registry.");
+  for (const [name, source] of [["Navbar", navbar], ["Footer", footer]]) {
+    if (!source.includes("pageId?: PageId") || !source.includes("getPublishedCounterpart(pageId, locale)") || !source.includes("{counterpart && (")) fail(`${name} must resolve language switches from the published route registry.`);
+  }
 };
 
 const approved = (value) => ({ state: "approved", acceptedValue: value, sha256: digest(value) });
@@ -67,6 +87,7 @@ const ledger = JSON.parse(readFileSync(ledgerPath, "utf8"));
 const claimLedger = readFileSync(claimLedgerPath, "utf8");
 if (!claimLedger.includes("# Spanish Claim Ledger") || !claimLedger.includes("## Evidence schema")) fail("Invalid Spanish claim ledger.");
 verifyDraftBoundary();
+verifyShellContracts();
 const published = verifyRecords(ledger, existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath, "utf8")) : null);
 if (published.length) fail("No Spanish route may publish during WU-1.");
 if (process.argv.includes("--self-test")) selfTest();
