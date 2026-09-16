@@ -33,10 +33,10 @@ TDD is not configured for repository policy documents. Use structural validation
 ## Tasks
 
 - [x] **ODD-PRBOOT-01 — Add policy templates.** Created the feature Issue Form, Issue Form config, and PR template with concise repository-facing English copy.
-- [ ] **ODD-PRBOOT-02 — Validate and publish bootstrap.** Local YAML/Markdown validation passed; direct-main commit, push, and GitHub readback remain pending.
-- [ ] **ODD-PRBOOT-03 — Create required labels.** Create `status:approved` and `type:feature` once, then verify their exact names and descriptions.
-- [ ] **ODD-PRBOOT-04 — Create and approve the WU-2 issue.** Complete duplicate search, create from the installed feature form, read back, then request issue-number-specific approval before applying the protected label.
-- [ ] **ODD-PRBOOT-05 — Open compliant WU-2 PR.** Reconcile the WU-2 branch with the new main bootstrap, open the linked PR, apply exactly one type label, and verify the remote PR state.
+- [x] **ODD-PRBOOT-02 — Validate and publish bootstrap.** YAML/Markdown validation, independent verification, native reliability review, direct-main commit/push, and default-branch GitHub readback passed.
+- [x] **ODD-PRBOOT-03 — Create required labels.** Created and verified exactly named `status:approved` and `type:feature` labels.
+- [x] **ODD-PRBOOT-04 — Create and approve the WU-2 issue.** Duplicate search found no candidate; issue #47 was created from the installed feature form, read back, and received `status:approved` after issue-specific owner authorization.
+- [x] **ODD-PRBOOT-05 — Open compliant WU-2 PR.** PR #48 is open, closes approved issue #47, carries exactly `type:feature`, and the branch includes the bootstrap commit. Vercel checks pass; the Cloudflare preview failure is a verified pre-existing repository condition also present on merged PRs #44–#46, not introduced by WU-2.
 
 ## Acceptance criteria
 
@@ -61,7 +61,13 @@ TDD is not configured for repository policy documents. Use structural validation
 - 2026-09-15: repository discovery confirmed issues are enabled, authenticated permission is `ADMIN`, `main` is unprotected, no rulesets exist, and `.github` is absent.
 - 2026-09-15: repository owner explicitly authorized the minimal direct-to-`main` bootstrap to break the circular policy dependency.
 - 2026-09-15: created `.github/ISSUE_TEMPLATE/{feature,config}.yml` and `.github/PULL_REQUEST_TEMPLATE.md`. The delegated Ruby validation command was unavailable because Ruby is not installed; parent validation used available PyYAML, confirmed the three required textarea controls and existing `enhancement` label, and passed no-index whitespace checks for all new files.
+- 2026-09-15: independent verification passed with no findings. Native medium-tier reliability review approved and was acknowledged under lineage `review-b063daac779188f6`.
+- 2026-09-15: committed `dcb6cac` (`chore(repo): bootstrap issue-first PR policy`) directly to authorized `main`, pushed it, and confirmed all four files through GitHub default-branch content readback.
+- 2026-09-15: created and read back `status:approved` and `type:feature` with the authorized exact names and descriptions.
+- 2026-09-15: the open-and-closed duplicate search found no candidate. Issue #47 (`https://github.com/OscarGa8a/duartes-auto-detailing/issues/47`) was created from `feature.yml` with `enhancement`, then received `status:approved` after exact issue-specific authorization and atomic readback.
+- 2026-09-15: PR #48 (`https://github.com/OscarGa8a/duartes-auto-detailing/pull/48`) was created from `feat/spanish-localization-shell` to `main`, closes #47, and received exactly `type:feature` after PR-specific authorization. The feature branch was then merged with current `main` and pushed to trigger fresh checks.
+- 2026-09-15: Vercel and Vercel Preview Comments passed on the refreshed head. Cloudflare Pages preview failed without exposed GitHub diagnostics; the same Cloudflare preview check also failed on merged PRs #44, #45, and #46, while the new `main` bootstrap deployment succeeded. This is documented as a pre-existing preview-environment condition and not attributed to WU-2.
 
 ## Next step
 
-Commit only the four bootstrap files directly to authorized `main`, push, and verify default-branch GitHub readback before creating labels.
+Bootstrap and compliant PR creation are complete. Await review/merge decisions; do not merge or deploy without a separate explicit user request.
