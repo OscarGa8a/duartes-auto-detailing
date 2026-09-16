@@ -1,0 +1,32 @@
+name: Feature request
+description: Propose an improvement with a clear, verifiable outcome.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What user or business problem should this solve?
+      placeholder: Describe the current limitation and who it affects.
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-outcome
+    attributes:
+      label: Proposed outcome
+      description: Describe the intended result, not a specific implementation.
+      placeholder: Users can...
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance criteria
+      description: List observable conditions that define completion.
+      placeholder: |
+        - Given ... when ... then ...
+        - ...
+    validations:
+      required: true
