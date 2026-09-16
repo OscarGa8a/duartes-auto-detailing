@@ -1,13 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import HeroSection from '../components/sections/home/HeroSection.astro';
-import WhyDuartes from '../components/sections/home/WhyDuartes.astro';
-import FeaturedPackages from '../components/sections/home/FeaturedPackages.astro';
-import Testimonials from '../components/sections/home/Testimonials.astro';
-import Gallery from '../components/sections/home/Gallery.astro';
-import DiscountBanner from '../components/sections/home/DiscountBanner.astro';
+import HomeComposition from '../components/sections/home/HomeComposition.astro';
 import { getCloudinaryImageUrl } from '../helpers/cloudinary';
 import { getLocalBusinessJsonLd, getWebSiteJsonLd } from '../data/business';
+import { englishHomeContent } from '../i18n/home-content';
 
 const ogImage = getCloudinaryImageUrl('og-image_usi1ab');
 const site = Astro.site ?? new URL('https://duartesautodetailing.com');
@@ -21,10 +17,5 @@ const structuredData = [getLocalBusinessJsonLd(site), getWebSiteJsonLd(site)];
   imageAlt="Freshly detailed vehicle by Duartes Auto Detailing"
   structuredData={structuredData}
 >
-  <HeroSection />
-  <WhyDuartes />
-  <FeaturedPackages />
-  <Testimonials />
-  <Gallery />
-  <DiscountBanner />
+  <HomeComposition content={englishHomeContent} />
 </BaseLayout>

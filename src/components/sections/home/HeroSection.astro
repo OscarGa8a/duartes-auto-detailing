@@ -5,6 +5,9 @@ import { CldImage } from 'astro-cloudinary';
 import Button from '../../ui/Button.astro';
 import Icon from '../../ui/Icon.astro';
 import { config, formattedNumber } from '../../../data/config';
+import type { HomeContent } from '../../../i18n/content-types';
+
+const { content } = Astro.props as { content: HomeContent['hero'] };
 
 interface HeroSlide {
   srcWeb: string;
@@ -18,28 +21,28 @@ const heroSlides: HeroSlide[] = [
   {
     srcWeb: 'hero-image-web1_fcezqo',
     srcMobile: 'hero-image-mobile1_ujrqjh',
-    alt: 'Freshly detailed blue sports car with glossy exterior finish',
+    alt: content.imageAlts[0],
     mobilePosition: 'object-bottom',
     desktopPosition: 'object-right',
   },
   {
     srcWeb: 'hero-image-web2_uhykzx',
     srcMobile: 'hero-image-mobile2_tc5j8m',
-    alt: 'Detailed vehicle exterior with deep gloss and reflection',
+    alt: content.imageAlts[1],
     mobilePosition: 'object-bottom',
     desktopPosition: 'object-right',
   },
   {
     srcWeb: 'hero-image-web3_knxbsn',
     srcMobile: 'hero-image-mobile3_uxdgnl',
-    alt: 'Exterior detail showing clean paint and bright reflections',
+    alt: content.imageAlts[2],
     mobilePosition: 'object-bottom',
     desktopPosition: 'object-right',
   },
   {
     srcWeb: 'hero-image-web4_pvhdsi',
     srcMobile: 'hero-image-mobile4_resultado_hmdjwp',
-    alt: 'Detailed exterior finish prepared for premium protection',
+    alt: content.imageAlts[3],
     mobilePosition: 'object-bottom',
     desktopPosition: 'object-right',
   },
@@ -99,63 +102,63 @@ const heroSlides: HeroSlide[] = [
 
   <div class="relative z-10 flex min-h-[calc(100dvh-80px)] flex-col px-4 pb-6 pt-8 sm:px-6 lg:px-24 lg:py-16">
     <span class="motion-enter inline-flex w-fit items-center rounded-full border border-gold/30 bg-black/28 px-3.5 py-1.5 text-xxs font-semibold uppercase tracking-wise text-text-secondary shadow-lg backdrop-blur-md lg:bg-surface/72 lg:text-xs lg:tracking-wide lg:backdrop-blur-sm">
-      Concierge Mobile Detailing · Bay Area
+      {content.eyebrow}
     </span>
 
     <div class="mt-auto flex w-full max-w-2xl flex-col gap-5 pb-1 sm:gap-6 lg:my-auto lg:gap-7 lg:pb-0">
       <div class="motion-enter flex items-center gap-3 text-xs font-medium uppercase tracking-wide text-gold" style="--enter-delay: 120ms">
         <span class="h-px w-12 bg-gold"></span>
-        Premium mobile detailing at your home or office
+        {content.serviceLine}
       </div>
 
       <h1 class="motion-enter max-w-80 text-balance text-h1 font-bold leading-[1.03] text-text-primary drop-shadow-[0_12px_36px_rgba(0,0,0,0.45)] lg:max-w-2xl lg:text-display lg:drop-shadow-none" style="--enter-delay: 180ms">
-        Diamond-Level Finish<br />
-        <span class="text-gold">At Your Doorstep</span>
+        {content.heading[0]}<br />
+        <span class="text-gold">{content.heading[1]}</span>
       </h1>
 
       <p class="motion-enter max-w-88 text-body leading-relaxed text-text-secondary drop-shadow-[0_8px_28px_rgba(0,0,0,0.35)] lg:max-w-lg lg:text-lg lg:drop-shadow-none" style="--enter-delay: 260ms">
-        We clean, restore, and protect your vehicle with premium care — right at your home or office.
+        {content.description}
       </p>
 
       <div class="motion-enter flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium uppercase tracking-wide text-text-secondary/92 lg:text-text-muted" style="--enter-delay: 340ms">
-        <span>{formattedNumber(config.vehiclesDetailed)}+ vehicles detailed</span>
+        <span>{formattedNumber(config.vehiclesDetailed)}+ {content.vehiclesDetailed}</span>
         <span aria-hidden="true" class="size-1 rounded-full bg-gold/60"></span>
-        <span class="lg:hidden">Fully Mobile Service</span>
-        <span class="hidden lg:inline">fully mobile</span>
+        <span class="lg:hidden">{content.mobileService}</span>
+        <span class="hidden lg:inline">{content.desktopService}</span>
       </div>
 
       <div class="motion-enter flex flex-col gap-3 pt-1 sm:flex-row lg:gap-4 lg:pt-2" style="--enter-delay: 420ms">
         <Button class="w-full" href="/contact" variant="primary-bright">
           <Icon name="tabler:phone" />
-          Book Your Service
+          {content.primaryAction}
         </Button>
         <Button class="w-full border-gold bg-black/22 text-text-primary backdrop-blur-md hover:bg-black/36" href="/services" variant="outline">
-          View Services
+          {content.secondaryAction}
         </Button>
       </div>
 
       <div class="motion-enter flex items-center justify-between gap-4 pt-2 lg:hidden" style="--enter-delay: 520ms">
         <div id="hero-mobile-dots" class="flex items-center gap-2">
           {heroSlides.map((_, index) => (
-            <button type="button" aria-label={`Ir al slide ${index + 1}`} class="h-1.5 w-6 rounded-full bg-white/24 transition-all duration-300" data-index={index}></button>
+            <button type="button" aria-label={`${content.carousel.mobileSlide} ${index + 1}`} class="h-1.5 w-6 rounded-full bg-white/24 transition-all duration-300" data-index={index}></button>
           ))}
         </div>
         <div class="inline-flex items-center rounded-full border border-white/16 bg-black/28 px-3.5 py-1.5 text-xxs font-semibold uppercase tracking-wide text-text-primary backdrop-blur-md">
-          At your home or office
+          {content.location}
         </div>
       </div>
     </div>
 
     <div class="motion-enter absolute bottom-8 left-8 hidden lg:block" style="--enter-delay: 520ms">
       <div class="inline-flex items-center rounded-full border border-white/18 bg-black/46 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wise text-text-primary backdrop-blur-md">
-        At your home or office
+        {content.location}
       </div>
     </div>
 
     <div class="motion-enter absolute bottom-8 right-8 hidden items-end gap-5 lg:flex" style="--enter-delay: 560ms">
       <div id="hero-desktop-dots" class="flex items-center gap-2 rounded-full border border-white/12 bg-black/34 px-3 py-2 backdrop-blur-md">
         {heroSlides.map((_, index) => (
-          <button type="button" aria-label={`Go to desktop slide ${index + 1}`} class="h-1.5 w-6 rounded-full bg-white/24 transition-all duration-300" data-index={index}></button>
+          <button type="button" aria-label={`${content.carousel.desktopSlide} ${index + 1}`} class="h-1.5 w-6 rounded-full bg-white/24 transition-all duration-300" data-index={index}></button>
         ))}
       </div>
       <ul class="flex items-center gap-3">

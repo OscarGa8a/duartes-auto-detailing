@@ -2,6 +2,10 @@
 import { CldImage } from 'astro-cloudinary';
 import Button from '../../ui/Button.astro';
 import Icon from '../../ui/Icon.astro';
+import type { HomeContent } from '../../../i18n/content-types';
+import { englishHomeContent } from '../../../i18n/home-content';
+
+const { content = englishHomeContent.discountBanner } = Astro.props as { content?: HomeContent['discountBanner'] };
 ---
 
 <section class="bg-black py-10 lg:py-14 relative overflow-hidden">
@@ -26,16 +30,16 @@ import Icon from '../../ui/Icon.astro';
       <div class="absolute inset-y-0 left-0 w-24 bg-linear-to-r from-black/10 to-transparent"></div>
 
       <div class="relative z-10 ml-auto flex w-full lg:max-w-lg xl:max-w-xl flex-col items-center justify-center gap-4 px-8 py-10 text-center lg:items-start lg:px-14 lg:text-left" data-reveal="blur">
-        <p class="text-black/60 text-sm font-semibold uppercase tracking-wide w-full">Special offer</p>
+        <p class="text-black/60 text-sm font-semibold uppercase tracking-wide w-full">{content.eyebrow}</p>
         <h2 class="text-black font-bold leading-tight text-h1 text-center lg:text-left w-full max-w-100">
-          20% off your first service
+          {content.title}
         </h2>
         <p class="text-black/72 text-sm max-w-sm leading-relaxed">
-          Book today and enjoy 20% off your first premium detailing session anywhere in the Bay Area.
+          {content.description}
         </p>
         <Button class='motion-glow-pulse ' href="/contact" variant="dark">
           <Icon name="tabler:phone" class="text-gold"  />
-          Book Your Service
+          {content.action}
         </Button>
       </div>
     </div>

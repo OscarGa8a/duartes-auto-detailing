@@ -1,5 +1,8 @@
 ---
 import { config } from "../../../data/config";
+import type { HomeContent } from "../../../i18n/content-types";
+
+const { content } = Astro.props as { content: HomeContent["whyDuartes"] };
 
 ---
 
@@ -11,17 +14,17 @@ import { config } from "../../../data/config";
       <div data-reveal="blur" class="relative flex flex-col gap-5">
         <span class="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold">
           <span class="h-px w-10 bg-gold"></span>
-          Why choose Duartes
+          {content.eyebrow}
         </span>
         <h2 class="text-text-primary font-bold leading-tight text-h1">
-          Premium care without the dealership wait.
+          {content.title}
         </h2>
         <p
           data-reveal="up"
           style="--reveal-delay: 120ms"
           class="max-w-xl text-text-secondary leading-relaxed"
         >
-          We bring professional detailing directly to your home or office — saving you time while delivering exceptional results.
+          {content.description}
         </p>
       </div>
 
@@ -34,10 +37,10 @@ import { config } from "../../../data/config";
           <div class="motion-sheen"></div>
           <div class="motion-glow-pulse absolute -right-8 -top-8 h-24 w-24 rounded-full bg-wine/14 blur-2xl"></div>
           <p class="text-gold font-semibold text-lg italic">
-            "It's not just a cleaning - it's a transformation."
+            "{content.callout}"
           </p>
           <p class="mt-4 text-text-secondary leading-relaxed">
-            We focus on restoring, protecting, and elevating your vehicle with precision, premium products, and attention to every detail.
+            {content.calloutDescription}
           </p>
         </div>
 
@@ -50,7 +53,7 @@ import { config } from "../../../data/config";
             <div class="absolute inset-x-5 top-0 h-px bg-linear-to-r from-transparent via-wine-soft/75 to-transparent"></div>
             <div class="motion-glow-pulse absolute -right-6 -top-6 h-20 w-20 rounded-full bg-gold/8 blur-2xl"></div>
             <span class="text-gold font-bold text-2xl md:text-3xl" data-count-to={config.vehiclesDetailed} data-count-suffix="+" data-count-duration="1800">{config.vehiclesDetailed}+</span>
-            <span class="mt-2 block text-sm text-text-secondary">Vehicles Detailed</span>
+            <span class="mt-2 block text-sm text-text-secondary">{content.statistics[0]}</span>
           </div>
           <div
             data-reveal="scale"
@@ -60,7 +63,7 @@ import { config } from "../../../data/config";
             <div class="absolute inset-x-5 top-0 h-px bg-linear-to-r from-transparent via-gold/70 to-transparent"></div>
             <div class="motion-glow-pulse absolute -right-6 -top-6 h-20 w-20 rounded-full bg-gold/8 blur-2xl" style="--float-delay: 0.8s"></div>
             <span class="text-gold font-bold text-2xl md:text-3xl" data-count-to={config.yearsOfExperience} data-count-suffix="+" data-count-duration="1100">{config.yearsOfExperience}+</span>
-            <span class="mt-2 block text-sm text-text-secondary">Years of Experience</span>
+            <span class="mt-2 block text-sm text-text-secondary">{content.statistics[1]}</span>
           </div>
           <div
             data-reveal="scale"
@@ -70,7 +73,7 @@ import { config } from "../../../data/config";
             <div class="absolute inset-x-5 top-0 h-px bg-linear-to-r from-transparent via-wine-soft/75 to-transparent"></div>
             <div class="motion-glow-pulse absolute -right-6 -top-6 h-20 w-20 rounded-full bg-wine/12 blur-2xl" style="--float-delay: 1.2s"></div>
             <span class="text-gold font-bold text-2xl md:text-3xl" data-count-to={config.bayAreaLocations} data-count-suffix="+" data-count-duration="1600">{config.bayAreaLocations}+</span>
-            <span class="mt-2 block text-sm text-text-secondary">Locations Served</span>
+            <span class="mt-2 block text-sm text-text-secondary">{content.statistics[2]}</span>
           </div>
         </div>
       </div>
