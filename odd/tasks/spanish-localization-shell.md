@@ -72,8 +72,9 @@ TDD is not configured for this ODD task: no project/session ODD TDD setting or d
 - 2026-09-15: independent re-verification passed with both prior findings closed. `verify:i18n-source`, Astro check, build/SEO verification, scoped diff check, and line-budget check all passed; two existing unused-import hints and the existing Vite chunk-size warning remain non-blocking.
 - 2026-09-15: native medium-tier reliability review approved and was acknowledged under lineage `review-c2d624f0a00cee89`. Its three advisory warnings are deferred, not blockers: prove the positive counterpart branch when WU-9 publishes routes, consider redirect-output coverage separately, and keep the pre-existing Zone.Identifier artifacts out of delivery.
 - 2026-09-15: user authorized commit, push, and PR. Commit `69859ac` (`feat(i18n): add localization shell contracts`) was created with only the eight scoped WU-2 files and pushed to `feat/spanish-localization-shell`; unrelated staged/untracked files remain untouched.
-- 2026-09-15: PR creation is blocked by repository policy prerequisites: no YAML Issue Form, no approved linked issue, and no `status:approved` or `type:*` labels exist. No PR was created.
+- 2026-09-15: the issue-first policy prerequisites were bootstrapped on `main` by explicit owner authorization. Issue #47 was created from the installed feature form and received `status:approved` after issue-specific authorization.
+- 2026-09-15: PR #48 (`https://github.com/OscarGa8a/duartes-auto-detailing/pull/48`) was created against `main`, closes approved issue #47, and carries exactly `type:feature`. The branch was merged with the bootstrap commit so remote checks run against the current base policy.
 
 ## Next step
 
-Resolve the missing issue/label policy infrastructure or explicitly stop delivery at the pushed branch; do not create a nonconforming PR.
+Confirm all remote PR checks pass; do not merge or deploy without a separate explicit user request.
