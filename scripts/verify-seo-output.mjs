@@ -253,30 +253,41 @@ function getLink(html, rel) {
 	return tag ? getAttrs(tag).href : undefined;
 }
 
+function getHrefPaths(hrefs) {
+	return hrefs.flatMap((href) => {
+		if (
+			!href ||
+			href.startsWith("#") ||
+			href.startsWith("mailto:") ||
+			href.startsWith("tel:")
+		)
+			return [];
+
+		try {
+			const url = new URL(href, siteBase);
+			return url.origin === new URL(siteBase).origin ? [url.pathname] : [];
+		} catch {
+			return [];
+		}
+	});
+}
+
+function getInternalHrefPaths(html) {
+	const hrefs = [...html.matchAll(/\bhref\s*=\s*(["'])(.*?)\1/gi)].map(
+		([, , href]) => decodeHtml(href),
+	);
+	return getHrefPaths(hrefs);
+}
+
 function getRouteLinks(html) {
 	const hrefs = [...html.matchAll(/<a\b[^>]*\bhref\s*=\s*(["'])(.*?)\1/gi)].map(
 		([, , href]) => decodeHtml(href),
 	);
+	return new Set(getHrefPaths(hrefs));
+}
 
-	return new Set(
-		hrefs.flatMap((href) => {
-			if (
-				!href ||
-				href.startsWith("#") ||
-				href.startsWith("mailto:") ||
-				href.startsWith("tel:")
-			)
-				return [];
-
-			try {
-				const url = new URL(href, siteBase);
-				if (url.origin !== new URL(siteBase).origin) return [];
-				return [url.pathname];
-			} catch {
-				return [];
-			}
-		}),
-	);
+function isUnpublishedSpanishPath(pathname) {
+	return pathname === "/es" || pathname.startsWith("/es/");
 }
 
 function getSitemapLocations(files) {
@@ -589,6 +600,9 @@ if (htmlFiles.length === 0) {
 }
 
 const generatedRoutes = new Set(htmlFiles.map(getRoute));
+if ([...generatedRoutes].some(isUnpublishedSpanishPath)) {
+	fail(distDir, "Spanish routes must not be generated before publication");
+}
 const generatedServiceDetailRoutes = new Set(
 	[...generatedRoutes].filter(
 		(route) => route !== "/services/" && route.startsWith("/services/"),
@@ -608,6 +622,9 @@ for (const route of generatedServiceDetailRoutes) {
 const routeFiles = new Map(htmlFiles.map((file) => [getRoute(file), file]));
 const sitemapLocations = getSitemapLocations(sitemapFiles);
 const sitemapLocationSet = new Set(sitemapLocations);
+if (sitemapLocations.some((location) => isUnpublishedSpanishPath(new URL(location).pathname))) {
+	fail(distDir, "sitemap must not include unpublished Spanish routes");
+}
 const titles = new Map();
 const descriptions = new Map();
 const normalizedCityGuides = new Map();
@@ -709,6 +726,11 @@ for (const file of htmlFiles) {
 	const html = readFileSync(file, "utf8");
 	const route = getRoute(file);
 	if (staticRedirects.has(route)) continue;
+	if (!/<html\b[^>]*\blang=["']en-US["']/i.test(html)) fail(file, "html lang must be en-US");
+	if (/\bhreflang=["']/i.test(html) || /<link\b[^>]*\brel=["']alternate["']/i.test(html)) {
+		fail(file, "must not publish alternate language metadata without a published counterpart");
+	}
+	if (getInternalHrefPaths(html).some(isUnpublishedSpanishPath)) fail(file, "must not link to unpublished Spanish routes");
 	const expectedCanonical = new URL(route, siteBase);
 	const title = getTitle(html);
 	const description = getMeta(html, "name", "description");
@@ -789,6 +811,7 @@ for (const file of htmlFiles) {
 	if (ogDescription !== description)
 		fail(file, "og:description must match meta description");
 	if (ogLocale !== "en_US") fail(file, "og:locale must be en_US");
+	if (/es_US/i.test(html)) fail(file, "must not expose unpublished Spanish locale metadata");
 	if (!ogImage || !new URL(ogImage).protocol.startsWith("http")) {
 		fail(file, "og:image must be an absolute URL");
 	}

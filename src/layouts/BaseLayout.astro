@@ -4,6 +4,8 @@ import StructuredData from '../components/seo/StructuredData.astro';
 import Navbar from '../components/layout/Navbar.astro';
 import Footer from '../components/layout/Footer.astro';
 import { ClientRouter } from 'astro:transitions';
+import { localeDefinitions, type Locale } from '../i18n/locales';
+import type { PageId } from '../i18n/routes';
 import '../styles/global.css';
 
 type JsonLd = Record<string, unknown> | Record<string, unknown>[];
@@ -14,13 +16,16 @@ interface Props {
   ogImage?: string;
   imageAlt?: string;
   structuredData?: JsonLd;
+  locale?: Locale;
+  pageId?: PageId;
 }
 
-const { title, description, ogImage, imageAlt, structuredData } = Astro.props;
+const { title, description, ogImage, imageAlt, structuredData, locale = 'en-US', pageId } = Astro.props;
+const localeDefinition = localeDefinitions[locale];
 ---
 
 <!doctype html>
-<html lang="en-US">
+<html lang={localeDefinition.htmlLang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -37,7 +42,7 @@ const { title, description, ogImage, imageAlt, structuredData } = Astro.props;
     <script is:inline>
       document.documentElement.classList.add('js');
     </script>
-    <SEOHead title={title} description={description} ogImage={ogImage} imageAlt={imageAlt} />
+    <SEOHead title={title} description={description} ogImage={ogImage} imageAlt={imageAlt} locale={locale} pageId={pageId} />
     {structuredData && <StructuredData data={structuredData} />}
     <style>
       .gslide-media {
@@ -58,11 +63,11 @@ const { title, description, ogImage, imageAlt, structuredData } = Astro.props;
     </noscript>
     <!-- End Google Tag Manager (noscript) -->
     <ClientRouter />
-    <Navbar />
+    <Navbar locale={locale} pageId={pageId} />
     <main>
       <slot />
     </main>
-    <Footer />
+    <Footer locale={locale} pageId={pageId} />
     <script>
       let revealObserver: IntersectionObserver | null = null;
       let countupObserver: IntersectionObserver | null = null;

@@ -1,5 +1,18 @@
 ---
+import { localeDefinitions, type Locale } from "../../i18n/locales";
+import { getPublishedCounterpart, type PageId } from "../../i18n/routes";
 import Icon from "../ui/Icon.astro";
+
+interface Props {
+  locale?: Locale;
+  pageId?: PageId;
+}
+
+const { locale = "en-US", pageId } = Astro.props;
+const counterpart = getPublishedCounterpart(pageId, locale);
+const counterpartLabel = counterpart && localeDefinitions[counterpart.locale].htmlLang === "es-US"
+  ? "Español"
+  : "English";
 
 const normalizePath = (path: string) => {
   if (!path || path === '/') return '/';
@@ -52,6 +65,16 @@ const links = [
         </li>
       ))}
     </ul>
+
+    {counterpart && (
+      <a
+        href={counterpart.path}
+        hreflang={localeDefinitions[counterpart.locale].htmlLang}
+        class="hidden md:inline-flex text-sm font-medium text-white transition-colors hover:text-gold"
+      >
+        {counterpartLabel}
+      </a>
+    )}
 
     <!-- Mobile hamburger -->
     <button
