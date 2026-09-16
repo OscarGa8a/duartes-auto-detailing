@@ -63,6 +63,29 @@ const verifyHomeContracts = () => {
   if (!composition.includes("content.policy.testimonials === 'include' && <Testimonials />")) fail("Testimonials must use the explicit inclusion policy.");
   if (!homeContent.includes('"es-US": { testimonials: "omit" }')) fail("Future Spanish home policy must omit testimonials.");
 };
+const verifyAboutContracts = () => {
+  const page = readFileSync(resolve(root, "src/pages/about.astro"), "utf8");
+  const composition = readFileSync(resolve(root, "src/components/sections/about/AboutComposition.astro"), "utf8");
+  const standard = readFileSync(resolve(root, "src/components/sections/about/StandardSection.astro"), "utf8");
+  const pillars = readFileSync(resolve(root, "src/components/sections/about/PillarsSection.astro"), "utf8");
+  const aboutContent = readFileSync(resolve(root, "src/i18n/about-content.ts"), "utf8");
+  const contentTypes = readFileSync(resolve(root, "src/i18n/content-types.ts"), "utf8");
+  const sections = ["PageHero", "StandardSection", "PillarsSection", "BehindTheShine", "CTABanner"];
+  if (!page.includes("<AboutComposition content={englishAboutContent} />") || /<(?:PageHero|StandardSection|PillarsSection|BehindTheShine|CTABanner)\b/.test(page)) fail("About page must render only through the shared composition.");
+  if (/<(?:div|main|section)\b/.test(composition)) fail("About composition must not add wrapper markup.");
+  const positions = sections.map((section) => composition.indexOf(`<${section}`));
+  if (positions.some((position, index) => position === -1 || (index > 0 && position < positions[index - 1]))) fail("About composition must retain the current section order.");
+  if (!page.includes("imageAlt={metadata.socialImageAlt}")) fail("About metadata must provide the shared SEO image alt.");
+  if (!composition.includes("config.phoneUSE164") || !composition.includes("encodeURIComponent(content.cta.smsMessage)")) fail("About SMS destination must derive from canonical phone data and typed content.");
+  const canonicalCounters = ["aboutMetricValues.vehiclesDetailed", "aboutMetricValues.yearsOfExperience", "aboutMetricValues.bayAreaLocations"];
+  if (canonicalCounters.some((counter, index) => !standard.includes(counter) || !standard.includes(`content.counters[${index}]`))) fail("About counters must retain canonical metric order with localized labels only.");
+  if (!standard.includes('data-count-duration="1800"') || !standard.includes('data-count-duration="1100"') || !standard.includes('data-count-duration="1600"')) fail("About counters must retain their canonical timing.");
+  if (!pillars.includes('const pillarIcons = ["tabler:check", "tabler:target-arrow", "tabler:star-filled"] as const;') || !pillars.includes("name={pillarIcons[index]}")) fail("About pillar icons must remain canonical component data.");
+  if (!contentTypes.includes("counters: readonly [string, string, string];") || !contentTypes.includes("items: readonly [") || /tabler:|metric:\s*[\"'](?:yearsOfExperience|vehiclesDetailed|bayAreaLocations)/.test(aboutContent)) fail("Localized About content must contain fixed labels and copy only.");
+  if (!contentTypes.includes('export type AboutMetric = "yearsOfExperience" | "vehiclesDetailed" | "bayAreaLocations"') || !aboutContent.includes("Unknown About metric placeholder") || !aboutContent.includes("formattedNumber(config.vehiclesDetailed)")) fail("About metric placeholders must be typed, canonical, and deterministic.");
+  if (/phoneUSE164|phoneUSNational|phoneFormatted|\+1\d{10}/.test(aboutContent)) fail("Localized About content must not define contact destinations.");
+};
+
 const verifyShellContracts = () => {
   const [routes, layout, seoHead, navbar, footer] = shellFiles.map((file) => readFileSync(file, "utf8"));
   const shellSources = [layout, seoHead, navbar, footer];
@@ -100,6 +123,7 @@ const claimLedger = readFileSync(claimLedgerPath, "utf8");
 if (!claimLedger.includes("# Spanish Claim Ledger") || !claimLedger.includes("## Evidence schema")) fail("Invalid Spanish claim ledger.");
 verifyDraftBoundary();
 verifyHomeContracts();
+verifyAboutContracts();
 verifyShellContracts();
 const published = verifyRecords(ledger, existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath, "utf8")) : null);
 if (published.length) fail("No Spanish route may publish during WU-1.");

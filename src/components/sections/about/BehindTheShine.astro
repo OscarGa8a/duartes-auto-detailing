@@ -1,6 +1,12 @@
 ---
 import { CldImage } from "astro-cloudinary";
+import type { AboutContent } from "../../../i18n/content-types";
 
+interface Props {
+  content: AboutContent["behindTheShine"];
+}
+
+const { content } = Astro.props;
 ---
 
 <section class="bg-black py-10 lg:py-16 relative overflow-hidden border-b border-border-soft">
@@ -11,18 +17,18 @@ import { CldImage } from "astro-cloudinary";
     <div data-reveal="blur" class="flex flex-col gap-5">
       <span class="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold">
         <span class="h-px w-10 bg-gold"></span>
-        Behind the shine
+        {content.eyebrow}
       </span>
       <h2 class="text-text-primary font-bold text-h2">
-        Premium results start with how we work when nobody is watching.
+        {content.title}
       </h2>
       <p class="text-text-secondary leading-relaxed">
-        We founded Duartes Auto Detailing to give busy Bay Area owners a premium answer to car care without sacrificing time, trust, or finish quality. That means operational discipline, respectful service at your location, and a standard that feels just as strong in the process as it does in the result.
+        {content.description}
       </p>
       <div data-reveal="scale" style="--reveal-delay: 180ms" class="motion-card-hover relative overflow-hidden rounded-xl border border-wine-soft/20 bg-[linear-gradient(180deg,rgba(110,43,44,0.16),rgba(23,24,27,0.96))] px-6 py-6 shadow-lg">
         <div class="motion-sheen"></div>
         <p class="text-wine-tint font-medium italic leading-relaxed">
-          "When you book with us, you are booking consistency, trust, and a finish that looks intentional from every angle."
+          "{content.quote}"
         </p>
       </div>
     </div>
@@ -31,7 +37,7 @@ import { CldImage } from "astro-cloudinary";
       <div class="motion-float-slow overflow-hidden rounded-xl border border-white/8 shadow-lg">
         <CldImage
           src="about-team_aexfzl"
-          alt="Technician at Duartes Auto Detailing"
+          alt={content.imageAlt}
           width={1280}
           height={900}
           sizes="(max-width: 1024px) 100vw, 56vw"
@@ -41,8 +47,8 @@ import { CldImage } from "astro-cloudinary";
       </div>
 
       <div class="motion-enter absolute left-5 bottom-5 rounded-xl border border-wine-soft/18 bg-[linear-gradient(180deg,rgba(15,16,18,0.62),rgba(79,29,30,0.36))] px-5 py-4 backdrop-blur-md" style="--enter-delay: 260ms">
-        <p class="text-xs uppercase tracking-wide text-gold">Bay Area mobile specialists</p>
-        <p class="mt-2 max-w-xs text-sm leading-relaxed text-text-secondary">Professional-grade service, brought directly to your home, office, or private garage.</p>
+        <p class="text-xs uppercase tracking-wide text-gold">{content.cardEyebrow}</p>
+        <p class="mt-2 max-w-xs text-sm leading-relaxed text-text-secondary">{content.cardDescription}</p>
       </div>
     </div>
   </div>

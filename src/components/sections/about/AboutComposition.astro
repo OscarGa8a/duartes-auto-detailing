@@ -1,0 +1,37 @@
+---
+import PageHero from "../../ui/PageHero.astro";
+import StandardSection from "./StandardSection.astro";
+import PillarsSection from "./PillarsSection.astro";
+import BehindTheShine from "./BehindTheShine.astro";
+import CTABanner from "../../ui/CTABanner.astro";
+import { config } from "../../../data/config";
+import { resolveAboutTemplate } from "../../../i18n/about-content";
+import type { AboutContent } from "../../../i18n/content-types";
+
+interface Props {
+  content: AboutContent;
+}
+
+const { content } = Astro.props;
+const phoneUrl = `sms:${config.phoneUSE164}?body=${encodeURIComponent(content.cta.smsMessage)}`;
+---
+
+<PageHero
+  title={content.hero.title}
+  backgroundImage={{ mobile: "banner-about-mobile_dkxtxy", desktop: "banner_about-web_uh2qcz" }}
+  eyebrow={content.hero.eyebrow}
+  description={resolveAboutTemplate(content.hero.description)}
+/>
+<StandardSection content={content.standard} />
+<PillarsSection content={content.pillars} />
+<BehindTheShine content={content.behindTheShine} />
+<CTABanner
+  image="cta_banner_utp6hb"
+  eyebrow={content.cta.eyebrow}
+  title={content.cta.title}
+  description={content.cta.description}
+  buttonText={content.cta.buttonText}
+  buttonHref={phoneUrl}
+  buttonTarget="_blank"
+  variant="premium"
+/>

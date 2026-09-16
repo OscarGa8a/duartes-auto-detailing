@@ -1,7 +1,13 @@
 ---
 import { CldImage } from "astro-cloudinary";
-import { config, formattedNumber } from "../../../data/config";
+import { aboutMetricValues, resolveAboutTemplate } from "../../../i18n/about-content";
+import type { AboutContent } from "../../../i18n/content-types";
 
+interface Props {
+  content: AboutContent["standard"];
+}
+
+const { content } = Astro.props;
 ---
 
 <section class="bg-black py-10 lg:py-16 overflow-hidden relative border-b border-border-soft">
@@ -14,7 +20,7 @@ import { config, formattedNumber } from "../../../data/config";
         <div class="motion-float-slow overflow-hidden rounded-xl border border-white/8 shadow-lg">
           <CldImage
             src="img5_brw7kv"
-            alt="Technician applying detailing product"
+            alt={content.imageAlt}
             width={1000}
             height={900}
             sizes="(max-width: 1024px) 100vw, 42vw"
@@ -24,46 +30,46 @@ import { config, formattedNumber } from "../../../data/config";
         </div>
 
         <div class="motion-enter absolute left-5 right-5 bottom-5 rounded-xl border border-wine-soft/22 bg-[linear-gradient(180deg,rgba(110,43,44,0.16),rgba(23,24,27,0.9))] px-5 py-4 shadow-lg backdrop-blur-sm" style="--enter-delay: 260ms">
-          <p class="text-xs font-semibold uppercase tracking-wide text-gold">Mobile detailing, elevated</p>
-          <p class="mt-2 text-sm leading-relaxed text-text-secondary">Every appointment is designed to feel effortless, polished, and worthy of the vehicle you trust us with.</p>
+          <p class="text-xs font-semibold uppercase tracking-wide text-gold">{content.calloutEyebrow}</p>
+          <p class="mt-2 text-sm leading-relaxed text-text-secondary">{content.calloutDescription}</p>
         </div>
       </div>
 
       <div class="order-1 lg:order-2 flex flex-col gap-6" data-reveal="blur">
         <span class="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold">
           <span class="h-px w-10 bg-gold"></span>
-          The Duartes standard
+          {content.eyebrow}
         </span>
         <h2 class="text-text-primary font-bold leading-tight text-h1 max-w-2xl">
-          Built for owners who expect more than a quick wash.
+          {content.title}
         </h2>
         <p class="text-wine-tint font-medium italic">
-          More than a service - it's a disciplined restoration experience.
+          {content.highlight}
         </p>
         <p class="text-text-secondary leading-relaxed max-w-2xl">
-          At Duartes Auto Detailing, we understand that your vehicle is a meaningful investment. With {config.yearsOfExperience}+ years of experience, we have detailed more than {formattedNumber(config.vehiclesDetailed)} vehicles across over {formattedNumber(config.bayAreaLocations)} Bay Area locations, combining convenience, premium products, and a level of care designed to leave every finish richer, cleaner, and better protected.
+          {resolveAboutTemplate(content.description)}
         </p>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
           <div data-reveal="scale" style="--reveal-delay: 280ms" class="motion-card-hover relative overflow-hidden rounded-xl border border-border-soft bg-surface-2 px-5 py-5 text-center">
             <div class="absolute inset-x-5 top-0 h-px bg-linear-to-r from-transparent via-wine-soft/72 to-transparent"></div>
             <div class="motion-glow-pulse absolute -right-6 -top-6 h-20 w-20 rounded-full bg-gold/8 blur-2xl" style="--float-delay: 0.8s"></div>
-            <span class="text-gold font-bold text-2xl md:text-3xl" data-count-to={config.vehiclesDetailed} data-count-suffix="+" data-count-duration="1800">{config.vehiclesDetailed}+</span>
-            <span class="mt-2 block text-sm text-text-secondary">Vehicles Detailed</span>
+            <span class="text-gold font-bold text-2xl md:text-3xl" data-count-to={aboutMetricValues.vehiclesDetailed} data-count-suffix="+" data-count-duration="1800">{aboutMetricValues.vehiclesDetailed}+</span>
+            <span class="mt-2 block text-sm text-text-secondary">{content.counters[0]}</span>
           </div>
 
           <div data-reveal="scale" style="--reveal-delay: 180ms" class="motion-card-hover relative overflow-hidden rounded-xl border border-border-soft bg-surface-2 px-5 py-5 text-center">
             <div class="absolute inset-x-5 top-0 h-px bg-linear-to-r from-transparent via-gold/70 to-transparent"></div>
             <div class="motion-glow-pulse absolute -right-6 -top-6 h-20 w-20 rounded-full bg-gold/8 blur-2xl"></div>
-            <span class="text-gold font-bold text-2xl md:text-3xl" data-count-to={config.yearsOfExperience} data-count-suffix="+" data-count-duration="1100">{config.yearsOfExperience}+</span>
-            <span class="mt-2 block text-sm text-text-secondary">Years of Experience</span>
+            <span class="text-gold font-bold text-2xl md:text-3xl" data-count-to={aboutMetricValues.yearsOfExperience} data-count-suffix="+" data-count-duration="1100">{aboutMetricValues.yearsOfExperience}+</span>
+            <span class="mt-2 block text-sm text-text-secondary">{content.counters[1]}</span>
           </div>
 
           <div data-reveal="scale" style="--reveal-delay: 380ms" class="motion-card-hover relative overflow-hidden rounded-xl border border-border-soft bg-surface-2 px-5 py-5 text-center">
             <div class="absolute inset-x-5 top-0 h-px bg-linear-to-r from-transparent via-wine-soft/72 to-transparent"></div>
             <div class="motion-glow-pulse absolute -right-6 -top-6 h-20 w-20 rounded-full bg-wine/12 blur-2xl" style="--float-delay: 1.2s"></div>
-            <span class="text-gold font-bold text-2xl md:text-3xl" data-count-to={config.bayAreaLocations} data-count-suffix="+" data-count-duration="1600">{config.bayAreaLocations}+</span>
-            <span class="mt-2 block text-sm text-text-secondary">Bay Area Locations</span>
+            <span class="text-gold font-bold text-2xl md:text-3xl" data-count-to={aboutMetricValues.bayAreaLocations} data-count-suffix="+" data-count-duration="1600">{aboutMetricValues.bayAreaLocations}+</span>
+            <span class="mt-2 block text-sm text-text-secondary">{content.counters[2]}</span>
           </div>
         </div>
       </div>
