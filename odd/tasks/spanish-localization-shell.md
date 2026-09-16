@@ -71,7 +71,9 @@ TDD is not configured for this ODD task: no project/session ODD TDD setting or d
 - 2026-09-15: corrected writer checks and parent source spot-check passed. Final scoped candidate is 145 additions and 25 deletions (170 changed lines).
 - 2026-09-15: independent re-verification passed with both prior findings closed. `verify:i18n-source`, Astro check, build/SEO verification, scoped diff check, and line-budget check all passed; two existing unused-import hints and the existing Vite chunk-size warning remain non-blocking.
 - 2026-09-15: native medium-tier reliability review approved and was acknowledged under lineage `review-c2d624f0a00cee89`. Its three advisory warnings are deferred, not blockers: prove the positive counterpart branch when WU-9 publishes routes, consider redirect-output coverage separately, and keep the pre-existing Zone.Identifier artifacts out of delivery.
+- 2026-09-15: user authorized commit, push, and PR. Commit `69859ac` (`feat(i18n): add localization shell contracts`) was created with only the eight scoped WU-2 files and pushed to `feat/spanish-localization-shell`; unrelated staged/untracked files remain untouched.
+- 2026-09-15: PR creation is blocked by repository policy prerequisites: no YAML Issue Form, no approved linked issue, and no `status:approved` or `type:*` labels exist. No PR was created.
 
 ## Next step
 
-Await explicit user authorization before staging the scoped candidate, committing, pushing, or opening PR #2.
+Resolve the missing issue/label policy infrastructure or explicitly stop delivery at the pushed branch; do not create a nonconforming PR.
