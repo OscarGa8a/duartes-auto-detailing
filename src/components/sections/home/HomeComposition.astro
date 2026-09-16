@@ -1,0 +1,18 @@
+---
+import type { HomeContent } from '../../../i18n/content-types';
+import HeroSection from './HeroSection.astro';
+import WhyDuartes from './WhyDuartes.astro';
+import FeaturedPackages from './FeaturedPackages.astro';
+import Testimonials from './Testimonials.astro';
+import Gallery from './Gallery.astro';
+import DiscountBanner from './DiscountBanner.astro';
+
+const { content } = Astro.props as { content: HomeContent };
+---
+
+<HeroSection content={content.hero} />
+<WhyDuartes content={content.whyDuartes} />
+<FeaturedPackages content={content.featuredPackages} />
+{content.policy.testimonials === 'include' && <Testimonials />}
+<Gallery content={content.gallery} />
+<DiscountBanner content={content.discountBanner} />

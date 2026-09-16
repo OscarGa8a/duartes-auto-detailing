@@ -51,6 +51,18 @@ const verifyDraftBoundary = () => {
   if (!existsSync(manifestPath) && deployable.length) fail("Deployable Spanish content requires a publication manifest.");
   if (existsSync(resolve(root, "src/pages/es"))) fail("Spanish pages must not exist before publication.");
 };
+const verifyHomeContracts = () => {
+  const page = readFileSync(resolve(root, "src/pages/index.astro"), "utf8");
+  const composition = readFileSync(resolve(root, "src/components/sections/home/HomeComposition.astro"), "utf8");
+  const homeContent = readFileSync(resolve(root, "src/i18n/home-content.ts"), "utf8");
+  const sections = ["HeroSection", "WhyDuartes", "FeaturedPackages", "Testimonials", "Gallery", "DiscountBanner"];
+  if (!page.includes("<HomeComposition content={englishHomeContent} />")) fail("Home page must render through the shared composition.");
+  if (/<(?:div|main|section)\b/.test(composition)) fail("Home composition must not add wrapper markup.");
+  const sectionPositions = sections.map((section) => composition.indexOf(`<${section}`));
+  if (sectionPositions.some((position, index) => position === -1 || (index > 0 && position < sectionPositions[index - 1]))) fail("Home composition must retain the current section order.");
+  if (!composition.includes("content.policy.testimonials === 'include' && <Testimonials />")) fail("Testimonials must use the explicit inclusion policy.");
+  if (!homeContent.includes('"es-US": { testimonials: "omit" }')) fail("Future Spanish home policy must omit testimonials.");
+};
 const verifyShellContracts = () => {
   const [routes, layout, seoHead, navbar, footer] = shellFiles.map((file) => readFileSync(file, "utf8"));
   const shellSources = [layout, seoHead, navbar, footer];
@@ -87,6 +99,7 @@ const ledger = JSON.parse(readFileSync(ledgerPath, "utf8"));
 const claimLedger = readFileSync(claimLedgerPath, "utf8");
 if (!claimLedger.includes("# Spanish Claim Ledger") || !claimLedger.includes("## Evidence schema")) fail("Invalid Spanish claim ledger.");
 verifyDraftBoundary();
+verifyHomeContracts();
 verifyShellContracts();
 const published = verifyRecords(ledger, existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath, "utf8")) : null);
 if (published.length) fail("No Spanish route may publish during WU-1.");
