@@ -86,6 +86,27 @@ const verifyAboutContracts = () => {
   if (/phoneUSE164|phoneUSNational|phoneFormatted|\+1\d{10}/.test(aboutContent)) fail("Localized About content must not define contact destinations.");
 };
 
+const verifyContactContracts = () => {
+  const page = readFileSync(resolve(root, "src/pages/contact.astro"), "utf8");
+  const composition = readFileSync(resolve(root, "src/components/sections/contact/ContactComposition.astro"), "utf8");
+  const options = readFileSync(resolve(root, "src/components/sections/contact/ContactOptions.astro"), "utf8");
+  const form = readFileSync(resolve(root, "src/components/sections/contact/ContactForm.astro"), "utf8");
+  const map = readFileSync(resolve(root, "src/components/sections/contact/ServiceMap.astro"), "utf8");
+  const content = readFileSync(resolve(root, "src/i18n/contact-content.ts"), "utf8");
+  const types = readFileSync(resolve(root, "src/i18n/content-types.ts"), "utf8");
+  if (!page.includes("<ContactComposition content={englishContactContent} />") || !page.includes("imageAlt={metadata.socialImageAlt}") || /<(?:PageHero|ContactSection|ServiceMap)\b/.test(page)) fail("Contact page must render only through the shared composition with localized metadata.");
+  if (/<(?:div|main|section)\b/.test(composition)) fail("Contact composition must not add wrapper markup.");
+  const sections = ["PageHero", "ContactSection", "ServiceMap"];
+  const positions = sections.map((section) => composition.indexOf(`<${section}`));
+  if (positions.some((position, index) => position === -1 || (index > 0 && position < positions[index - 1]))) fail("Contact composition must retain the current section order.");
+  if (!composition.includes('content.policy.serviceMap === "include" && <ServiceMap content={content.map} />') || !content.includes('"en-US": { serviceMap: "include" }') || !content.includes('"es-US": { serviceMap: "omit" }')) fail("Contact map policy must conditionally omit the whole map subtree.");
+  if (!types.includes("export interface ContactMessageChannelContent") || !types.includes("ContactChannelContent,") || !content.includes("preparedStatus") || !content.includes("prepared but not sent") || !form.includes('role="status" aria-live="polite"') || form.includes("form.reset()")) fail("Contact form status must truthfully preserve submitted values.");
+  if (/description:\s*["'](?:phone|@duartes_detailing)|@duartes_detailing|phoneFormatted|phoneUSE164/.test(content)) fail("Localized Contact channels must not own canonical display or destination data.");
+  if (!options.includes("info: config.phoneFormatted") || !options.includes("info: '@duartes_detailing'") || !options.includes("https://wa.me/${config.phoneUSE164}") || !options.includes("sms:${config.phoneUSE164}") || !options.includes("https://www.instagram.com/direct/t/17842345695295426") || !options.includes("instagram://user?username=duartes_detailing")) fail("Contact channels must retain canonical destinations and mobile fallback.");
+  if (!map.includes("37.63506596297662") || !map.includes("-122.08118753590793") || !map.includes("aria-describedby=\"service-map-help\"")) fail("Contact map must retain canonical coordinates and accessibility relationship.");
+  if (/\b(?:Spanish|Español|Contacto|Enviar mensaje)\b/.test(content)) fail("Contact content must not publish Spanish copy.");
+};
+
 const verifyShellContracts = () => {
   const [routes, layout, seoHead, navbar, footer] = shellFiles.map((file) => readFileSync(file, "utf8"));
   const shellSources = [layout, seoHead, navbar, footer];
@@ -124,6 +145,7 @@ if (!claimLedger.includes("# Spanish Claim Ledger") || !claimLedger.includes("##
 verifyDraftBoundary();
 verifyHomeContracts();
 verifyAboutContracts();
+verifyContactContracts();
 verifyShellContracts();
 const published = verifyRecords(ledger, existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath, "utf8")) : null);
 if (published.length) fail("No Spanish route may publish during WU-1.");

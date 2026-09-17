@@ -1,4 +1,11 @@
 ---
+import type { ContactContent } from "../../../i18n/content-types";
+
+interface Props {
+  content: ContactContent["map"];
+}
+
+const { content } = Astro.props;
 const serviceLocation = {
   lat: 37.63506596297662,
   lng: -122.08118753590793,
@@ -18,16 +25,16 @@ const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${coor
     <div data-reveal="blur" class="flex flex-col gap-3">
       <span class="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold-deep">
         <span class="h-px w-10 bg-gold"></span>
-        Mobile coverage
+        {content.eyebrow}
       </span>
       <h2 class="text-text-dark font-bold text-h2">
-        100% mobile service across the Bay Area.
+        {content.title}
       </h2>
       <p class="text-text-dark/72 leading-relaxed">
-        We bring professional detailing directly to your driveway, office, or private garage. The map is centered near our Bay Area base and travel radius can vary depending on the service requested.
+        {content.description}
       </p>
       <p id="service-map-help" class="text-sm text-text-dark/60">
-        Coverage and scheduling can change by service type, distance, and appointment availability.
+        {content.help}
       </p>
     </div>
 
@@ -35,7 +42,7 @@ const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${coor
       <div class="motion-glow-pulse absolute -right-10 -top-10 h-28 w-28 rounded-full bg-wine/12 blur-2xl"></div>
       <div class="relative w-full overflow-hidden rounded-xl border border-white/8" style="height: 420px;">
         <iframe
-          title="Service Area - Duarte's Auto Detailing — Bay Area, California"
+          title={content.iframeTitle}
           src={mapEmbedUrl}
           width="100%"
           height="100%"
@@ -47,7 +54,7 @@ const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${coor
         ></iframe>
 
         <div class="absolute top-4 left-4 bg-[linear-gradient(180deg,rgba(15,16,18,0.86),rgba(79,29,30,0.34))] text-text-primary text-sm font-semibold uppercase tracking-wide px-3.5 py-2 rounded-full shadow-sm border border-wine-soft/22 backdrop-blur-md">
-          Bay Area Coverage
+          {content.overlayLabel}
         </div>
       </div>
     </div>
@@ -59,7 +66,7 @@ const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${coor
         rel="noopener noreferrer"
         class="inline-flex items-center justify-center bg-black text-text-primary font-semibold px-5 py-3 rounded-full hover:bg-surface transition-colors"
       >
-        Get Directions
+        {content.directionsLabel}
       </a>
 
       <a
@@ -68,7 +75,7 @@ const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${coor
         rel="noopener noreferrer"
         class="inline-flex items-center justify-center border border-gold text-text-dark font-semibold px-5 py-3 rounded-full hover:bg-gold/8 transition-colors"
       >
-        Open in Google Maps
+        {content.openMapLabel}
       </a>
     </div>
 
@@ -86,9 +93,9 @@ const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${coor
 
     <noscript>
       <p class="text-sm text-text-muted">
-        JavaScript is disabled. Use this direct link:
+        {content.noScriptPrefix}
         <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer" class="font-semibold underline underline-offset-2">
-          View location in Google Maps.
+          {content.noScriptLinkLabel}
         </a>
       </p>
     </noscript>

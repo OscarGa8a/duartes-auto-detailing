@@ -1,6 +1,11 @@
 ---
 import { config } from "../../../data/config";
 import Icon from "../../ui/Icon.astro";
+import type { ContactContent } from "../../../i18n/content-types";
+
+interface Props {
+  content: ContactContent["channels"];
+}
 
 interface ContactOption {
   icon: string;
@@ -8,33 +13,37 @@ interface ContactOption {
   info: string;
   href: string;
   label: string;
+  ariaLabel: string;
   mobileHref?: string;
 }
 
-const message = encodeURIComponent("Hello, Duarte Detailing! I'm interested in booking a detailing service. Could you provide me with more information about your services, prices, and availability? Thank you!");
-
+const { content } = Astro.props;
+const [whatsApp, sms, instagram] = content;
 const options: ContactOption[] = [
   {
     icon: 'tabler:brand-whatsapp',
-    title: 'Book via WhatsApp',
+    title: whatsApp.title,
     info: config.phoneFormatted,
-    href: `https://wa.me/${config.phoneUSE164}?text=${message}`,
-    label: 'Open WhatsApp',
+    href: `https://wa.me/${config.phoneUSE164}?text=${encodeURIComponent(whatsApp.prefilledMessage)}`,
+    label: whatsApp.actionLabel,
+    ariaLabel: whatsApp.ariaLabel,
   },
   {
     icon: 'tabler:message',
-    title: 'Send a Quick Text Message',
+    title: sms.title,
     info: config.phoneFormatted,
-    href: `sms:${config.phoneUSE164}?body=${message}`,
-    label: 'Send SMS',
+    href: `sms:${config.phoneUSE164}?body=${encodeURIComponent(sms.prefilledMessage)}`,
+    label: sms.actionLabel,
+    ariaLabel: sms.ariaLabel,
   },
   {
     icon: 'tabler:brand-instagram',
-    title: 'Send a DM on Instagram',
+    title: instagram.title,
     info: '@duartes_detailing',
     href: 'https://www.instagram.com/direct/t/17842345695295426',
     mobileHref: 'instagram://user?username=duartes_detailing',
-    label: 'Go to Instagram',
+    label: instagram.actionLabel,
+    ariaLabel: instagram.ariaLabel,
   },
 ];
 ---
@@ -50,7 +59,7 @@ const options: ContactOption[] = [
       data-platform-switch={opt.mobileHref ? "true" : undefined}
       target={opt.href.startsWith('http') ? '_blank' : undefined}
       rel={opt.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-      aria-label={opt.label}
+      aria-label={opt.ariaLabel}
       class={`motion-card-hover relative overflow-hidden rounded-xl border border-border-soft bg-surface-2 p-7 flex flex-col gap-5 group ${index === 2 ? "sm:col-span-2 sm:max-w-1/2 sm:w-full sm:mx-auto xl:col-span-1 xl:max-w-none" : ""}`}
     >
       <div class={`absolute inset-x-6 top-0 h-px bg-linear-to-r from-transparent ${index === 2 ? 'via-wine-soft/78' : 'via-gold/75'} to-transparent`}></div>

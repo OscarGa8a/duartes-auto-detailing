@@ -1,0 +1,21 @@
+---
+import PageHero from "../../ui/PageHero.astro";
+import ContactSection from "./ContactSection.astro";
+import ServiceMap from "./ServiceMap.astro";
+import type { ContactContent } from "../../../i18n/content-types";
+
+interface Props {
+  content: ContactContent;
+}
+
+const { content } = Astro.props;
+---
+
+<PageHero
+  title={content.hero.title}
+  backgroundImage={{ mobile: "banner-contact-mobile_oh3t4c", desktop: "banner-contact-web_ngbhya" }}
+  eyebrow={content.hero.eyebrow}
+  description={content.hero.description}
+/>
+<ContactSection content={content} />
+{content.policy.serviceMap === "include" && <ServiceMap content={content.map} />}
