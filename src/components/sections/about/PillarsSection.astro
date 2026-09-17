@@ -1,29 +1,13 @@
 ---
 import Icon from "../../ui/Icon.astro";
+import type { AboutContent } from "../../../i18n/content-types";
 
-interface Pillar {
-  icon: string;
-  title: string;
-  description: string;
+interface Props {
+  content: AboutContent["pillars"];
 }
 
-const pillars: Pillar[] = [
-  {
-    icon: 'tabler:check',
-    title: 'Our Mission',
-    description: 'We clean, restore, and protect every vehicle with excellence. We add real value to the maintenance and appearance of your car by using top-quality products.',
-  },
-  {
-    icon: 'tabler:target-arrow',
-    title: 'Our Vision',
-    description: 'To be the leading brand and trusted leader in mobile automotive detailing in the Bay Area and California.',
-  },
-  {
-    icon: 'tabler:star-filled',
-    title: 'Our Values',
-    description: 'Professionalism, trust, and versatility. We guarantee a comfortable, safe experience and consistent results right at your doorstep.',
-  },
-];
+const { content } = Astro.props;
+const pillarIcons = ["tabler:check", "tabler:target-arrow", "tabler:star-filled"] as const;
 ---
 
 <section class="bg-off-white py-10 lg:py-16 relative overflow-hidden border-b border-divider-light/70">
@@ -34,27 +18,27 @@ const pillars: Pillar[] = [
     <div data-reveal="blur" class="w-full flex flex-col gap-3 text-left">
       <span class="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold-deep">
         <span class="h-px w-10 bg-gold"></span>
-        Our pillars
+        {content.eyebrow}
       </span>
       <h2 class="text-text-dark font-bold text-h2">
-        The principles behind every Duartes appointment.
+        {content.title}
       </h2>
       <p class="text-text-dark/72 leading-relaxed">
-        Mission, vision, and values are not filler here. They shape how we show up, how we work, and how every finish leaves your driveway.
+        {content.description}
       </p>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
-      {pillars.map((pillar, index) => (
+      {content.items.map((pillar, index) => (
         <div
           data-reveal="scale"
           class={`motion-card-hover relative overflow-hidden rounded-xl border border-border-soft p-8 flex flex-col items-start text-left gap-5 ${index === 0 ? "bg-surface" : "bg-surface/92"} ${index === 2 ? "sm:col-span-2 sm:max-w-1/2 sm:mx-auto lg:col-span-1 lg:max-w-none lg:mx-0" : ""}`}
           style={`--reveal-delay: ${index * 100}ms`}
         >
-          <div class={`absolute inset-x-6 top-0 h-px bg-linear-to-r from-transparent ${index === 1 ? 'via-wine-soft/78' : 'via-gold/75'} to-transparent`}></div>
-          <div class={`motion-glow-pulse absolute -right-8 -top-8 h-24 w-24 rounded-full ${index === 1 ? 'bg-wine/12' : 'bg-gold/8'} blur-2xl`} style={`--float-delay: ${index * 0.6}s`}></div>
+          <div class={`absolute inset-x-6 top-0 h-px bg-linear-to-r from-transparent ${index === 1 ? "via-wine-soft/78" : "via-gold/75"} to-transparent`}></div>
+          <div class={`motion-glow-pulse absolute -right-8 -top-8 h-24 w-24 rounded-full ${index === 1 ? "bg-wine/12" : "bg-gold/8"} blur-2xl`} style={`--float-delay: ${index * 0.6}s`}></div>
           <div class="w-12 h-12 rounded-full bg-gold flex items-center justify-center shrink-0 shadow-lg">
-            <Icon name={pillar.icon} class="text-text-dark" size="lg" />
+            <Icon name={pillarIcons[index]} class="text-text-dark" size="lg" />
           </div>
           <div class="flex flex-col gap-2">
             <h3 class="text-text-primary font-bold text-lg">{pillar.title}</h3>

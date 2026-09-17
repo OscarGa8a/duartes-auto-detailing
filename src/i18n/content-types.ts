@@ -33,6 +33,40 @@ export interface HomeSectionPolicy {
   testimonials: "include" | "omit";
 }
 
+export type AboutMetric = "yearsOfExperience" | "vehiclesDetailed" | "bayAreaLocations";
+
+export interface AboutTemplate {
+  template: string;
+  metrics: readonly AboutMetric[];
+}
+
+export interface AboutContent {
+  metadata: Omit<PageMetadataContent, "description" | "schemaDescription"> & { description: AboutTemplate; schemaDescription: AboutTemplate };
+  hero: { eyebrow: string; title: string; description: AboutTemplate };
+  standard: {
+    imageAlt: string;
+    calloutEyebrow: string;
+    calloutDescription: string;
+    eyebrow: string;
+    title: string;
+    highlight: string;
+    description: AboutTemplate;
+    counters: readonly [string, string, string];
+  };
+  pillars: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    items: readonly [
+      { title: string; description: string },
+      { title: string; description: string },
+      { title: string; description: string },
+    ];
+  };
+  behindTheShine: { eyebrow: string; title: string; description: string; quote: string; imageAlt: string; cardEyebrow: string; cardDescription: string };
+  cta: { eyebrow: string; title: string; description: string; buttonText: string; smsMessage: string };
+}
+
 export interface HomeContent {
   policy: HomeSectionPolicy;
   hero: {
