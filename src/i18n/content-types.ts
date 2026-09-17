@@ -67,6 +67,65 @@ export interface AboutContent {
   cta: { eyebrow: string; title: string; description: string; buttonText: string; smsMessage: string };
 }
 
+export interface ContactSectionPolicy {
+  serviceMap: "include" | "omit";
+}
+
+export interface ContactContent {
+  policy: ContactSectionPolicy;
+  metadata: PageMetadataContent;
+  hero: { eyebrow: string; title: string; description: string };
+  section: { eyebrow: string; title: string; description: string };
+  channels: readonly [
+    ContactMessageChannelContent,
+    ContactMessageChannelContent,
+    ContactChannelContent,
+  ];
+  form: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    honeypotLabel: string;
+    fields: {
+      name: FormFieldContent;
+      email: FormFieldContent;
+      phone: FormFieldContent;
+      message: FormFieldContent;
+    };
+    help: string;
+    submitLabel: string;
+    preparedStatus: string;
+  };
+  map: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    help: string;
+    iframeTitle: string;
+    overlayLabel: string;
+    directionsLabel: string;
+    openMapLabel: string;
+    noScriptPrefix: string;
+    noScriptLinkLabel: string;
+  };
+}
+
+export interface ContactChannelContent {
+  title: string;
+  actionLabel: string;
+  ariaLabel: string;
+}
+
+export interface ContactMessageChannelContent extends ContactChannelContent {
+  prefilledMessage: string;
+}
+
+export interface FormFieldContent {
+  label: string;
+  placeholder: string;
+  error: string;
+}
+
 export interface HomeContent {
   policy: HomeSectionPolicy;
   hero: {

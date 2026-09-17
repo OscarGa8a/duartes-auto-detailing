@@ -1,6 +1,13 @@
 ---
 import ContactForm from "./ContactForm.astro";
 import ContactOptions from "./ContactOptions.astro";
+import type { ContactContent } from "../../../i18n/content-types";
+
+interface Props {
+  content: ContactContent;
+}
+
+const { content } = Astro.props;
 ---
 
 <section class="bg-black py-10 lg:py-16 overflow-hidden relative border-b border-border-soft">
@@ -12,21 +19,21 @@ import ContactOptions from "./ContactOptions.astro";
       <div data-reveal="blur" class="flex flex-col gap-4">
         <span class="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold">
           <span class="h-px w-10 bg-gold"></span>
-          Contact options
+          {content.section.eyebrow}
         </span>
         <h2 class="text-text-primary font-bold text-h1">
-          Book fast, ask questions, or start the conversation your way.
+          {content.section.title}
         </h2>
         <p class="text-text-secondary leading-relaxed">
-          Whether you prefer WhatsApp, text, Instagram, or email, we keep the process direct and premium. Pick the channel that feels most natural and we will guide you to the right service.
+          {content.section.description}
         </p>
       </div>
 
-      <ContactOptions />
+      <ContactOptions content={content.channels} />
     </div>
 
     <div class="flex justify-center w-full">
-      <ContactForm />
+      <ContactForm content={content.form} />
     </div>
   </div>
 </section>
