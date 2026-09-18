@@ -1,14 +1,16 @@
 ---
+import type { ServicesContent } from "../../../i18n/content-types";
 import ServicesCatalogIntro from "./ServicesCatalogIntro.astro";
 import ServicesGrid from "./ServicesGrid.astro";
 
+const { content } = Astro.props as { content: ServicesContent };
 ---
 
 <div class="overflow-hidden bg-black">
   <section class="bg-black py-10 lg:py-16 border-b border-border-soft relative overflow-hidden">
     <div class="motion-drift absolute -left-12 top-14 h-64 w-64 rounded-full bg-gold/10 blur-3xl"></div>
     <div class="motion-drift absolute right-0 bottom-0 h-64 w-64 rounded-full bg-wine/12 blur-3xl" style="--float-delay: 1.2s"></div>
-    <ServicesCatalogIntro />
+    <ServicesCatalogIntro content={content.intro} />
   </section>
-  <ServicesGrid />
+  <ServicesGrid content={content} />
 </div>

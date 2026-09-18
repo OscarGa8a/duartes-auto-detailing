@@ -23,7 +23,18 @@ export interface GalleryMediaItem {
   gridArea?: string; // Optional CSS grid area for layout purposes
 }
 
+export type ServiceId =
+  | "interior-detail"
+  | "exterior-detail"
+  | "paint-correction"
+  | "ceramic-coating"
+  | "full-detail"
+  | "seat-upholstery-deep-cleaning"
+  | "headlight-restoration"
+  | "clay-bar-decontamination";
+
 export interface Service {
+  id: ServiceId;
   slug: string;
   name: string;
   tagline: string;
@@ -40,6 +51,7 @@ export interface Service {
 
 export const services: Service[] = [
   {
+    id: "interior-detail",
     slug: "interior-detailing",
     name: "Interior Detail",
     tagline:
@@ -125,6 +137,7 @@ export const services: Service[] = [
     ],
   },
   {
+    id: "exterior-detail",
     slug: "exterior-detailing",
     name: "Exterior Detail",
     tagline:
@@ -215,6 +228,7 @@ export const services: Service[] = [
     ],
   },
   {
+    id: "paint-correction",
     slug: "paint-correction",
     name: "Paint Correction",
     tagline:
@@ -281,6 +295,7 @@ export const services: Service[] = [
     ],
   },
   {
+    id: "ceramic-coating",
     slug: "ceramic-coating",
     name: "Ceramic Coating",
     tagline:
@@ -357,6 +372,7 @@ export const services: Service[] = [
     ],
   },
   {
+    id: "full-detail",
     slug: "full-detailing",
     name: "Full Detail (Interior - Exterior)",
     tagline:
@@ -438,6 +454,7 @@ export const services: Service[] = [
     relatedSlugs: ["ceramic-coating", "paint-correction", "interior-detailing"],
   },
   {
+    id: "seat-upholstery-deep-cleaning",
     slug: "seat-upholstery-deep-cleaning",
     name: "Seat & Upholstery Deep Cleaning",
     tagline: "Deep interior fabric restoration for a cleaner, fresher cabin.",
@@ -510,6 +527,7 @@ export const services: Service[] = [
     ],
   },
   {
+    id: "headlight-restoration",
     slug: "headlight-restoration",
     name: "Headlight Restoration",
     tagline:
@@ -570,6 +588,7 @@ export const services: Service[] = [
     relatedSlugs: ["exterior-detailing", "paint-correction", "full-detailing"],
   },
   {
+    id: "clay-bar-decontamination",
     slug: "clay-bar-decontamination",
     name: "Clay Bar Decontamination",
     tagline: "Paint decontamination that removes what a regular wash cannot.",

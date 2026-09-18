@@ -126,6 +126,41 @@ export interface FormFieldContent {
   error: string;
 }
 
+export interface ServicesSectionPolicy {
+  areaTeaser: "include" | "omit";
+  englishDetailDisclosure: "required" | "not-required";
+}
+
+export interface ServicesCardPresentation {
+  detailAction: string;
+  /** Required before a future locale may link to English-only service details. */
+  englishDetailDisclosure?: string;
+  /** Reserved for approved localized card copy; canonical names and summaries remain in services data. */
+  byServiceId: Record<import("../data/services").ServiceId, Record<string, never>>;
+}
+
+export interface ServicesContent {
+  policy: ServicesSectionPolicy;
+  metadata: PageMetadataContent;
+  hero: { eyebrow: string; title: string; description: string };
+  intro: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    benefits: readonly [
+      { title: string; description: string },
+      { title: string; description: string },
+      { title: string; description: string },
+    ];
+    imageAlt: string;
+    processEyebrow: string;
+    processDescription: string;
+  };
+  grid: { eyebrow: string; title: string; description: string };
+  cards: ServicesCardPresentation;
+  areaTeaser: { eyebrow: string; title: string; description: string; action: string };
+}
+
 export interface HomeContent {
   policy: HomeSectionPolicy;
   hero: {
