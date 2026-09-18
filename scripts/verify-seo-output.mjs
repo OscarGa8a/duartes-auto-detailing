@@ -279,6 +279,13 @@ function getInternalHrefPaths(html) {
 	return getHrefPaths(hrefs);
 }
 
+function getAnchorHrefPaths(html) {
+	const hrefs = [...html.matchAll(/<a\b[^>]*\bhref\s*=\s*(["'])(.*?)\1/gi)].map(
+		([, , href]) => decodeHtml(href),
+	);
+	return getHrefPaths(hrefs);
+}
+
 function getRouteLinks(html) {
 	const hrefs = [...html.matchAll(/<a\b[^>]*\bhref\s*=\s*(["'])(.*?)\1/gi)].map(
 		([, , href]) => decodeHtml(href),
@@ -706,9 +713,28 @@ for (const [route, file] of routeFiles) {
 
 const servicesFile = routeFiles.get("/services/");
 if (servicesFile) {
-	const servicesLinks = getRouteLinks(readFileSync(servicesFile, "utf8"));
+	const servicesHtml = readFileSync(servicesFile, "utf8");
+	const servicesLinks = getRouteLinks(servicesHtml);
 	if (!servicesLinks.has("/service-area/bay-area/")) {
 		fail(servicesFile, "services page must link to /service-area/bay-area/");
+	}
+	const itemList = findJsonLdType(parseJsonLd(servicesFile, getJsonLdBlocks(servicesHtml)), "ItemList");
+	const expectedItems = [...expectedServiceDetails.entries()].map(([route, service], index) => ({
+		"@type": "ListItem",
+		position: index + 1,
+		name: service.name,
+		url: new URL(route.replace(/\/$/, ""), siteBase).href,
+	}));
+	if (JSON.stringify(itemList?.itemListElement) !== JSON.stringify(expectedItems)) {
+		fail(servicesFile, "ItemList entries must exactly match canonical service names, positions, and URLs");
+	}
+	const canonicalDetailRoutes = [...expectedServiceDetails.keys()].map((route) => route.replace(/\/$/, ""));
+	const expectedDetailLinks = canonicalDetailRoutes.flatMap((route) => [route, route]);
+	const detailLinks = getAnchorHrefPaths(servicesHtml).filter((href) =>
+		canonicalDetailRoutes.includes(href.replace(/\/$/, "")),
+	);
+	if (JSON.stringify(detailLinks) !== JSON.stringify(expectedDetailLinks)) {
+		fail(servicesFile, "service cards must link from each image and button in canonical card order");
 	}
 }
 

@@ -107,6 +107,35 @@ const verifyContactContracts = () => {
   if (/\b(?:Spanish|Español|Contacto|Enviar mensaje)\b/.test(content)) fail("Contact content must not publish Spanish copy.");
 };
 
+const verifyServicesContracts = () => {
+  const page = readFileSync(resolve(root, "src/pages/services/index.astro"), "utf8");
+  const composition = readFileSync(resolve(root, "src/components/sections/services/ServicesComposition.astro"), "utf8");
+  const section = readFileSync(resolve(root, "src/components/sections/services/ServicesSection.astro"), "utf8");
+  const grid = readFileSync(resolve(root, "src/components/sections/services/ServicesGrid.astro"), "utf8");
+  const card = readFileSync(resolve(root, "src/components/sections/services/ServiceCard.astro"), "utf8");
+  const services = readFileSync(resolve(root, "src/data/services.ts"), "utf8");
+  const content = readFileSync(resolve(root, "src/i18n/services-content.ts"), "utf8");
+  const types = readFileSync(resolve(root, "src/i18n/content-types.ts"), "utf8");
+  const sections = ["PageHero", "ServicesSection", "DiscountBanner"];
+  if (!page.includes("<ServicesComposition content={englishServicesContent} />") || /<(?:PageHero|ServicesSection|DiscountBanner)\b/.test(page)) fail("Services page must render only through the shared composition.");
+  if (composition.indexOf("<PageHero") === -1 || /<(?:div|main)\b/.test(composition.slice(0, composition.indexOf("<PageHero")))) fail("Services composition must not add a wrapper before PageHero.");
+  const positions = sections.map((sectionName) => composition.indexOf(`<${sectionName}`));
+  if (positions.some((position, index) => position === -1 || (index > 0 && position < positions[index - 1]))) fail("Services composition must retain the current section order.");
+  if (!composition.includes('content.policy.areaTeaser === "include"') || !content.includes('"es-US": { areaTeaser: "omit", englishDetailDisclosure: "required" }') || !grid.includes('content.policy.englishDetailDisclosure === "required" && !englishDetailDisclosure') || !card.includes("englishDetailDisclosure &&")) fail("Future Spanish Services policy must omit the area teaser and disclose English-only detail destinations.");
+  if (!types.includes("export interface ServicesContent") || !types.includes("ServicesCardPresentation") || !types.includes("Record<import(\"../data/services\").ServiceId")) fail("Services content must use an exhaustive ServiceId presentation contract.");
+  const ids = ["interior-detail", "exterior-detail", "paint-correction", "ceramic-coating", "full-detail", "seat-upholstery-deep-cleaning", "headlight-restoration", "clay-bar-decontamination"];
+  for (const id of ids) {
+    if (!services.includes(`id: "${id}"`) || !content.includes(`"${id}": {}`)) fail(`Missing canonical or presentation ServiceId: ${id}`);
+  }
+  if ((services.match(/\bid: "/g) ?? []).length !== ids.length) fail("Canonical services must define one unique ServiceId each.");
+  const imageLink = card.indexOf('<a href={href} class="block w-full h-full">');
+  const image = card.indexOf("src={service.images[0]}");
+  const detailButton = card.indexOf('<Button href={href}');
+  if (!grid.includes("services.map") || !grid.includes("<ServiceCard service={service}") || !card.includes("const href = `/services/${service.slug}`") || imageLink === -1 || image === -1 || detailButton === -1 || imageLink > image || image > detailButton) fail("Services cards must preserve canonical image-before-button detail links.");
+  if (!section.includes("<ServicesCatalogIntro content={content.intro} />") || !section.includes("<ServicesGrid content={content} />")) fail("Services sections must consume typed presentation content.");
+  if (/\b(?:Spanish|Español|Servicios|Ver detalles)\b/.test(content)) fail("Services content must not publish Spanish wording.");
+};
+
 const verifyShellContracts = () => {
   const [routes, layout, seoHead, navbar, footer] = shellFiles.map((file) => readFileSync(file, "utf8"));
   const shellSources = [layout, seoHead, navbar, footer];
@@ -146,6 +175,7 @@ verifyDraftBoundary();
 verifyHomeContracts();
 verifyAboutContracts();
 verifyContactContracts();
+verifyServicesContracts();
 verifyShellContracts();
 const published = verifyRecords(ledger, existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath, "utf8")) : null);
 if (published.length) fail("No Spanish route may publish during WU-1.");

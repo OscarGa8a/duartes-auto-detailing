@@ -1,5 +1,8 @@
 ---
 import { CldImage } from "astro-cloudinary";
+import type { ServicesContent } from "../../../i18n/content-types";
+
+const { content } = Astro.props as { content: ServicesContent["intro"] };
 ---
 
 <section>
@@ -7,31 +10,23 @@ import { CldImage } from "astro-cloudinary";
     <div data-reveal="blur" class="flex flex-col gap-6 max-w-2xl">
       <span class="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold">
         <span class="h-px w-10 bg-gold"></span>
-        Curated lineup
+        {content.eyebrow}
       </span>
       <h2 class="text-text-primary font-bold leading-tight text-h1 max-w-xl">
-        Services designed around gloss, protection, and long-term care.
+        {content.title}
       </h2>
       <p class="text-text-secondary leading-relaxed max-w-xl">
-        Every package is built to match a different level of maintenance, correction, or protection. Browse the catalog below to compare services, understand the process, and choose the finish standard that fits your vehicle best.
+        {content.description}
       </p>
 
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-        <div data-reveal="scale" style="--reveal-delay: 140ms" class="motion-card-hover relative overflow-hidden rounded-xl border border-border-soft bg-surface-2 px-5 py-5 text-center">
-          <div class="absolute inset-x-5 top-0 h-px bg-linear-to-r from-transparent via-wine-soft/72 to-transparent"></div>
-          <span class="text-gold font-bold text-2xl">Mobile</span>
-          <span class="mt-2 block text-sm text-text-secondary">At-home convenience</span>
-        </div>
-        <div data-reveal="scale" style="--reveal-delay: 240ms" class="motion-card-hover relative overflow-hidden rounded-xl border border-border-soft bg-surface-2 px-5 py-5 text-center">
-          <div class="absolute inset-x-5 top-0 h-px bg-linear-to-r from-transparent via-gold/70 to-transparent"></div>
-          <span class="text-gold font-bold text-2xl">Premium</span>
-          <span class="mt-2 block text-sm text-text-secondary">Top-tier products</span>
-        </div>
-        <div data-reveal="scale" style="--reveal-delay: 340ms" class="motion-card-hover relative overflow-hidden rounded-xl border border-border-soft bg-surface-2 px-5 py-5 text-center">
-          <div class="absolute inset-x-5 top-0 h-px bg-linear-to-r from-transparent via-wine-soft/72 to-transparent"></div>
-          <span class="text-gold font-bold text-2xl">Results</span>
-          <span class="mt-2 block text-sm text-text-secondary">Visible after every visit</span>
-        </div>
+        {content.benefits.map((benefit, index) => (
+          <div data-reveal="scale" style={`--reveal-delay: ${140 + index * 100}ms`} class="motion-card-hover relative overflow-hidden rounded-xl border border-border-soft bg-surface-2 px-5 py-5 text-center">
+            <div class={`absolute inset-x-5 top-0 h-px bg-linear-to-r from-transparent ${index === 1 ? "via-gold/70" : "via-wine-soft/72"} to-transparent`}></div>
+            <span class="text-gold font-bold text-2xl">{benefit.title}</span>
+            <span class="mt-2 block text-sm text-text-secondary">{benefit.description}</span>
+          </div>
+        ))}
       </div>
     </div>
 
@@ -39,7 +34,7 @@ import { CldImage } from "astro-cloudinary";
       <div class="motion-float-slow overflow-hidden rounded-xl border border-white/8 shadow-lg min-h-96 lg:min-h-136">
         <CldImage
           src="about-cta_xhm8le"
-          alt="Professional wheel cleaning with spray"
+          alt={content.imageAlt}
           width={1200}
           height={900}
           sizes="(max-width: 1024px) 100vw, 44vw"
@@ -49,8 +44,8 @@ import { CldImage } from "astro-cloudinary";
       </div>
 
       <div class="motion-enter absolute left-5 right-5 bottom-5 rounded-xl border border-wine-soft/20 bg-[linear-gradient(180deg,rgba(110,43,44,0.16),rgba(23,24,27,0.9))] px-5 py-4 shadow-lg backdrop-blur-sm" style="--enter-delay: 220ms">
-        <p class="text-xs font-semibold uppercase tracking-wide text-gold">Premium process</p>
-        <p class="mt-2 text-sm leading-relaxed text-text-secondary">From maintenance washes to high-touch correction and protection, every service is executed with the same discipline and attention to finish quality.</p>
+        <p class="text-xs font-semibold uppercase tracking-wide text-gold">{content.processEyebrow}</p>
+        <p class="mt-2 text-sm leading-relaxed text-text-secondary">{content.processDescription}</p>
       </div>
     </div>
   </div>
