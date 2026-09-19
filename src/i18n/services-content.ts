@@ -1,10 +1,16 @@
-import type { ServicesContent, ServicesSectionPolicy } from "./content-types";
+import { services } from "../data/services";
+import type { LocalizedServiceCardPresentation, ServicesContent, ServicesPromotionPolicy } from "./content-types";
 import type { Locale } from "./locales";
 
+/** Promotion visibility is composition-owned rather than localized source content. */
 export const servicesSectionPolicies = {
-  "en-US": { areaTeaser: "include", englishDetailDisclosure: "not-required" },
-  "es-US": { areaTeaser: "omit", englishDetailDisclosure: "required" },
-} as const satisfies Record<Locale, ServicesSectionPolicy>;
+  "en-US": { areaTeaser: "include", englishDetailDisclosure: "not-required", discountBanner: "include" },
+  "es-US": { areaTeaser: "omit", englishDetailDisclosure: "required", discountBanner: "omit" },
+} as const satisfies Record<Locale, ServicesPromotionPolicy>;
+
+const englishServiceCards = Object.fromEntries(
+  services.map(({ id, name, description }) => [id, { displayName: name, summary: description }]),
+) as Record<(typeof services)[number]["id"], LocalizedServiceCardPresentation>;
 
 export const englishServicesContent = {
   policy: servicesSectionPolicies["en-US"],
@@ -40,16 +46,7 @@ export const englishServicesContent = {
   },
   cards: {
     detailAction: "See more details",
-    byServiceId: {
-      "interior-detail": {},
-      "exterior-detail": {},
-      "paint-correction": {},
-      "ceramic-coating": {},
-      "full-detail": {},
-      "seat-upholstery-deep-cleaning": {},
-      "headlight-restoration": {},
-      "clay-bar-decontamination": {},
-    },
+    byServiceId: englishServiceCards,
   },
   areaTeaser: {
     eyebrow: "Mobile service area",

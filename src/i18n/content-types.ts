@@ -1,3 +1,4 @@
+import type { ServiceId } from "../data/services";
 import type { Locale } from "./locales";
 import type { PageId, ShellDestination } from "./routes";
 
@@ -158,16 +159,23 @@ export interface ServicesSectionPolicy {
   englishDetailDisclosure: "required" | "not-required";
 }
 
-export interface ServicesCardPresentation {
-  detailAction: string;
-  /** Required before a future locale may link to English-only service details. */
-  englishDetailDisclosure?: string;
-  /** Reserved for approved localized card copy; canonical names and summaries remain in services data. */
-  byServiceId: Record<import("../data/services").ServiceId, Record<string, never>>;
+/** Kept outside localized sources so omission does not require promotional placeholder copy. */
+export interface ServicesPromotionPolicy extends ServicesSectionPolicy {
+  discountBanner: "include" | "omit";
 }
 
-export interface ServicesContent {
-  policy: ServicesSectionPolicy;
+export interface LocalizedServiceCardPresentation {
+  displayName: string;
+  summary: string;
+}
+
+export interface ServicesCardPresentation {
+  detailAction: string;
+  /** Localized presentation only; canonical service facts remain in services data. */
+  byServiceId: Record<ServiceId, LocalizedServiceCardPresentation>;
+}
+
+type ServicesContentBase = {
   metadata: PageMetadataContent;
   hero: { eyebrow: string; title: string; description: string };
   intro: {
@@ -184,9 +192,26 @@ export interface ServicesContent {
     processDescription: string;
   };
   grid: { eyebrow: string; title: string; description: string };
-  cards: ServicesCardPresentation;
-  areaTeaser: { eyebrow: string; title: string; description: string; action: string };
-}
+};
+
+type ServicesAreaTeaser =
+  | {
+      policy: { areaTeaser: "include" };
+      areaTeaser: { eyebrow: string; title: string; description: string; action: string };
+    }
+  | { policy: { areaTeaser: "omit" }; areaTeaser?: never };
+
+type ServicesEnglishDetailDisclosure =
+  | {
+      policy: { englishDetailDisclosure: "required" };
+      cards: ServicesCardPresentation & { englishDetailDisclosure: string };
+    }
+  | {
+      policy: { englishDetailDisclosure: "not-required" };
+      cards: ServicesCardPresentation & { englishDetailDisclosure?: never };
+    };
+
+export type ServicesContent = ServicesContentBase & ServicesAreaTeaser & ServicesEnglishDetailDisclosure;
 
 export interface HomeDiscountBanner {
   eyebrow: string;
