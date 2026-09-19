@@ -6,6 +6,8 @@ import { services } from '../../data/services';
 import { getCloudinaryImageUrl } from '../../helpers/cloudinary';
 import { englishServicesContent } from '../../i18n/services-content';
 
+const locale = "en-US";
+const pageId = "services";
 const site = Astro.site ?? new URL('https://duartesautodetailing.com');
 const structuredData = [getLocalBusinessJsonLd(site), getServicesItemListJsonLd(site)];
 const candidateOgImage = getCloudinaryImageUrl(services[0]?.images[0] ?? '', 'f_auto,q_auto,w_1200,h_630,c_fill');
@@ -18,6 +20,8 @@ const ogImage = candidateOgImage.startsWith('http') || candidateOgImage.startsWi
   ogImage={ogImage}
   imageAlt={englishServicesContent.metadata.socialImageAlt}
   structuredData={structuredData}
+  locale={locale}
+  pageId={pageId}
 >
-  <ServicesComposition content={englishServicesContent} />
+  <ServicesComposition content={englishServicesContent} locale={locale} />
 </BaseLayout>

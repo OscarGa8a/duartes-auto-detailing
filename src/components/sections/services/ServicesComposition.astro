@@ -1,11 +1,31 @@
 ---
 import type { ServicesContent } from "../../../i18n/content-types";
 import { englishHomeContent } from "../../../i18n/home-content";
+import { servicesSectionPolicies } from "../../../i18n/services-content";
 import PageHero from "../../ui/PageHero.astro";
 import DiscountBanner from "../home/DiscountBanner.astro";
 import ServicesSection from "./ServicesSection.astro";
 
-const { content } = Astro.props as { content: ServicesContent };
+const { content, locale } = Astro.props as {
+  content: ServicesContent;
+  locale: keyof typeof servicesSectionPolicies;
+};
+const promotionPolicy = servicesSectionPolicies[locale];
+
+function getAreaTeaser(servicesContent: ServicesContent): NonNullable<ServicesContent["areaTeaser"]> | undefined {
+  if (servicesContent.policy.areaTeaser === "include") {
+    const { areaTeaser } = servicesContent;
+    if (areaTeaser === undefined) {
+      throw new Error("Area teaser is required when the Services policy includes it.");
+    }
+
+    return areaTeaser;
+  }
+
+  return undefined;
+}
+
+const areaTeaserContent = getAreaTeaser(content);
 ---
 
 <PageHero
@@ -15,21 +35,23 @@ const { content } = Astro.props as { content: ServicesContent };
   description={content.hero.description}
 />
 <ServicesSection content={content} />
-{content.policy.areaTeaser === "include" && (
+{areaTeaserContent && (
   <section class="bg-off-white py-10 lg:py-16 border-b border-divider-light/70">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
       <div data-reveal="up" class="flex flex-col gap-3">
         <span class="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold-deep">
           <span class="h-px w-10 bg-gold"></span>
-          {content.areaTeaser.eyebrow}
+          {areaTeaserContent.eyebrow}
         </span>
-        <h2 class="text-text-dark font-bold text-h2">{content.areaTeaser.title}</h2>
-        <p class="max-w-3xl text-text-dark/72 leading-relaxed">{content.areaTeaser.description}</p>
+        <h2 class="text-text-dark font-bold text-h2">{areaTeaserContent.title}</h2>
+        <p class="max-w-3xl text-text-dark/72 leading-relaxed">{areaTeaserContent.description}</p>
       </div>
       <a data-reveal="right" href="/service-area/bay-area/" class="inline-flex items-center justify-center rounded-full bg-black px-6 py-3 text-sm font-semibold text-text-primary transition-colors hover:bg-surface">
-        {content.areaTeaser.action}
+        {areaTeaserContent.action}
       </a>
     </div>
   </section>
 )}
-<DiscountBanner content={englishHomeContent.discountBanner} locale="en-US" />
+{promotionPolicy.discountBanner === "include" && (
+  <DiscountBanner content={englishHomeContent.discountBanner} locale={locale} />
+)}

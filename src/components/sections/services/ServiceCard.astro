@@ -5,11 +5,12 @@ import type { Service } from "../../../data/services";
 
 interface Props {
   service: Service;
+  displayName: string;
+  summary: string;
   detailAction: string;
-  englishDetailDisclosure?: string;
 }
 
-const { service, detailAction, englishDetailDisclosure } = Astro.props as Props;
+const { service, displayName, summary, detailAction } = Astro.props as Props;
 const href = `/services/${service.slug}`;
 ---
 
@@ -27,9 +28,8 @@ const href = `/services/${service.slug}`;
     </a>
   </div>
   <div class="p-5 flex flex-col gap-3 flex-1">
-    <h3 class="font-bold text-lg text-text-primary">{service.name}</h3>
-    <p class="text-sm leading-relaxed flex-1 line-clamp-4 text-text-secondary">{service.description}</p>
-    {englishDetailDisclosure && <p class="text-sm text-text-secondary">{englishDetailDisclosure}</p>}
+    <h3 class="font-bold text-lg text-text-primary">{displayName}</h3>
+    <p class="text-sm leading-relaxed flex-1 line-clamp-4 text-text-secondary">{summary}</p>{" "}
     <Button href={href} variant="primary-bright" class="w-full text-center">
       {detailAction}
     </Button>
