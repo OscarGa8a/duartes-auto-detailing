@@ -4,8 +4,12 @@ import { services } from '../../../data/services';
 import ServiceCard from '../../ui/ServiceCard.astro';
 import Button from '../../ui/Button.astro';
 import type { HomeContent } from '../../../i18n/content-types';
+import type { Locale } from '../../../i18n/locales';
+import { getCanonicalPagePath } from '../../../i18n/routes';
 
-const { content } = Astro.props as { content: HomeContent['featuredPackages'] };
+const { content, locale = "en-US" } = Astro.props as { content: HomeContent['featuredPackages']; locale?: Locale };
+const servicesHref = getCanonicalPagePath("services", locale);
+const serviceHref = (service: typeof services[number]) => locale === "en-US" ? `/services/${service.slug}` : servicesHref;
 ---
 
 <section class="bg-off-white py-10 lg:py-16 relative overflow-hidden border-y border-divider-light/70">
@@ -37,14 +41,14 @@ const { content } = Astro.props as { content: HomeContent['featuredPackages'] };
             image={service.images[0]}
             title={service.name}
             description={service.description}
-            href={`/services/${service.slug}`}
+            href={serviceHref(service)}
           />
         </div>
       ))}
     </div>
 
     <div data-reveal="fade" style="--reveal-delay: 420ms">
-      <Button href="/services" variant="outline-dark" class="motion-glow-pulse ">
+      <Button href={servicesHref} variant="outline-dark" class="motion-glow-pulse ">
         {content.action}
       </Button>
     </div>

@@ -1,5 +1,6 @@
 ---
-import type { HomeContent } from '../../../i18n/content-types';
+import type { HomeContent, HomeContentWithDiscountBanner } from '../../../i18n/content-types';
+import type { Locale } from '../../../i18n/locales';
 import HeroSection from './HeroSection.astro';
 import WhyDuartes from './WhyDuartes.astro';
 import FeaturedPackages from './FeaturedPackages.astro';
@@ -7,12 +8,13 @@ import Testimonials from './Testimonials.astro';
 import Gallery from './Gallery.astro';
 import DiscountBanner from './DiscountBanner.astro';
 
-const { content } = Astro.props as { content: HomeContent };
+const { content, locale = "en-US" } = Astro.props as { content: HomeContent; locale?: Locale };
+const hasDiscountBanner = (homeContent: HomeContent): homeContent is HomeContentWithDiscountBanner => homeContent.policy.discountBanner === "include";
 ---
 
-<HeroSection content={content.hero} />
+<HeroSection content={content.hero} locale={locale} />
 <WhyDuartes content={content.whyDuartes} />
-<FeaturedPackages content={content.featuredPackages} />
+<FeaturedPackages content={content.featuredPackages} locale={locale} />
 {content.policy.testimonials === 'include' && <Testimonials />}
 <Gallery content={content.gallery} />
-<DiscountBanner content={content.discountBanner} />
+{hasDiscountBanner(content) && <DiscountBanner content={content.discountBanner} locale={locale} />}

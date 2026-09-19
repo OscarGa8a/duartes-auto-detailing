@@ -1,6 +1,9 @@
 import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { englishHomeContent, spanishHomeContent } from "../src/i18n/home-content.ts";
+import { englishShellContent, spanishShellContent } from "../src/i18n/shell-content.ts";
+import { getCanonicalPagePath, getShellDestinationPath } from "../src/i18n/routes.ts";
 
 const root = process.cwd();
 const reviewRoot = resolve(root, "localization/es-US");
@@ -18,6 +21,23 @@ const pageIds = new Set(["home", "about", "contact", "services"]);
 const canonical = (value) => Array.isArray(value) ? `[${value.map(canonical).join(",")}]` : value && typeof value === "object" ? `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${canonical(value[key])}`).join(",")}}` : JSON.stringify(value);
 const digest = (value) => createHash("sha256").update(canonical(value)).digest("hex");
 const fail = (message) => { throw new Error(message); };
+const approvedSpanishDigests = {
+  shell: "702d3c0059d1ef3e048b1064050209ddb7c77b59cf55a821a3369cbf1058ae25",
+  home: "6c259ed9ecb79022dd778d8fad74ec6d287a9b02e084664ec2a2de8e732b4b2d",
+};
+const verifyApprovedSpanishSources = () => {
+  for (const [name, value] of Object.entries({ shell: spanishShellContent, home: spanishHomeContent })) {
+    const actual = digest(value);
+    if (actual !== approvedSpanishDigests[name]) fail(`Approved Spanish ${name} digest mismatch: ${actual}`);
+    console.log(`Approved Spanish ${name} digest: ${actual}`);
+  }
+};
+const verifyHomeDiscountBannerContract = () => {
+  const types = readFileSync(resolve(root, "src/i18n/content-types.ts"), "utf8");
+  if (!types.includes("export type HomeContentWithDiscountBanner") || !types.includes('policy: HomeSectionPolicy & { discountBanner: "include" };') || !types.includes("discountBanner: HomeDiscountBanner;") || !types.includes("export type HomeContentWithoutDiscountBanner") || !types.includes('policy: HomeSectionPolicy & { discountBanner: "omit" };') || !types.includes("discountBanner?: never;")) fail("Home discount-banner type must require included content and forbid omitted content.");
+  if (englishHomeContent.policy.discountBanner !== "include" || !Object.hasOwn(englishHomeContent, "discountBanner")) fail("English Home must include its discount banner subtree.");
+  if (spanishHomeContent.policy.discountBanner !== "omit" || Object.hasOwn(spanishHomeContent, "discountBanner")) fail("Spanish Home must omit its discount banner subtree.");
+};
 
 export const verifyRecords = (ledger, manifest) => {
   if (ledger.schemaVersion !== 1 || ledger.locale !== "es-US") fail("Invalid approval ledger schema.");
@@ -55,13 +75,20 @@ const verifyHomeContracts = () => {
   const page = readFileSync(resolve(root, "src/pages/index.astro"), "utf8");
   const composition = readFileSync(resolve(root, "src/components/sections/home/HomeComposition.astro"), "utf8");
   const homeContent = readFileSync(resolve(root, "src/i18n/home-content.ts"), "utf8");
+  const hero = readFileSync(resolve(root, "src/components/sections/home/HeroSection.astro"), "utf8");
+  const featuredPackages = readFileSync(resolve(root, "src/components/sections/home/FeaturedPackages.astro"), "utf8");
+  const discountBanner = readFileSync(resolve(root, "src/components/sections/home/DiscountBanner.astro"), "utf8");
   const sections = ["HeroSection", "WhyDuartes", "FeaturedPackages", "Testimonials", "Gallery", "DiscountBanner"];
-  if (!page.includes("<HomeComposition content={englishHomeContent} />")) fail("Home page must render through the shared composition.");
+  if (!page.includes("const { metadata } = englishHomeContent;") || !page.includes("title={metadata.title}") || !page.includes("description={metadata.description}") || !page.includes("imageAlt={metadata.socialImageAlt}") || !page.includes('locale="en-US"') || !page.includes('pageId="home"') || !page.includes('<HomeComposition content={englishHomeContent} locale="en-US" />')) fail("Home page must consume English metadata and explicit logical locale/page identity.");
   if (/<(?:div|main|section)\b/.test(composition)) fail("Home composition must not add wrapper markup.");
   const sectionPositions = sections.map((section) => composition.indexOf(`<${section}`));
   if (sectionPositions.some((position, index) => position === -1 || (index > 0 && position < sectionPositions[index - 1]))) fail("Home composition must retain the current section order.");
-  if (!composition.includes("content.policy.testimonials === 'include' && <Testimonials />")) fail("Testimonials must use the explicit inclusion policy.");
-  if (!homeContent.includes('"es-US": { testimonials: "omit" }')) fail("Future Spanish home policy must omit testimonials.");
+  if (!composition.includes("const { content, locale = \"en-US\" }") || !composition.includes("<HeroSection content={content.hero} locale={locale} />") || !composition.includes("<FeaturedPackages content={content.featuredPackages} locale={locale} />") || !composition.includes("content.policy.testimonials === 'include' && <Testimonials />") || !composition.includes("homeContent.policy.discountBanner === \"include\"") || !composition.includes("hasDiscountBanner(content) && <DiscountBanner content={content.discountBanner} locale={locale} />")) fail("Home composition must forward locale and omit whole optional section subtrees.");
+  if (!homeContent.includes('"es-US": { testimonials: "omit", discountBanner: "omit" }')) fail("Future Spanish home policy must omit testimonials and the discount banner.");
+  if (getCanonicalPagePath("contact", "en-US") !== "/contact/" || getCanonicalPagePath("contact", "es-US") !== "/es/contact/" || getCanonicalPagePath("services", "en-US") !== "/services/" || getCanonicalPagePath("services", "es-US") !== "/es/services/" || !hero.includes('getCanonicalPagePath("contact", locale)') || !hero.includes('getCanonicalPagePath("services", locale)') || !featuredPackages.includes('getCanonicalPagePath("services", locale)') || !discountBanner.includes('getCanonicalPagePath("contact", locale)')) fail("Home CTAs must resolve canonical locale page destinations.");
+  if (!featuredPackages.includes('locale === "en-US" ? `/services/${service.slug}` : servicesHref') || !featuredPackages.includes("href={serviceHref(service)}") || featuredPackages.includes("href={`/services/${service.slug}`}")) fail("Featured package cards must keep English details and use the Spanish catalog candidate.");
+  if (discountBanner.includes("englishHomeContent") || !discountBanner.includes("content: HomeDiscountBanner")) fail("Discount banner must require explicit included content without an English fallback.");
+  if (!hero.includes("formattedNumber(config.vehiclesDetailed)") || !featuredPackages.includes("services.slice(0, 3)") || !featuredPackages.includes("image={service.images[0]}")) fail("Home metrics, service data, and media must remain runtime-owned.");
 };
 const verifyAboutContracts = () => {
   const page = readFileSync(resolve(root, "src/pages/about.astro"), "utf8");
@@ -122,6 +149,7 @@ const verifyServicesContracts = () => {
   const positions = sections.map((sectionName) => composition.indexOf(`<${sectionName}`));
   if (positions.some((position, index) => position === -1 || (index > 0 && position < positions[index - 1]))) fail("Services composition must retain the current section order.");
   if (!composition.includes('content.policy.areaTeaser === "include"') || !content.includes('"es-US": { areaTeaser: "omit", englishDetailDisclosure: "required" }') || !grid.includes('content.policy.englishDetailDisclosure === "required" && !englishDetailDisclosure') || !card.includes("englishDetailDisclosure &&")) fail("Future Spanish Services policy must omit the area teaser and disclose English-only detail destinations.");
+  if (!composition.includes("import { englishHomeContent } from \"../../../i18n/home-content\";") || !composition.includes('<DiscountBanner content={englishHomeContent.discountBanner} locale="en-US" />') || composition.includes("content.policy.discountBanner")) fail("Services banner must remain explicitly English; future Spanish discount omission is deferred to WU-8C.");
   if (!types.includes("export interface ServicesContent") || !types.includes("ServicesCardPresentation") || !types.includes("Record<import(\"../data/services\").ServiceId")) fail("Services content must use an exhaustive ServiceId presentation contract.");
   const ids = ["interior-detail", "exterior-detail", "paint-correction", "ceramic-coating", "full-detail", "seat-upholstery-deep-cleaning", "headlight-restoration", "clay-bar-decontamination"];
   for (const id of ids) {
@@ -144,6 +172,13 @@ const verifyShellContracts = () => {
   if (/\bPublishedCounterpart\b/.test(routes) || shellSources.some((source) => /state:\s*[\"']published[\"']|\bPublishedCounterpart\b|counterpart\?:/.test(source))) fail("Shell callers must not be able to assert counterpart publication.");
   if (!layout.includes("locale = 'en-US'") || !layout.includes('lang={localeDefinition.htmlLang}') || !layout.includes("pageId?: PageId")) fail("Base layout must default to English and accept only a logical page ID.");
   if (!seoHead.includes("locale = 'en-US'") || !seoHead.includes('content={localeDefinition.ogLocale}') || !seoHead.includes("getPublishedCounterpart(pageId, locale)") || !seoHead.includes('{counterpartHref && (')) fail("SEO alternates must resolve a published counterpart from the registry.");
+  if (!routes.includes("export type ShellDestination") || !routes.includes("export const getShellDestinationPath") || !routes.includes('destination === "service-area-bay-area-en"')) fail("Shell destinations must resolve only through the canonical route registry.");
+  if (getShellDestinationPath("home", "en-US") !== "/" || getShellDestinationPath("home", "es-US") !== "/es/" || getShellDestinationPath("service-area-bay-area-en", "en-US") !== "/service-area/bay-area/" || getShellDestinationPath("service-area-bay-area-en", "es-US") !== "/service-area/bay-area/") fail("Shell destinations must resolve canonical locale paths and the English-only service area.");
+  if (/"href"\s*:/.test(JSON.stringify(englishShellContent)) || /"href"\s*:/.test(JSON.stringify(spanishShellContent))) fail("Localized shell content must not own hrefs.");
+  if (!layout.includes("const shellContent = locale === 'es-US' ? spanishShellContent : englishShellContent;") || !layout.includes("<Navbar content={shellContent} locale={locale} pageId={pageId} />") || !layout.includes("<Footer content={shellContent} locale={locale} pageId={pageId} />")) fail("Base layout must derive and pass locale-matched shell content.");
+  if (!navbar.includes("getShellDestinationPath") || !navbar.includes("navigationIcons") || !navbar.includes("content.brandLogoAlt") || !navbar.includes("content.languageControl.label") || !navbar.includes("content.languageControl.destinationLabel") || !navbar.includes("aria-label={languageControlLabel}") || !navbar.includes("content.menu.openLabel") || !navbar.includes("content.menu.closeLabel") || !navbar.includes("content.menu.heading") || !navbar.includes("content.menu.subtitle") || !navbar.includes("content.menu.currentPageLabel") || !navbar.includes("content.menu.openSectionLabel")) fail("Navbar must consume shell content and resolve canonical destinations.");
+  if ((navbar.match(/aria-label=\{content\.menu\.closeLabel\}/g) ?? []).length !== 2 || /aria-label=["'](?:Open menu|Close menu)["']|>\s*Duartes menu\s*<|>\s*Premium mobile detailing, one tap away\.\s*</.test(navbar)) fail("Navbar must not retain hard-coded approved shell labels.");
+  if (!footer.includes("getShellDestinationPath") || !footer.includes("content.brandLogoAlt") || !footer.includes("content.footer.navigationLabel") || !footer.includes("content.footer.socialLabel") || !footer.includes("content.footer.links") || !footer.includes("content.footer.copyrightSuffix") || !footer.includes("content.footer.socialLinks") || !footer.includes("content.languageControl.label") || !footer.includes("content.languageControl.destinationLabel") || !footer.includes("aria-label={languageControlLabel}")) fail("Footer must consume shell labels and resolve canonical destinations.");
   for (const [name, source] of [["Navbar", navbar], ["Footer", footer]]) {
     if (!source.includes("pageId?: PageId") || !source.includes("getPublishedCounterpart(pageId, locale)") || !source.includes("{counterpart && (")) fail(`${name} must resolve language switches from the published route registry.`);
   }
@@ -177,6 +212,8 @@ verifyAboutContracts();
 verifyContactContracts();
 verifyServicesContracts();
 verifyShellContracts();
+verifyHomeDiscountBannerContract();
+verifyApprovedSpanishSources();
 const published = verifyRecords(ledger, existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath, "utf8")) : null);
 if (published.length) fail("No Spanish route may publish during WU-1.");
 if (process.argv.includes("--self-test")) selfTest();

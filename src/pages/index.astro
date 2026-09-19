@@ -5,17 +5,20 @@ import { getCloudinaryImageUrl } from '../helpers/cloudinary';
 import { getLocalBusinessJsonLd, getWebSiteJsonLd } from '../data/business';
 import { englishHomeContent } from '../i18n/home-content';
 
+const { metadata } = englishHomeContent;
 const ogImage = getCloudinaryImageUrl('og-image_usi1ab');
 const site = Astro.site ?? new URL('https://duartesautodetailing.com');
 const structuredData = [getLocalBusinessJsonLd(site), getWebSiteJsonLd(site)];
 ---
 
 <BaseLayout
-  title="Bay Area Mobile Auto Detailing"
-  description="Premium mobile auto detailing in the Bay Area, delivered to your home, office, or private garage. Book Duartes Auto Detailing today."
+  title={metadata.title}
+  description={metadata.description}
   ogImage={ogImage}
-  imageAlt="Freshly detailed vehicle by Duartes Auto Detailing"
+  imageAlt={metadata.socialImageAlt}
   structuredData={structuredData}
+  locale="en-US"
+  pageId="home"
 >
-  <HomeComposition content={englishHomeContent} />
+  <HomeComposition content={englishHomeContent} locale="en-US" />
 </BaseLayout>

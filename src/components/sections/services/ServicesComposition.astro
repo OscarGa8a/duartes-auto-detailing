@@ -1,5 +1,6 @@
 ---
 import type { ServicesContent } from "../../../i18n/content-types";
+import { englishHomeContent } from "../../../i18n/home-content";
 import PageHero from "../../ui/PageHero.astro";
 import DiscountBanner from "../home/DiscountBanner.astro";
 import ServicesSection from "./ServicesSection.astro";
@@ -31,4 +32,4 @@ const { content } = Astro.props as { content: ServicesContent };
     </div>
   </section>
 )}
-<DiscountBanner />
+<DiscountBanner content={englishHomeContent.discountBanner} locale="en-US" />

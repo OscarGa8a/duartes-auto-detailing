@@ -1,13 +1,27 @@
 import type { Locale } from "./locales";
-import type { PageId, RoutePath } from "./routes";
+import type { PageId, ShellDestination } from "./routes";
 
 export type ApprovalBlockId = string;
 
 export interface ShellContent {
-  navigation: readonly { label: string; href: RoutePath }[];
+  navigation: readonly { pageId: PageId; label: string }[];
   languageControl: { label: string; destinationLabel: string };
-  footer: { navigationLabel: string; socialLabel: string };
-  menu: { openLabel: string; closeLabel: string; heading: string };
+  brandLogoAlt: string;
+  menu: {
+    openLabel: string;
+    closeLabel: string;
+    heading: string;
+    subtitle: string;
+    currentPageLabel: string;
+    openSectionLabel: string;
+  };
+  footer: {
+    navigationLabel: string;
+    socialLabel: string;
+    links: readonly { destination: ShellDestination; label: string }[];
+    copyrightSuffix: string;
+    socialLinks: readonly { platform: "TikTok" | "Facebook" | "Instagram" | "WhatsApp"; accessibleLabel: string }[];
+  };
 }
 
 export interface PageMetadataContent {
@@ -31,6 +45,7 @@ export interface LocalizedPageBundle extends PageContent {
 
 export interface HomeSectionPolicy {
   testimonials: "include" | "omit";
+  discountBanner: "include" | "omit";
 }
 
 export type AboutMetric = "yearsOfExperience" | "vehiclesDetailed" | "bayAreaLocations";
@@ -161,8 +176,15 @@ export interface ServicesContent {
   areaTeaser: { eyebrow: string; title: string; description: string; action: string };
 }
 
-export interface HomeContent {
-  policy: HomeSectionPolicy;
+export interface HomeDiscountBanner {
+  eyebrow: string;
+  title: string;
+  description: string;
+  action: string;
+}
+
+interface HomeContentBase {
+  metadata: PageMetadataContent;
   hero: {
     eyebrow: string;
     serviceLine: string;
@@ -187,5 +209,16 @@ export interface HomeContent {
   };
   featuredPackages: { eyebrow: string; title: string; description: string; action: string };
   gallery: { eyebrow: string; title: string; description: string; itemLabels: readonly string[] };
-  discountBanner: { eyebrow: string; title: string; description: string; action: string };
 }
+
+export type HomeContentWithDiscountBanner = HomeContentBase & {
+  policy: HomeSectionPolicy & { discountBanner: "include" };
+  discountBanner: HomeDiscountBanner;
+};
+
+export type HomeContentWithoutDiscountBanner = HomeContentBase & {
+  policy: HomeSectionPolicy & { discountBanner: "omit" };
+  discountBanner?: never;
+};
+
+export type HomeContent = HomeContentWithDiscountBanner | HomeContentWithoutDiscountBanner;

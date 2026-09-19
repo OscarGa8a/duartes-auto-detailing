@@ -2,11 +2,18 @@ import type { HomeContent, HomeSectionPolicy } from "./content-types";
 import type { Locale } from "./locales";
 
 export const homeSectionPolicies = {
-  "en-US": { testimonials: "include" },
-  "es-US": { testimonials: "omit" },
+  "en-US": { testimonials: "include", discountBanner: "include" },
+  "es-US": { testimonials: "omit", discountBanner: "omit" },
 } as const satisfies Record<Locale, HomeSectionPolicy>;
 
 export const englishHomeContent = {
+  metadata: {
+    title: "Bay Area Mobile Auto Detailing",
+    description: "Premium mobile auto detailing in the Bay Area, delivered to your home, office, or private garage. Book Duartes Auto Detailing today.",
+    socialImageAlt: "Freshly detailed vehicle by Duartes Auto Detailing",
+    schemaName: "Bay Area Mobile Auto Detailing",
+    schemaDescription: "Premium mobile auto detailing in the Bay Area, delivered to your home, office, or private garage. Book Duartes Auto Detailing today.",
+  },
   policy: homeSectionPolicies["en-US"],
   hero: {
     eyebrow: "Concierge Mobile Detailing · Bay Area",
@@ -60,5 +67,63 @@ export const englishHomeContent = {
     title: "20% off your first service",
     description: "Book today and enjoy 20% off your first premium detailing session anywhere in the Bay Area.",
     action: "Book Your Service",
+  },
+} as const satisfies HomeContent;
+
+export const spanishHomeContent = {
+  metadata: {
+    title: "Detallado automotriz móvil en el Área de la Bahía",
+    description: "Detallado automotriz móvil en el Área de la Bahía, en tu hogar, oficina o garaje privado. Conoce Duartes Auto Detailing.",
+    socialImageAlt: "Vehículo detallado por Duartes Auto Detailing",
+    schemaName: "Detallado automotriz móvil en el Área de la Bahía",
+    schemaDescription: "Servicio móvil de detallado automotriz de Duartes Auto Detailing para conductores del Área de la Bahía, en hogares, oficinas y garajes privados.",
+  },
+  policy: homeSectionPolicies["es-US"],
+  hero: {
+    eyebrow: "Detallado móvil · Área de la Bahía",
+    serviceLine: "Detallado automotriz móvil en tu hogar u oficina",
+    heading: ["Cuidado para tu vehículo", "en tu ubicación"],
+    description: "Limpiamos, restauramos y protegemos tu vehículo con atención a los detalles en tu hogar u oficina.",
+    vehiclesDetailed: "vehículos detallados",
+    mobileService: "Servicio móvil",
+    desktopService: "servicio móvil",
+    primaryAction: "Solicita tu servicio",
+    secondaryAction: "Ver servicios",
+    location: "En tu hogar u oficina",
+    carousel: { mobileSlide: "Ir a la diapositiva", desktopSlide: "Ir a la diapositiva de escritorio" },
+    imageAlts: [
+      "Auto deportivo azul recién detallado con acabado exterior brillante",
+      "Exterior de un vehículo detallado con brillo y reflejos",
+      "Detalle exterior con pintura limpia y reflejos brillantes",
+      "Acabado exterior detallado preparado para protección",
+    ],
+  },
+  whyDuartes: {
+    eyebrow: "Por qué elegir Duartes",
+    title: "Cuidado detallado en la ubicación de tu vehículo.",
+    description: "Llevamos el detallado automotriz móvil a tu hogar u oficina para atender tu vehículo donde te resulte conveniente.",
+    callout: "Más que limpieza: cuidado detallado para tu vehículo.",
+    calloutDescription: "Nos enfocamos en limpiar, restaurar y proteger tu vehículo con atención a cada detalle.",
+    statistics: ["Vehículos detallados", "Años de experiencia", "Ubicaciones atendidas"],
+  },
+  featuredPackages: {
+    eyebrow: "Paquetes seleccionados",
+    title: "Paquetes destacados",
+    description: "Conoce opciones de detallado interior, exterior y de protección para tu vehículo.",
+    action: "Ver todos los servicios",
+  },
+  gallery: {
+    eyebrow: "Galería",
+    title: "Trabajos de detallado",
+    description: "Explora imágenes de nuestros procesos y servicios de detallado.",
+    itemLabels: [
+      "Aplicación de recubrimiento cerámico",
+      "Detallado interior con limpieza a vapor",
+      "Aplicación de recubrimiento cerámico",
+      "Descontaminación con barra de arcilla",
+      "Antes y después del detallado completo de un Ford Mustang GT",
+      "Limpieza profunda de tapicería de asientos",
+      "Proceso de descontaminación profunda con barra de arcilla",
+    ],
   },
 } as const satisfies HomeContent;
