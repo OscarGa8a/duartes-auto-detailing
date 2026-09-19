@@ -1,6 +1,17 @@
 {
   "schemaVersion": 1,
   "locale": "es-US",
-  "blocks": {},
-  "routes": {}
+  "blocks": {
+    "shell": { "state": "approved", "sha256": "702d3c0059d1ef3e048b1064050209ddb7c77b59cf55a821a3369cbf1058ae25" },
+    "home": { "state": "approved", "sha256": "6c259ed9ecb79022dd778d8fad74ec6d287a9b02e084664ec2a2de8e732b4b2d" },
+    "about": { "state": "approved", "sha256": "29dc14fa4af33cd95392115c82693bb7263e37464288862953c4e9e5a684c645" },
+    "contact": { "state": "approved", "sha256": "0812252896e042a485682a2716c7e7792deb7dbf41f405cccb38fc2294ecafaf" },
+    "services": { "state": "approved", "sha256": "8d2cd90a9f164f7a0c1f10b110ec32e1e925a63bf244d6de4fbbf52d1b5caadf" }
+  },
+  "routes": {
+    "home": { "state": "approved", "requiredBlocks": ["shell", "home"] },
+    "about": { "state": "approved", "requiredBlocks": ["shell", "about"] },
+    "contact": { "state": "approved", "requiredBlocks": ["shell", "contact"] },
+    "services": { "state": "approved", "requiredBlocks": ["shell", "services"] }
+  }
 }

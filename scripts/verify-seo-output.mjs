@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -119,6 +120,13 @@ const expectedExplicitSocialImages = new Map([
 		cloudinaryImageUrl(service.publicId, serviceImageTransformations),
 	]),
 ]);
+const expectedSpanishRoutes = new Set(["/es/", "/es/about/", "/es/contact/", "/es/services/"]);
+const spanishCounterparts = new Map([
+	["/", "/es/"],
+	["/about/", "/es/about/"],
+	["/contact/", "/es/contact/"],
+	["/services/", "/es/services/"],
+]);
 const expectedPageSchemas = new Map([
 	[
 		"/about/",
@@ -137,6 +145,24 @@ const expectedPageSchemas = new Map([
 			name: "Contact Duartes Auto Detailing",
 			description:
 				"Book Bay Area mobile auto detailing via WhatsApp, text message, Instagram, or email. Duartes Auto Detailing is a 100% mobile service.",
+			relationship: "mainEntity",
+		},
+	],
+	[
+		"/es/about/",
+		{
+			type: "AboutPage",
+			name: "Acerca de Duartes Auto Detailing",
+			description: "Conoce Duartes Auto Detailing: más de 6 años de experiencia y más de 10,000 vehículos detallados para conductores del Área de la Bahía, California.",
+			relationship: "about",
+		},
+	],
+	[
+		"/es/contact/",
+		{
+			type: "ContactPage",
+			name: "Contacto | Duartes Auto Detailing",
+			description: "Comunícate con Duartes Auto Detailing por WhatsApp, mensaje de texto o Instagram para consultar sobre servicios de detallado móvil.",
 			relationship: "mainEntity",
 		},
 	],
@@ -293,8 +319,16 @@ function getRouteLinks(html) {
 	return new Set(getHrefPaths(hrefs));
 }
 
-function isUnpublishedSpanishPath(pathname) {
+function isSpanishPath(pathname) {
 	return pathname === "/es" || pathname.startsWith("/es/");
+}
+
+function isUnpublishedSpanishPath(pathname) {
+	return isSpanishPath(pathname) && !expectedSpanishRoutes.has(`${pathname.replace(/\/$/, "")}/`);
+}
+
+function getExpectedCounterpart(route) {
+	return spanishCounterparts.get(route) ?? [...spanishCounterparts.entries()].find(([, spanish]) => spanish === route)?.[0];
 }
 
 function getSitemapLocations(files) {
@@ -577,8 +611,8 @@ function verifyLlmsOutput() {
 }
 
 function expectedJsonLdTypes(route) {
-	if (route === "/") return ["AutoWash", "WebSite"];
-	if (route === "/services/") return ["AutoWash", "ItemList"];
+	if (route === "/" || route === "/es/") return ["AutoWash", "WebSite"];
+	if (route === "/services/" || route === "/es/services/") return ["AutoWash", "ItemList"];
 	if (route !== "/services/" && route.startsWith("/services/"))
 		return ["AutoWash", "Service", "BreadcrumbList"];
 	if (serviceAreaRoutes.has(route))
@@ -607,8 +641,9 @@ if (htmlFiles.length === 0) {
 }
 
 const generatedRoutes = new Set(htmlFiles.map(getRoute));
-if ([...generatedRoutes].some(isUnpublishedSpanishPath)) {
-	fail(distDir, "Spanish routes must not be generated before publication");
+const generatedSpanishRoutes = new Set([...generatedRoutes].filter(isSpanishPath));
+if (JSON.stringify([...generatedSpanishRoutes].sort()) !== JSON.stringify([...expectedSpanishRoutes].sort())) {
+	fail(distDir, "generated Spanish routes must exactly be /es/, /es/about/, /es/contact/, and /es/services/");
 }
 const generatedServiceDetailRoutes = new Set(
 	[...generatedRoutes].filter(
@@ -629,8 +664,9 @@ for (const route of generatedServiceDetailRoutes) {
 const routeFiles = new Map(htmlFiles.map((file) => [getRoute(file), file]));
 const sitemapLocations = getSitemapLocations(sitemapFiles);
 const sitemapLocationSet = new Set(sitemapLocations);
-if (sitemapLocations.some((location) => isUnpublishedSpanishPath(new URL(location).pathname))) {
-	fail(distDir, "sitemap must not include unpublished Spanish routes");
+const sitemapSpanishRoutes = new Set(sitemapLocations.map((location) => new URL(location).pathname).filter(isSpanishPath).map((pathname) => `${pathname.replace(/\/$/, "")}/`));
+if (JSON.stringify([...sitemapSpanishRoutes].sort()) !== JSON.stringify([...expectedSpanishRoutes].sort())) {
+	fail(distDir, "sitemap must include exactly the four published Spanish canonical routes");
 }
 const titles = new Map();
 const descriptions = new Map();
@@ -752,9 +788,16 @@ for (const file of htmlFiles) {
 	const html = readFileSync(file, "utf8");
 	const route = getRoute(file);
 	if (staticRedirects.has(route)) continue;
-	if (!/<html\b[^>]*\blang=["']en-US["']/i.test(html)) fail(file, "html lang must be en-US");
-	if (/\bhreflang=["']/i.test(html) || /<link\b[^>]*\brel=["']alternate["']/i.test(html)) {
-		fail(file, "must not publish alternate language metadata without a published counterpart");
+	const counterpartRoute = getExpectedCounterpart(route);
+	const expectedLocale = isSpanishPath(route) ? "es-US" : "en-US";
+	if (!new RegExp(`<html\\b[^>]*\\blang=["']${expectedLocale}["']`, "i").test(html)) fail(file, `html lang must be ${expectedLocale}`);
+	const alternateHrefs = [...html.matchAll(/<link\b[^>]*\brel=["']alternate["'][^>]*>/gi)].map(([tag]) => getAttrs(tag).href);
+	if (counterpartRoute) {
+		const expectedAlternateHrefs = [new URL(route, siteBase).href, new URL(counterpartRoute, siteBase).href];
+		if (JSON.stringify(alternateHrefs) !== JSON.stringify(expectedAlternateHrefs)) fail(file, "published language counterparts must emit reciprocal self and counterpart hreflang links");
+		if (!getRouteLinks(html).has(counterpartRoute)) fail(file, "published language counterparts must link to each other");
+	} else if (alternateHrefs.length || getInternalHrefPaths(html).some(isSpanishPath)) {
+		fail(file, "unpublished pages must not advertise or link to Spanish counterparts");
 	}
 	if (getInternalHrefPaths(html).some(isUnpublishedSpanishPath)) fail(file, "must not link to unpublished Spanish routes");
 	const expectedCanonical = new URL(route, siteBase);
@@ -836,8 +879,8 @@ for (const file of htmlFiles) {
 	if (ogTitle !== title) fail(file, "og:title must match <title>");
 	if (ogDescription !== description)
 		fail(file, "og:description must match meta description");
-	if (ogLocale !== "en_US") fail(file, "og:locale must be en_US");
-	if (/es_US/i.test(html)) fail(file, "must not expose unpublished Spanish locale metadata");
+	const expectedOgLocale = isSpanishPath(route) ? "es_US" : "en_US";
+	if (ogLocale !== expectedOgLocale) fail(file, `og:locale must be ${expectedOgLocale}`);
 	if (!ogImage || !new URL(ogImage).protocol.startsWith("http")) {
 		fail(file, "og:image must be an absolute URL");
 	}
@@ -1024,6 +1067,11 @@ if (
 	new Set(normalizedCityGuides.values()).size !== expectedRelatedCityRoutes.size
 ) {
 	fail(distDir, "all city service guides must remain meaningfully distinct after city and region tokens are removed");
+}
+
+const sourceLlms = readFileSync("public/llms.txt");
+if (createHash("sha256").update(sourceLlms).digest("hex") !== "ce8959f14622d26c73f4b70e6aae3e63359751f59d76aa74e224744cf86b69bb") {
+	fail("public/llms.txt", "must remain byte-identical to the approved baseline");
 }
 
 if (failures.length > 0) {

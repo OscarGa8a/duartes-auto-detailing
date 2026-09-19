@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AboutComposition from '../../components/sections/about/AboutComposition.astro';
+import ContactComposition from '../../components/sections/contact/ContactComposition.astro';
+import ServicesComposition from '../../components/sections/services/ServicesComposition.astro';
+import { getPageJsonLd, getLocalBusinessJsonLd, getServicesItemListJsonLd } from '../../data/business';
+import { getCloudinaryImageUrl } from '../../helpers/cloudinary';
+import { resolveAboutTemplate } from '../../i18n/about-content';
+import { spanishContactContent } from '../../i18n/contact-content';
+import { getCanonicalPagePath, type PageId } from '../../i18n/routes';
+import { spanishAboutContent } from '../../i18n/spanish-about-content';
+import { spanishServicesContent } from '../../i18n/spanish-services-content';
+import { services } from '../../data/services';
+
+const locale = "es-US";
+
+export function getStaticPaths() {
+  return (["about", "contact", "services"] as const).map((page) => ({ params: { page } }));
+}
+
+const pageId = Astro.params.page as Exclude<PageId, "home">;
+const site = Astro.site ?? new URL('https://duartesautodetailing.com');
+const schemaPath = getCanonicalPagePath(pageId, locale);
+const aboutMetadata = spanishAboutContent.metadata;
+const aboutDescription = resolveAboutTemplate(aboutMetadata.description);
+const aboutStructuredData = [
+  getPageJsonLd(site, "AboutPage", schemaPath, aboutMetadata.schemaName, resolveAboutTemplate(aboutMetadata.schemaDescription)),
+];
+const contactMetadata = spanishContactContent.metadata;
+const contactStructuredData = [getPageJsonLd(site, "ContactPage", schemaPath, contactMetadata.schemaName, contactMetadata.schemaDescription)];
+const candidateOgImage = getCloudinaryImageUrl(services[0]?.images[0] ?? '', 'f_auto,q_auto,w_1200,h_630,c_fill');
+const servicesOgImage = candidateOgImage.startsWith('http') || candidateOgImage.startsWith('/') ? candidateOgImage : undefined;
+const servicesStructuredData = [getLocalBusinessJsonLd(site), getServicesItemListJsonLd(site)];
+---
+
+{pageId === "about" && (
+  <BaseLayout title={aboutMetadata.title} description={aboutDescription} imageAlt={aboutMetadata.socialImageAlt} structuredData={aboutStructuredData} locale={locale} pageId={pageId}>
+    <AboutComposition content={spanishAboutContent} />
+  </BaseLayout>
+)}
+
+{pageId === "contact" && (
+  <BaseLayout title={contactMetadata.title} description={contactMetadata.description} imageAlt={contactMetadata.socialImageAlt} structuredData={contactStructuredData} locale={locale} pageId={pageId}>
+    <ContactComposition content={spanishContactContent} />
+  </BaseLayout>
+)}
+
+{pageId === "services" && (
+  <BaseLayout title={spanishServicesContent.metadata.title} description={spanishServicesContent.metadata.description} ogImage={servicesOgImage} imageAlt={spanishServicesContent.metadata.socialImageAlt} structuredData={servicesStructuredData} locale={locale} pageId={pageId}>
+    <ServicesComposition content={spanishServicesContent} locale={locale} />
+  </BaseLayout>
+)}

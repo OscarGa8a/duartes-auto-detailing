@@ -30,8 +30,7 @@ export const getShellDestinationPath = (destination: ShellDestination, locale: L
   return getCanonicalPagePath(destination, locale);
 };
 
-// WU-9 may add a page ID here only when its Spanish route is published.
-export const publishedSpanishPageIds: readonly PageId[] = [];
+export const publishedSpanishPageIds: readonly PageId[] = ["home", "about", "contact", "services"];
 
 export const getPublishedCounterpart = (pageId: PageId | undefined, locale: Locale) => {
   if (!pageId || !publishedSpanishPageIds.includes(pageId)) return undefined;

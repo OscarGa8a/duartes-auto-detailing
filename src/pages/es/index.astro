@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HomeComposition from '../../components/sections/home/HomeComposition.astro';
+import { getCloudinaryImageUrl } from '../../helpers/cloudinary';
+import { getLocalBusinessJsonLd, getWebSiteJsonLd } from '../../data/business';
+import { spanishHomeContent } from '../../i18n/home-content';
+
+const locale = "es-US";
+const pageId = "home";
+const { metadata } = spanishHomeContent;
+const ogImage = getCloudinaryImageUrl('og-image_usi1ab');
+const site = Astro.site ?? new URL('https://duartesautodetailing.com');
+const structuredData = [getLocalBusinessJsonLd(site), getWebSiteJsonLd(site)];
+---
+
+<BaseLayout
+  title={metadata.title}
+  description={metadata.description}
+  ogImage={ogImage}
+  imageAlt={metadata.socialImageAlt}
+  structuredData={structuredData}
+  locale={locale}
+  pageId={pageId}
+>
+  <HomeComposition content={spanishHomeContent} locale={locale} />
+</BaseLayout>
