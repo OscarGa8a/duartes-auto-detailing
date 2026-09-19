@@ -3,12 +3,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactComposition from '../components/sections/contact/ContactComposition.astro';
 import { getPageJsonLd } from '../data/business';
 import { englishContactContent } from '../i18n/contact-content';
+import { getCanonicalPagePath } from '../i18n/routes';
 
+const locale = "en-US";
+const pageId = "contact";
 const { metadata } = englishContactContent;
 const pageTitle = metadata.title;
 const pageDescription = metadata.description;
+const schemaPath = getCanonicalPagePath(pageId, locale);
 const site = Astro.site ?? new URL('https://duartesautodetailing.com');
-const structuredData = [getPageJsonLd(site, 'ContactPage', '/contact/', pageTitle, pageDescription)];
+const structuredData = [getPageJsonLd(site, 'ContactPage', schemaPath, metadata.schemaName, metadata.schemaDescription)];
 ---
 
 <BaseLayout
@@ -16,6 +20,8 @@ const structuredData = [getPageJsonLd(site, 'ContactPage', '/contact/', pageTitl
   description={pageDescription}
   imageAlt={metadata.socialImageAlt}
   structuredData={structuredData}
+  locale={locale}
+  pageId={pageId}
 >
   <ContactComposition content={englishContactContent} />
 </BaseLayout>

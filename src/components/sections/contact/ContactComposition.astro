@@ -2,12 +2,13 @@
 import PageHero from "../../ui/PageHero.astro";
 import ContactSection from "./ContactSection.astro";
 import ServiceMap from "./ServiceMap.astro";
-import type { ContactContent } from "../../../i18n/content-types";
+import type { ContactContent, ContactContentWithServiceMap } from "../../../i18n/content-types";
 
 interface Props {
   content: ContactContent;
 }
 
+const hasServiceMap = (content: ContactContent): content is ContactContentWithServiceMap => content.policy.serviceMap === "include";
 const { content } = Astro.props;
 ---
 
@@ -18,4 +19,4 @@ const { content } = Astro.props;
   description={content.hero.description}
 />
 <ContactSection content={content} />
-{content.policy.serviceMap === "include" && <ServiceMap content={content.map} />}
+{hasServiceMap(content) && <ServiceMap content={content.map} />}

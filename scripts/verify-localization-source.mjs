@@ -2,6 +2,8 @@ import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { englishHomeContent, spanishHomeContent } from "../src/i18n/home-content.ts";
+import { spanishAboutContent } from "../src/i18n/spanish-about-content.ts";
+import { englishContactContent, spanishContactContent } from "../src/i18n/contact-content.ts";
 import { englishShellContent, spanishShellContent } from "../src/i18n/shell-content.ts";
 import { getCanonicalPagePath, getShellDestinationPath } from "../src/i18n/routes.ts";
 
@@ -24,9 +26,11 @@ const fail = (message) => { throw new Error(message); };
 const approvedSpanishDigests = {
   shell: "702d3c0059d1ef3e048b1064050209ddb7c77b59cf55a821a3369cbf1058ae25",
   home: "6c259ed9ecb79022dd778d8fad74ec6d287a9b02e084664ec2a2de8e732b4b2d",
+  about: "29dc14fa4af33cd95392115c82693bb7263e37464288862953c4e9e5a684c645",
+  contact: "0812252896e042a485682a2716c7e7792deb7dbf41f405cccb38fc2294ecafaf",
 };
 const verifyApprovedSpanishSources = () => {
-  for (const [name, value] of Object.entries({ shell: spanishShellContent, home: spanishHomeContent })) {
+  for (const [name, value] of Object.entries({ shell: spanishShellContent, home: spanishHomeContent, about: spanishAboutContent, contact: spanishContactContent })) {
     const actual = digest(value);
     if (actual !== approvedSpanishDigests[name]) fail(`Approved Spanish ${name} digest mismatch: ${actual}`);
     console.log(`Approved Spanish ${name} digest: ${actual}`);
@@ -96,9 +100,11 @@ const verifyAboutContracts = () => {
   const standard = readFileSync(resolve(root, "src/components/sections/about/StandardSection.astro"), "utf8");
   const pillars = readFileSync(resolve(root, "src/components/sections/about/PillarsSection.astro"), "utf8");
   const aboutContent = readFileSync(resolve(root, "src/i18n/about-content.ts"), "utf8");
+  const spanishAboutSource = readFileSync(resolve(root, "src/i18n/spanish-about-content.ts"), "utf8");
   const contentTypes = readFileSync(resolve(root, "src/i18n/content-types.ts"), "utf8");
   const sections = ["PageHero", "StandardSection", "PillarsSection", "BehindTheShine", "CTABanner"];
   if (!page.includes("<AboutComposition content={englishAboutContent} />") || /<(?:PageHero|StandardSection|PillarsSection|BehindTheShine|CTABanner)\b/.test(page)) fail("About page must render only through the shared composition.");
+  if (!page.includes('import { getCanonicalPagePath } from "../i18n/routes";') || !page.includes('const locale = "en-US";') || !page.includes('const pageId = "about";') || !page.includes("const schemaPath = getCanonicalPagePath(pageId, locale);") || !page.includes("schemaPath,") || !page.includes("metadata.schemaName,") || !page.includes("resolveAboutTemplate(metadata.schemaDescription),") || !page.includes("locale={locale}") || !page.includes("pageId={pageId}")) fail("About must declare logical English identity and derive its schema path and fields from typed metadata.");
   if (/<(?:div|main|section)\b/.test(composition)) fail("About composition must not add wrapper markup.");
   const positions = sections.map((section) => composition.indexOf(`<${section}`));
   if (positions.some((position, index) => position === -1 || (index > 0 && position < positions[index - 1]))) fail("About composition must retain the current section order.");
@@ -110,7 +116,24 @@ const verifyAboutContracts = () => {
   if (!pillars.includes('const pillarIcons = ["tabler:check", "tabler:target-arrow", "tabler:star-filled"] as const;') || !pillars.includes("name={pillarIcons[index]}")) fail("About pillar icons must remain canonical component data.");
   if (!contentTypes.includes("counters: readonly [string, string, string];") || !contentTypes.includes("items: readonly [") || /tabler:|metric:\s*[\"'](?:yearsOfExperience|vehiclesDetailed|bayAreaLocations)/.test(aboutContent)) fail("Localized About content must contain fixed labels and copy only.");
   if (!contentTypes.includes('export type AboutMetric = "yearsOfExperience" | "vehiclesDetailed" | "bayAreaLocations"') || !aboutContent.includes("Unknown About metric placeholder") || !aboutContent.includes("formattedNumber(config.vehiclesDetailed)")) fail("About metric placeholders must be typed, canonical, and deterministic.");
-  if (/phoneUSE164|phoneUSNational|phoneFormatted|\+1\d{10}/.test(aboutContent)) fail("Localized About content must not define contact destinations.");
+  if (/phoneUSE164|phoneUSNational|phoneFormatted|\+1\d{10}/.test(spanishAboutSource)) fail("Spanish About content must not define contact destinations.");
+  const templates = [
+    spanishAboutContent.metadata.description,
+    spanishAboutContent.metadata.schemaDescription,
+    spanishAboutContent.hero.description,
+    spanishAboutContent.standard.description,
+  ];
+  const expectedMetricOrders = [
+    ["yearsOfExperience", "vehiclesDetailed"],
+    ["yearsOfExperience", "vehiclesDetailed"],
+    ["yearsOfExperience"],
+    ["yearsOfExperience", "vehiclesDetailed", "bayAreaLocations"],
+  ];
+  for (const [index, template] of templates.entries()) {
+    const placeholders = [...template.template.matchAll(/\{([a-zA-Z]+)\}/g)].map(([, metric]) => metric);
+    if (canonical(placeholders) !== canonical(template.metrics) || canonical(template.metrics) !== canonical(expectedMetricOrders[index])) fail("Spanish About templates must use only approved runtime metrics in order.");
+  }
+  if (/\b(?:config|formattedNumber|yearsOfExperience:\s*\d|vehiclesDetailed:\s*\d|bayAreaLocations:\s*\d)\b/.test(spanishAboutSource)) fail("Spanish About must not own runtime metric values or formatting.");
 };
 
 const verifyContactContracts = () => {
@@ -122,16 +145,24 @@ const verifyContactContracts = () => {
   const content = readFileSync(resolve(root, "src/i18n/contact-content.ts"), "utf8");
   const types = readFileSync(resolve(root, "src/i18n/content-types.ts"), "utf8");
   if (!page.includes("<ContactComposition content={englishContactContent} />") || !page.includes("imageAlt={metadata.socialImageAlt}") || /<(?:PageHero|ContactSection|ServiceMap)\b/.test(page)) fail("Contact page must render only through the shared composition with localized metadata.");
+  if (!page.includes("import { getCanonicalPagePath } from '../i18n/routes';") || !page.includes('const locale = "en-US";') || !page.includes('const pageId = "contact";') || !page.includes("const schemaPath = getCanonicalPagePath(pageId, locale);") || !page.includes("getPageJsonLd(site, 'ContactPage', schemaPath, metadata.schemaName, metadata.schemaDescription)") || !page.includes("locale={locale}") || !page.includes("pageId={pageId}")) fail("Contact must declare logical English identity and derive canonical schema fields from typed metadata.");
   if (/<(?:div|main|section)\b/.test(composition)) fail("Contact composition must not add wrapper markup.");
   const sections = ["PageHero", "ContactSection", "ServiceMap"];
   const positions = sections.map((section) => composition.indexOf(`<${section}`));
   if (positions.some((position, index) => position === -1 || (index > 0 && position < positions[index - 1]))) fail("Contact composition must retain the current section order.");
-  if (!composition.includes('content.policy.serviceMap === "include" && <ServiceMap content={content.map} />') || !content.includes('"en-US": { serviceMap: "include" }') || !content.includes('"es-US": { serviceMap: "omit" }')) fail("Contact map policy must conditionally omit the whole map subtree.");
-  if (!types.includes("export interface ContactMessageChannelContent") || !types.includes("ContactChannelContent,") || !content.includes("preparedStatus") || !content.includes("prepared but not sent") || !form.includes('role="status" aria-live="polite"') || form.includes("form.reset()")) fail("Contact form status must truthfully preserve submitted values.");
+  if (!composition.includes('import type { ContactContent, ContactContentWithServiceMap } from "../../../i18n/content-types";') || !composition.includes('const hasServiceMap = (content: ContactContent): content is ContactContentWithServiceMap => content.policy.serviceMap === "include";') || !composition.includes('{hasServiceMap(content) && <ServiceMap content={content.map} />}') || !content.includes('"en-US": { serviceMap: "include" }') || !content.includes('"es-US": { serviceMap: "omit" }')) fail("Contact map policy must narrow through a local include guard before rendering the complete map subtree.");
+  if (!types.includes("export type ContactContentWithServiceMap") || !types.includes('policy: { serviceMap: "include" };') || !types.includes("map: ContactMapContent;") || !types.includes("export type ContactContentWithoutServiceMap") || !types.includes('policy: { serviceMap: "omit" };') || !types.includes("map?: never;") || !types.includes("export type ContactContent = ContactContentWithServiceMap | ContactContentWithoutServiceMap;")) fail("Contact types must require included maps and forbid omitted maps.");
+  if (!types.includes("export interface ContactMessageChannelContent") || !types.includes("ContactChannelContent,") || !content.includes("preparedStatus") || !englishContactContent.form.preparedStatus.includes("prepared but not sent") || !spanishContactContent.form.preparedStatus.includes("preparado, pero no se envió") || !form.includes('role="status" aria-live="polite"') || form.includes("form.reset()")) fail("Contact form status must truthfully preserve submitted values.");
   if (/description:\s*["'](?:phone|@duartes_detailing)|@duartes_detailing|phoneFormatted|phoneUSE164/.test(content)) fail("Localized Contact channels must not own canonical display or destination data.");
   if (!options.includes("info: config.phoneFormatted") || !options.includes("info: '@duartes_detailing'") || !options.includes("https://wa.me/${config.phoneUSE164}") || !options.includes("sms:${config.phoneUSE164}") || !options.includes("https://www.instagram.com/direct/t/17842345695295426") || !options.includes("instagram://user?username=duartes_detailing")) fail("Contact channels must retain canonical destinations and mobile fallback.");
+  if (!map.includes('import type { ContactMapContent } from "../../../i18n/content-types";') || !map.includes("content: ContactMapContent;") || map.includes('ContactContent["map"]')) fail("ServiceMap must require the named non-optional ContactMapContent prop after composition narrows inclusion.");
   if (!map.includes("37.63506596297662") || !map.includes("-122.08118753590793") || !map.includes("aria-describedby=\"service-map-help\"")) fail("Contact map must retain canonical coordinates and accessibility relationship.");
-  if (/\b(?:Spanish|Español|Contacto|Enviar mensaje)\b/.test(content)) fail("Contact content must not publish Spanish copy.");
+  if (englishContactContent.policy.serviceMap !== "include" || !Object.hasOwn(englishContactContent, "map")) fail("English Contact must retain its complete map subtree.");
+  if (spanishContactContent.policy.serviceMap !== "omit" || Object.hasOwn(spanishContactContent, "map")) fail("Spanish Contact must omit the complete map subtree.");
+  const channelOrder = spanishContactContent.channels.map((channel) => channel.title);
+  if (canonical(channelOrder) !== canonical(["Escríbenos por WhatsApp", "Envíanos un mensaje de texto", "Envíanos un mensaje directo por Instagram"])) fail("Spanish Contact channels must retain approved channel order.");
+  const spanishContact = JSON.stringify(spanishContactContent);
+  if (/phoneUSE164|phoneFormatted|@duartes_detailing|https?:\/\/|instagram:\/\/|\+1\d{10}|37\.63506596297662|-122\.08118753590793/.test(spanishContact)) fail("Spanish Contact must not own phone, handle, URL, or coordinate destinations.");
 };
 
 const verifyServicesContracts = () => {

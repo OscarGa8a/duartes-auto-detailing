@@ -3,15 +3,19 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import AboutComposition from "../components/sections/about/AboutComposition.astro";
 import { getPageJsonLd } from "../data/business";
 import { englishAboutContent, resolveAboutTemplate } from "../i18n/about-content";
+import { getCanonicalPagePath } from "../i18n/routes";
 
+const locale = "en-US";
+const pageId = "about";
 const { metadata } = englishAboutContent;
 const pageDescription = resolveAboutTemplate(metadata.description);
+const schemaPath = getCanonicalPagePath(pageId, locale);
 const site = Astro.site ?? new URL("https://duartesautodetailing.com");
 const structuredData = [
   getPageJsonLd(
     site,
     "AboutPage",
-    "/about/",
+    schemaPath,
     metadata.schemaName,
     resolveAboutTemplate(metadata.schemaDescription),
   ),
@@ -23,6 +27,8 @@ const structuredData = [
   description={pageDescription}
   imageAlt={metadata.socialImageAlt}
   structuredData={structuredData}
+  locale={locale}
+  pageId={pageId}
 >
   <AboutComposition content={englishAboutContent} />
 </BaseLayout>
