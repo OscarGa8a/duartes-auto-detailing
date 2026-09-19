@@ -6,8 +6,12 @@ import Button from '../../ui/Button.astro';
 import Icon from '../../ui/Icon.astro';
 import { config, formattedNumber } from '../../../data/config';
 import type { HomeContent } from '../../../i18n/content-types';
+import type { Locale } from '../../../i18n/locales';
+import { getCanonicalPagePath } from '../../../i18n/routes';
 
-const { content } = Astro.props as { content: HomeContent['hero'] };
+const { content, locale = "en-US" } = Astro.props as { content: HomeContent['hero']; locale?: Locale };
+const contactHref = getCanonicalPagePath("contact", locale);
+const servicesHref = getCanonicalPagePath("services", locale);
 
 interface HeroSlide {
   srcWeb: string;
@@ -128,11 +132,11 @@ const heroSlides: HeroSlide[] = [
       </div>
 
       <div class="motion-enter flex flex-col gap-3 pt-1 sm:flex-row lg:gap-4 lg:pt-2" style="--enter-delay: 420ms">
-        <Button class="w-full" href="/contact" variant="primary-bright">
+        <Button class="w-full" href={contactHref} variant="primary-bright">
           <Icon name="tabler:phone" />
           {content.primaryAction}
         </Button>
-        <Button class="w-full border-gold bg-black/22 text-text-primary backdrop-blur-md hover:bg-black/36" href="/services" variant="outline">
+        <Button class="w-full border-gold bg-black/22 text-text-primary backdrop-blur-md hover:bg-black/36" href={servicesHref} variant="outline">
           {content.secondaryAction}
         </Button>
       </div>

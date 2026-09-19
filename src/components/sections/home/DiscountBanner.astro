@@ -2,10 +2,12 @@
 import { CldImage } from 'astro-cloudinary';
 import Button from '../../ui/Button.astro';
 import Icon from '../../ui/Icon.astro';
-import type { HomeContent } from '../../../i18n/content-types';
-import { englishHomeContent } from '../../../i18n/home-content';
+import type { HomeDiscountBanner } from '../../../i18n/content-types';
+import type { Locale } from '../../../i18n/locales';
+import { getCanonicalPagePath } from '../../../i18n/routes';
 
-const { content = englishHomeContent.discountBanner } = Astro.props as { content?: HomeContent['discountBanner'] };
+const { content, locale = "en-US" } = Astro.props as { content: HomeDiscountBanner; locale?: Locale };
+const contactHref = getCanonicalPagePath("contact", locale);
 ---
 
 <section class="bg-black py-10 lg:py-14 relative overflow-hidden">
@@ -37,7 +39,7 @@ const { content = englishHomeContent.discountBanner } = Astro.props as { content
         <p class="text-black/72 text-sm max-w-sm leading-relaxed">
           {content.description}
         </p>
-        <Button class='motion-glow-pulse ' href="/contact" variant="dark">
+        <Button class='motion-glow-pulse ' href={contactHref} variant="dark">
           <Icon name="tabler:phone" class="text-gold"  />
           {content.action}
         </Button>
