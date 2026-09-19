@@ -1,6 +1,8 @@
 import { config, formattedNumber } from "../data/config";
 import type { AboutContent, AboutMetric, AboutTemplate } from "./content-types";
 
+export { spanishAboutContent } from "./spanish-about-content";
+
 const metricValues: Record<AboutMetric, string> = {
   yearsOfExperience: String(config.yearsOfExperience),
   vehiclesDetailed: formattedNumber(config.vehiclesDetailed),

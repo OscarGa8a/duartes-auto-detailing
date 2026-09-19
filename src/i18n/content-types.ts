@@ -82,12 +82,24 @@ export interface AboutContent {
   cta: { eyebrow: string; title: string; description: string; buttonText: string; smsMessage: string };
 }
 
-export interface ContactSectionPolicy {
-  serviceMap: "include" | "omit";
+export type ContactSectionPolicy =
+  | { serviceMap: "include" }
+  | { serviceMap: "omit" };
+
+export interface ContactMapContent {
+  eyebrow: string;
+  title: string;
+  description: string;
+  help: string;
+  iframeTitle: string;
+  overlayLabel: string;
+  directionsLabel: string;
+  openMapLabel: string;
+  noScriptPrefix: string;
+  noScriptLinkLabel: string;
 }
 
-export interface ContactContent {
-  policy: ContactSectionPolicy;
+export interface ContactContentBase {
   metadata: PageMetadataContent;
   hero: { eyebrow: string; title: string; description: string };
   section: { eyebrow: string; title: string; description: string };
@@ -111,19 +123,19 @@ export interface ContactContent {
     submitLabel: string;
     preparedStatus: string;
   };
-  map: {
-    eyebrow: string;
-    title: string;
-    description: string;
-    help: string;
-    iframeTitle: string;
-    overlayLabel: string;
-    directionsLabel: string;
-    openMapLabel: string;
-    noScriptPrefix: string;
-    noScriptLinkLabel: string;
-  };
 }
+
+export type ContactContentWithServiceMap = ContactContentBase & {
+  policy: { serviceMap: "include" };
+  map: ContactMapContent;
+};
+
+export type ContactContentWithoutServiceMap = ContactContentBase & {
+  policy: { serviceMap: "omit" };
+  map?: never;
+};
+
+export type ContactContent = ContactContentWithServiceMap | ContactContentWithoutServiceMap;
 
 export interface ContactChannelContent {
   title: string;
