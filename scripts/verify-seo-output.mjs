@@ -610,6 +610,52 @@ function verifyLlmsOutput() {
 	if (existsSync(llmsFullFile)) fail(llmsFullFile, "llms-full.txt must not be generated");
 }
 
+function verify404Output() {
+	const file = join(distDir, "404.html");
+	if (!existsSync(file)) {
+		fail(distDir, "missing generated 404.html");
+		return;
+	}
+
+	const html = readFileSync(file, "utf8");
+	const robotsDirectives = getRobotsDirectives(getMeta(html, "name", "robots"));
+	if (!robotsDirectives.has("noindex") || !robotsDirectives.has("nofollow")) {
+		fail(file, "robots meta must include noindex and nofollow");
+	}
+	if (!/<html\b[^>]*\blang=["']es-US["']/i.test(html)) {
+		fail(file, "html lang must be es-US");
+	}
+	if ((html.match(/<main\b/gi) ?? []).length !== 1) {
+		fail(file, "must contain exactly one <main>");
+	}
+
+	const h1s = [...html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)];
+	if (h1s.length !== 1 || getText(h1s[0][1]) !== "Parece que este camino necesita un detalle.") {
+		fail(file, "must contain exactly one Spanish h1 with the required text");
+	}
+	if (!/<[a-z][\w:-]*\b[^>]*\blang=["']en["'][^>]*>\s*Looks like this route could use a detail\.\s*<\/[a-z][\w:-]*>/i.test(html)) {
+		fail(file, "must include the required English support text marked lang=en");
+	}
+
+	const anchors = [...html.matchAll(/<a\b[^>]*\bhref\s*=\s*(["'])(.*?)\1[^>]*>/gi)];
+	if (anchors.length !== 1 || decodeHtml(anchors[0]?.[2] ?? "") !== "/") {
+		fail(file, "must contain exactly one home action linking to /");
+	}
+	if (getAnchorHrefPaths(html).some((pathname) => pathname !== "/")) {
+		fail(file, "must not contain extra internal links");
+	}
+
+	if (getLink(html, "canonical")) fail(file, "must not include a canonical link");
+	if (/<link\b[^>]*\brel=["']alternate["'][^>]*>/i.test(html)) {
+		fail(file, "must not include hreflang or alternate links");
+	}
+	if (getMeta(html, "property", "og:url")) fail(file, "must not include og:url");
+	if (getJsonLdBlocks(html).length > 0) fail(file, "must not include JSON-LD");
+	if (/<meta\b[^>]*\bhttp-equiv=["']refresh["'][^>]*>/i.test(html) || /\b(?:window\.)?location(?:\.href)?\s*=/i.test(html)) {
+		fail(file, "must not include redirects");
+	}
+}
+
 function expectedJsonLdTypes(route) {
 	if (route === "/" || route === "/es/") return ["AutoWash", "WebSite"];
 	if (route === "/services/" || route === "/es/services/") return ["AutoWash", "ItemList"];
@@ -629,6 +675,7 @@ if (!existsSync(distDir)) {
 }
 
 verifyLlmsOutput();
+verify404Output();
 
 const htmlFiles = getHtmlFiles(distDir);
 const sitemapFiles = getSitemapFiles(distDir);
@@ -664,6 +711,10 @@ for (const route of generatedServiceDetailRoutes) {
 const routeFiles = new Map(htmlFiles.map((file) => [getRoute(file), file]));
 const sitemapLocations = getSitemapLocations(sitemapFiles);
 const sitemapLocationSet = new Set(sitemapLocations);
+if (sitemapLocationSet.has(new URL("/404.html", siteBase).href)) {
+	fail(distDir, "sitemap must not include /404.html");
+}
+
 const sitemapSpanishRoutes = new Set(sitemapLocations.map((location) => new URL(location).pathname).filter(isSpanishPath).map((pathname) => `${pathname.replace(/\/$/, "")}/`));
 if (JSON.stringify([...sitemapSpanishRoutes].sort()) !== JSON.stringify([...expectedSpanishRoutes].sort())) {
 	fail(distDir, "sitemap must include exactly the four published Spanish canonical routes");
