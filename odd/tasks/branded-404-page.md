@@ -64,6 +64,7 @@ TDD is not configured. Use ordinary deterministic source/output checks, Astro/ty
 - 2026-09-19: localization checks, Astro check, `git diff --check`, isolated production build, and the SEO/404 output gate passed; the build generated 35 canonical pages plus `/404.html`.
 - 2026-09-19: native review `review-ed317939a3fcd0a7` was approved and acknowledged with one informational reminder that edge HTTP status proof remains post-deployment.
 - 2026-09-19: delivery issue [#67](https://github.com/OscarGa8a/duartes-auto-detailing/issues/67) was created and owner-approved.
+- 2026-09-19: work-unit commit `daf3a46` records ODD-404-01 and ODD-404-02 with their verifier contracts and task evidence.
 
 ## Next step
 Commit and open the approved delivery PR, then verify real HTTP 404 behavior after an explicitly authorized merge and deployment.
