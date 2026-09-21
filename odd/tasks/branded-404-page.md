@@ -5,7 +5,7 @@ Replace Cloudflare Pages' generic 200 homepage fallback with a premium bilingual
 
 ## Baseline and production evidence
 - Baseline: merged Spanish-localization commit `3dd4b4212544f2dd7ab3353645e1338d03af113a`.
-- Production currently returns HTTP 200 from Cloudflare for random unknown paths and `/es/services/interior-detailing`.
+- Before this work, production returned HTTP 200 from Cloudflare for random unknown paths and `/es/services/interior-detailing`.
 - Official Cloudflare Pages behavior: without a top-level `404.html`, unknown paths receive the SPA entry point; adding a top-level `404.html` disables that fallback and serves the custom document with HTTP 404: https://developers.cloudflare.com/pages/configuration/serving-pages/.
 
 ## Approved design direction
@@ -37,7 +37,7 @@ TDD is not configured. Use ordinary deterministic source/output checks, Astro/ty
 ## Tasks
 - [x] **ODD-404-01 — Build the branded error page.** Added `src/pages/404.astro` with a standalone Spanish-primary, bilingual error page, error-safe metadata, accessible home action, responsive graphite/cream/gold composition, and reduced-motion reflective treatment.
 - [x] **ODD-404-02 — Enforce static error contracts.** Extended `scripts/verify-seo-output.mjs` to require and validate `dist/404.html` while keeping it outside canonical route and sitemap inventories.
-- [ ] **ODD-404-03 — Verify build and status boundary.** Run source checks, Astro check, isolated build/SEO, exact path/line inventory, visual/static review, native review, and post-delivery HTTP 404 validation.
+- [x] **ODD-404-03 — Verify build and status boundary.** Source checks, Astro check, isolated build/SEO, exact path/line inventory, visual/static review, native review, and post-delivery HTTP 404 validation passed.
 
 ## Acceptance criteria
 1. `dist/404.html` exists and is not included in sitemap or canonical page inventories.
@@ -65,6 +65,8 @@ TDD is not configured. Use ordinary deterministic source/output checks, Astro/ty
 - 2026-09-19: native review `review-ed317939a3fcd0a7` was approved and acknowledged with one informational reminder that edge HTTP status proof remains post-deployment.
 - 2026-09-19: delivery issue [#67](https://github.com/OscarGa8a/duartes-auto-detailing/issues/67) was created and owner-approved.
 - 2026-09-19: work-unit commit `daf3a46` records ODD-404-01 and ODD-404-02 with their verifier contracts and task evidence.
+- 2026-09-20: PR [#68](https://github.com/OscarGa8a/duartes-auto-detailing/pull/68) merged at `fea0ab6d14c153ab45fd7e9d9f1fc887a5e8ff00` after final committed-target review `review-20801668669cf0ce` was approved and acknowledged.
+- 2026-09-20: production returned direct HTTP 404 for a random unknown path and `/es/services/interior-detailing`, both rendering the branded page; representative canonical routes returned 200 and `sitemap-0.xml` excluded `/404.html`.
 
-## Next step
-Commit and open the approved delivery PR, then verify real HTTP 404 behavior after an explicitly authorized merge and deployment.
+## Completion
+All implementation, delivery, native review, and production validation work is complete.
