@@ -27,19 +27,27 @@ const normalizePath = (path: string) => {
 };
 
 const currentPath = normalizePath(Astro.url.pathname);
+const homeHref = normalizePath(getShellDestinationPath("home", locale));
 
-const isLinkActive = (href: string) => {
+const isLinkActive = (href: string, itemPageId?: PageId) => {
+  if (pageId && itemPageId) {
+    return pageId === itemPageId;
+  }
+
   const normalizedHref = normalizePath(href);
 
-  if (normalizedHref === '/') return currentPath === '/';
+  if (normalizedHref === homeHref || normalizedHref === '/') {
+    return currentPath === normalizedHref;
+  }
 
   return currentPath === normalizedHref || currentPath.startsWith(`${normalizedHref}/`);
 };
 
-const links = content.navigation.map(({ pageId, label }) => ({
-  href: getShellDestinationPath(pageId, locale),
+const links = content.navigation.map(({ pageId: itemPageId, label }) => ({
+  pageId: itemPageId,
+  href: getShellDestinationPath(itemPageId, locale),
   label,
-  icon: navigationIcons[pageId],
+  icon: navigationIcons[itemPageId],
 }));
 ---
 
@@ -62,12 +70,12 @@ const links = content.navigation.map(({ pageId, label }) => ({
 
     <!-- Desktop nav -->
     <ul class="hidden md:flex items-center gap-8">
-      {links.map(({ href, label }) => (
+      {links.map(({ href, label, pageId: itemPageId }) => (
         <li>
           <a
             href={href}
             class={`text-sm font-medium transition-colors hover:text-gold drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] ${
-              isLinkActive(href) ? 'text-gold' : 'text-white'
+              isLinkActive(href, itemPageId) ? 'text-gold' : 'text-white'
             }`}
           >
             {label}
@@ -143,32 +151,35 @@ const links = content.navigation.map(({ pageId, label }) => ({
         </div>
   
         <ul class="relative z-10 mt-5 flex flex-col gap-3">
-        {links.map(({ href, label, icon }, index) => (
-          <li data-menu-item style={`--menu-delay: ${index * 70}ms`}>
-            <a
-              href={href}
-              class={`group flex items-center justify-between gap-4 rounded-xl border px-4 py-4 transition-all duration-300 ${
-                  isLinkActive(href)
-                  ? 'border-wine-soft/34 bg-[linear-gradient(90deg,rgba(110,43,44,0.22),rgba(212,175,55,0.08))] text-gold shadow-[0_18px_30px_-24px_rgba(110,43,44,0.5)]'
-                  : 'border-white/8 bg-black/20 text-text-primary hover:border-wine-soft/24 hover:bg-wine/10'
-              }`}
-            >
-              <div class="flex items-center gap-4">
-                <span class={`inline-flex h-11 w-11 items-center justify-center rounded-full ${
-                  isLinkActive(href) ? 'bg-gold text-text-dark' : 'bg-[linear-gradient(180deg,rgba(38,41,46,1),rgba(110,43,44,0.3))] text-gold'
-                }`}>
-                  <Icon name={icon} size="lg" class="text-current" />
-                </span>
-                  <div class="flex flex-col gap-1">
-                    <span class="text-lg font-semibold">{label}</span>
-                    <span class="text-xs font-medium uppercase tracking-wide text-text-muted">
-                      {isLinkActive(href) ? content.menu.currentPageLabel : content.menu.openSectionLabel}
-                    </span>
+        {links.map(({ href, label, icon, pageId: itemPageId }, index) => {
+          const isActive = isLinkActive(href, itemPageId);
+          return (
+            <li data-menu-item style={`--menu-delay: ${index * 70}ms`}>
+              <a
+                href={href}
+                class={`group flex items-center justify-between gap-4 rounded-xl border px-4 py-4 transition-all duration-300 ${
+                    isActive
+                    ? 'border-wine-soft/34 bg-[linear-gradient(90deg,rgba(110,43,44,0.22),rgba(212,175,55,0.08))] text-gold shadow-[0_18px_30px_-24px_rgba(110,43,44,0.5)]'
+                    : 'border-white/8 bg-black/20 text-text-primary hover:border-wine-soft/24 hover:bg-wine/10'
+                }`}
+              >
+                <div class="flex items-center gap-4">
+                  <span class={`inline-flex h-11 w-11 items-center justify-center rounded-full ${
+                    isActive ? 'bg-gold text-text-dark' : 'bg-[linear-gradient(180deg,rgba(38,41,46,1),rgba(110,43,44,0.3))] text-gold'
+                  }`}>
+                    <Icon name={icon} size="lg" class="text-current" />
+                  </span>
+                    <div class="flex flex-col gap-1">
+                      <span class="text-lg font-semibold">{label}</span>
+                      <span class="text-xs font-medium uppercase tracking-wide text-text-muted">
+                        {isActive ? content.menu.currentPageLabel : content.menu.openSectionLabel}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </a>
-            </li>
-          ))}
+                </a>
+              </li>
+          );
+        })}
         </ul>
   
         <!-- <div class="relative z-10 mt-5 rounded-[1.35rem] border border-gold/16 bg-gold/10 px-4 py-4">
