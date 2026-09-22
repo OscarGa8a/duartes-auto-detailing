@@ -2,16 +2,31 @@
 import Button from '../../ui/Button.astro';
 import ServiceGallery from './ServiceGallery.astro';
 import type { Service } from '../../../data/services';
+import type { LocalizedServiceDetail, ServiceDetailUiContent } from '../../../i18n/spanish-service-details';
 import Icon from '../../ui/Icon.astro';
 import { config } from '../../../data/config';
 
 interface Props {
   service: Service;
+  localizedContent?: LocalizedServiceDetail;
+  uiContent?: ServiceDetailUiContent;
 }
 
-const { service } = Astro.props;
+const { service, localizedContent, uiContent } = Astro.props;
 
-const phoneMessage = encodeURIComponent(`Hello, I'd like to book the service: ${service.name}`);
+const displayName = localizedContent?.name ?? service.name;
+const tagline = localizedContent?.tagline ?? service.tagline;
+const description = localizedContent?.description ?? service.description;
+const includes = localizedContent?.includes ?? service.includes;
+const ctaLine = localizedContent?.ctaLine ?? service.ctaLine;
+
+const eyebrow = uiContent?.eyebrow ?? "Service detail";
+const includesHeading = uiContent?.includesHeading ?? "What this service includes";
+const ctaButtonText = uiContent?.ctaButtonText ?? "Book this service";
+
+const phoneMessage = encodeURIComponent(
+  uiContent ? `${uiContent.smsMessagePrefix} ${displayName}` : `Hello, I'd like to book the service: ${service.name}`
+);
 const phoneUrl = `sms:${config.phoneUSE164}?body=${phoneMessage}`;
 ---
 
@@ -23,27 +38,27 @@ const phoneUrl = `sms:${config.phoneUSE164}?body=${phoneMessage}`;
     <div data-reveal="blur" class="min-w-0 flex flex-col gap-6 max-w-2xl w-full">
       <span class="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold">
         <span class="h-px w-10 bg-gold"></span>
-        Service detail
+        {eyebrow}
       </span>
 
       <div class="flex flex-col gap-3">
         <h1 class="text-text-primary font-bold leading-tight text-h1">
-          {service.name}
+          {displayName}
         </h1>
         <p class="text-gold text-base lg:text-lg font-medium">
-          {service.tagline}
+          {tagline}
         </p>
       </div>
 
       <p class="text-text-secondary leading-relaxed">
-        {service.description}
+        {description}
       </p>
 
-      {service.ctaLine && (
+      {ctaLine && (
         <div data-reveal="scale" style="--reveal-delay: 160ms" class="motion-card-hover relative overflow-hidden rounded-xl border border-wine-soft/20 bg-[linear-gradient(180deg,rgba(110,43,44,0.16),rgba(23,24,27,0.96))] px-6 py-5 shadow-lg">
           <div class="motion-sheen"></div>
           <p class="text-wine-tint italic font-medium leading-relaxed">
-            {service.ctaLine}
+            {ctaLine}
           </p>
         </div>
       )}
@@ -51,11 +66,11 @@ const phoneUrl = `sms:${config.phoneUSE164}?body=${phoneMessage}`;
       <div class="flex flex-col gap-4">
         <div class="flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold">
           <span class="h-px w-10 bg-gold"></span>
-          What this service includes
+          {includesHeading}
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {service.includes.map((item, index) => (
+          {includes.map((item, index) => (
             <div data-reveal="scale" style={`--reveal-delay: ${index * 60}ms`} class="motion-card-hover relative overflow-hidden rounded-xl border border-border-soft bg-surface-2 px-4 py-3 flex items-start gap-3">
               <div class={`absolute inset-x-4 top-0 h-px bg-linear-to-r from-transparent ${index % 3 === 0 ? 'via-wine-soft/72' : 'via-gold/70'} to-transparent`}></div>
               <span class={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${index % 3 === 0 ? 'bg-wine/16 text-wine-tint' : 'bg-gold/14 text-gold'}`}>
@@ -70,7 +85,7 @@ const phoneUrl = `sms:${config.phoneUSE164}?body=${phoneMessage}`;
       <div data-reveal="up" style="--reveal-delay: 220ms" class="pt-2">
         <Button href={phoneUrl} variant="primary-bright" target="_blank" class='w-full sm:w-auto sm:min-w-64'>
           <Icon name="tabler:phone" />
-          Book this service
+          {ctaButtonText}
         </Button>
       </div>
     </div>
@@ -78,7 +93,7 @@ const phoneUrl = `sms:${config.phoneUSE164}?body=${phoneMessage}`;
     <div data-reveal="scale" class="relative w-full min-w-0">
       <div class="motion-float-slow relative rounded-xl border border-white/8 bg-surface px-4 py-4 sm:px-5 sm:py-5 shadow-lg">
         <div class="motion-glow-pulse absolute -right-6 -top-6 h-24 w-24 rounded-full bg-wine/12 blur-2xl"></div>
-        <ServiceGallery media={service.media ? service.media : []} serviceName={service.name} />
+        <ServiceGallery media={service.media ? service.media : []} serviceName={displayName} />
       </div>
     </div>
   </div>

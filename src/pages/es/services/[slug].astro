@@ -1,0 +1,93 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ServiceDetailHero from '../../../components/sections/services/ServiceDetailHero.astro';
+import ServiceVideoEmbed from '../../../components/sections/services/ServiceVideoEmbed.astro';
+import RelatedServices from '../../../components/sections/services/RelatedServices.astro';
+import CTABanner from '../../../components/ui/CTABanner.astro';
+import { services, getRelatedServices } from '../../../data/services';
+import { config } from '../../../data/config';
+import { getBreadcrumbListJsonLd, getLocalBusinessJsonLd } from '../../../data/business';
+import { getCloudinaryImageUrl } from '../../../helpers/cloudinary';
+import { spanishServiceDetails, spanishServiceDetailUiContent } from '../../../i18n/spanish-service-details';
+
+export function getStaticPaths() {
+  return services.map((service) => ({
+    params: { slug: service.slug },
+    props: { service },
+  }));
+}
+
+const locale = "es-US";
+const { service } = Astro.props;
+const related = getRelatedServices(service.relatedSlugs);
+const localized = spanishServiceDetails[service.id];
+
+const pageTitle = localized?.pageTitle ?? `${service.name.trim()} en el Área de la Bahía`;
+const pageDescription = localized?.pageDescription ?? `${service.tagline} Servicio móvil disponible en toda el Área de la Bahía.`;
+const candidateOgImage = getCloudinaryImageUrl(service.ogImage ?? service.images[0] ?? '', 'f_auto,q_auto,w_1200,h_630,c_fill');
+const ogImage = candidateOgImage.startsWith('http') || candidateOgImage.startsWith('/') ? candidateOgImage : undefined;
+const site = Astro.site ?? new URL('https://duartesautodetailing.com');
+
+const serviceJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "@id": new URL(`/es/services/${service.slug}#service`, site).href,
+  name: localized?.name ?? service.name.trim(),
+  description: localized?.description ?? service.description,
+  serviceType: localized?.name ?? service.name.trim(),
+  areaServed: {
+    "@type": "AdministrativeArea",
+    name: "Bay Area, California",
+  },
+  provider: {
+    "@id": new URL("#duartes-auto-detailing", site).href,
+  },
+};
+
+const structuredData = [
+  getLocalBusinessJsonLd(site),
+  serviceJsonLd,
+  getBreadcrumbListJsonLd(site, [
+    { name: 'Inicio', path: '/es/' },
+    { name: 'Servicios', path: '/es/services/' },
+    { name: localized?.name ?? service.name.trim(), path: `/es/services/${service.slug}/` },
+  ]),
+];
+
+const phoneMessage = encodeURIComponent(`${spanishServiceDetailUiContent.smsMessagePrefix} ${localized?.name ?? service.name}`);
+const phoneUrl = `sms:${config.phoneUSE164}?body=${phoneMessage}`;
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  ogImage={ogImage}
+  imageAlt={localized?.imageAlt ?? `Resultado de ${service.name.trim()} por Duartes Auto Detailing`}
+  structuredData={structuredData}
+  locale={locale}
+>
+  <ServiceDetailHero
+    service={service}
+    localizedContent={localized}
+    uiContent={spanishServiceDetailUiContent}
+  />
+
+  {service.video && (
+    <ServiceVideoEmbed video={service.video} serviceSlug={service.slug} />
+  )}
+
+  {related.length > 0 && (
+    <RelatedServices services={related} locale={locale} />
+  )}
+
+  <CTABanner
+    image="cta_banner_utp6hb"
+    eyebrow={spanishServiceDetailUiContent.ctaEyebrow}
+    title={spanishServiceDetailUiContent.ctaTitle}
+    description={`${spanishServiceDetailUiContent.ctaDescriptionPrefix} ${(localized?.name ?? service.name).toLowerCase()} ${spanishServiceDetailUiContent.ctaDescriptionSuffix}`}
+    buttonText={spanishServiceDetailUiContent.ctaButtonText}
+    buttonHref={phoneUrl}
+    buttonTarget="_blank"
+    variant="premium"
+  />
+</BaseLayout>

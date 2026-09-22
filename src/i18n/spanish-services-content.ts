@@ -1,7 +1,7 @@
 import type { ServicesContent } from "./content-types";
 
 export const spanishServicesContent = {
-  policy: { areaTeaser: "include", englishDetailDisclosure: "required" },
+  policy: { areaTeaser: "include", englishDetailDisclosure: "not-required" },
   metadata: {
     title: "Servicios de detallado automotriz móvil",
     description: "Explora servicios de detallado automotriz móvil en el Área de la Bahía, incluidos el detallado interior, exterior y completo, el recubrimiento cerámico y la corrección de pintura.",
@@ -33,8 +33,7 @@ export const spanishServicesContent = {
     description: "Cada opción está diseñada para ser fácil de comparar, sencilla de reservar y clara sobre el nivel de acabado que puedes esperar.",
   },
   cards: {
-    detailAction: "Ver detalles en inglés",
-    englishDetailDisclosure: "Los detalles completos de cada servicio están disponibles en inglés.",
+    detailAction: "Ver detalles",
     byServiceId: {
       "interior-detail": { displayName: "Detallado interior", summary: "Cuidado detallado del interior centrado en la limpieza, la comodidad y la presentación." },
       "exterior-detail": { displayName: "Detallado exterior", summary: "Proceso de limpieza exterior orientado a realzar el brillo y la presentación." },
@@ -54,4 +53,4 @@ export const spanishServicesContent = {
   },
 } as const satisfies ServicesContent;
 
-export const spanishServicesContentDigest = "bc55a2b15231023ba174f9bf11f1189a3c62d6a114eb0bdda90b55b6ff4b97a5";
+export const spanishServicesContentDigest = "27901899f6e83926427e8684643de73fb02a95c794c7fdd53d62e8293fc503a7";
