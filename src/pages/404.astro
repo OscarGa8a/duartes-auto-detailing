@@ -22,7 +22,10 @@ import '../styles/global.css';
 
       <main class="error-main">
         <div class="brand-mark">
-          <img src="/images/logo.png" alt="Duartes Auto Detailing" width="184" height="184" />
+          <picture class="contents">
+            <source srcset="/images/logo.webp" type="image/webp" />
+            <img src="/images/logo.png" alt="Duartes Auto Detailing" width="184" height="184" loading="eager" decoding="async" />
+          </picture>
           <span aria-hidden="true"></span>
         </div>
 
