@@ -146,6 +146,7 @@ const spanishCounterparts = new Map([
 	["/about/", "/es/about/"],
 	["/contact/", "/es/contact/"],
 	["/services/", "/es/services/"],
+	...[...expectedSpanishServiceDetails.keys()].map((es) => [es.replace(/^\/es/, ""), es]),
 ]);
 const expectedPageSchemas = new Map([
 	[

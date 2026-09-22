@@ -1,6 +1,6 @@
 ---
 import { localeDefinitions, type Locale } from '../../i18n/locales';
-import { getPublishedCounterpart, type PageId } from '../../i18n/routes';
+import { getPublishedCounterpart, resolveCounterpartPath, type PageId, type RoutePath } from '../../i18n/routes';
 
 interface Props {
   title: string;
@@ -31,7 +31,13 @@ const fallbackOgImage = 'https://res.cloudinary.com/dkq4plo7s/image/upload/f_aut
 const imageHref = new URL(ogImage ?? fallbackOgImage, siteBase).href;
 const twitterCard = 'summary_large_image';
 const localeDefinition = localeDefinitions[locale];
-const counterpart = getPublishedCounterpart(pageId, locale);
+let counterpart = getPublishedCounterpart(pageId, locale);
+if (counterpart) {
+  counterpart = {
+    ...counterpart,
+    path: resolveCounterpartPath(counterpart.path, Astro.url.pathname) as RoutePath,
+  };
+}
 const counterpartHref = counterpart ? new URL(counterpart.path, siteBase).href : undefined;
 ---
 

@@ -3,8 +3,19 @@ import type { Locale } from "./locales";
 export const pageIds = ["home", "about", "contact", "services"] as const;
 export type PageId = (typeof pageIds)[number];
 export type ShellDestination = PageId | "service-area-bay-area-en";
-export type RoutePath = "/" | "/about/" | "/contact/" | "/services/" | "/es/" | "/es/about/" | "/es/contact/" | "/es/services/";
+export type RoutePath = "/" | "/about/" | "/contact/" | "/services/" | "/es/" | "/es/about/" | "/es/contact/" | "/es/services/" | (string & {});
 export type ShellDestinationPath = RoutePath | "/service-area/bay-area/";
+
+export const resolveCounterpartPath = (counterpartPath: string, currentPath: string): string => {
+  const match = currentPath.match(/(?:\/es)?\/services\/([a-z0-9-]+)\/?$/);
+  if (match) {
+    const slug = match[1];
+    return counterpartPath.startsWith("/es/")
+      ? `/es/services/${slug}/`
+      : `/services/${slug}/`;
+  }
+  return counterpartPath;
+};
 
 type Route = { locale: Locale; path: RoutePath; restParam?: string };
 export type CandidateRoutePair = { pageId: PageId; en: Route; es: Route; requiredSpanishBlocks: readonly string[] };
