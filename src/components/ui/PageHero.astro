@@ -37,8 +37,12 @@ const desktopSrc = getCloudinaryImageUrl(
     <img
       src={mobileSrc}
       alt={title}
+      width="900"
+      height="600"
       class="absolute inset-0 h-full w-full object-cover page-hero__image object-right"
       loading="eager"
+      fetchpriority="high"
+      decoding="async"
     />
   </picture>
   <!-- <CldImage
@@ -73,6 +77,7 @@ const desktopSrc = getCloudinaryImageUrl(
           {description}
         </p>
       )}
+      <slot />
     </div>
   </div>
 </section>

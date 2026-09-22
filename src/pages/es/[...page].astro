@@ -24,6 +24,7 @@ const schemaPath = getCanonicalPagePath(pageId, locale);
 const aboutMetadata = spanishAboutContent.metadata;
 const aboutDescription = resolveAboutTemplate(aboutMetadata.description);
 const aboutStructuredData = [
+  getLocalBusinessJsonLd(site),
   getPageJsonLd(site, "AboutPage", schemaPath, aboutMetadata.schemaName, resolveAboutTemplate(aboutMetadata.schemaDescription)),
 ];
 const contactMetadata = spanishContactContent.metadata;
