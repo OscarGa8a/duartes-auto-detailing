@@ -22,7 +22,7 @@ if (content.policy.englishDetailDisclosure === "required" && !englishDetailDiscl
       </span>
       <h2 class="text-text-dark font-bold text-h2">{content.grid.title}</h2>
       <p class="text-text-dark/72 leading-relaxed">{content.grid.description}</p>
-    </div>{englishDetailDisclosure && <p class="text-sm text-text-secondary">{englishDetailDisclosure}</p>}
+    </div>{englishDetailDisclosure && <p class="text-sm text-text-dark/75 italic">{englishDetailDisclosure}</p>}
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {services.map((service, index) => {

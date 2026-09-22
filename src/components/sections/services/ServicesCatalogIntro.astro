@@ -39,9 +39,9 @@ const { content } = Astro.props as { content: ServicesContent["intro"] };
         <CldImage
           src="about-cta_xhm8le"
           alt={content.imageAlt}
-          width={1200}
-          height={900}
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 44vw"
+          width={1000}
+          height={800}
+          sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) 90vw, 44vw"
           class="w-full h-full object-cover"
         />
         <div class="absolute inset-0 bg-linear-to-t from-black/58 via-transparent to-transparent"></div>
