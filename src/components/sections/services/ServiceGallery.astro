@@ -235,7 +235,7 @@ const countLabel = videoCount > 0
       const mediaSrc = trigger.dataset.galleryMediaSrc ?? '';
       if (isVideo) {
         return {
-          content: `<video src="${mediaSrc}" controls playsinline autoplay
+          content: `<video src="${mediaSrc}" controls playsinline autoplay muted
             style="max-height:85dvh;" data-gallery-id="${galleryId}" class="service-gallery-video service-gallery-video-${index} block h-auto outline-none rounded-sm bg-black w-auto max-w-full">
           </video>`,
           width: 'auto',
@@ -294,13 +294,16 @@ const countLabel = videoCount > 0
             stopAllVideos();
             if (currentSlide?.slideConfig?.type !== 'image') {
               const video = document.querySelector<HTMLVideoElement>(`.service-gallery-video-${currentSlide.slideIndex}[data-gallery-id="${galleryId}"]`);
-              if (video) video.play();
+              video?.play().catch(() => {});
             }
           }) as () => void
         );
 
         if (mainTriggers[index]?.dataset.galleryType === 'image') {
           stopAllVideos();
+        } else {
+          const video = document.querySelector<HTMLVideoElement>(`.service-gallery-video-${index}[data-gallery-id="${galleryId}"]`);
+          video?.play().catch(() => {});
         }
       } catch (error) {
         console.error('Unable to load the service gallery lightbox.', error);

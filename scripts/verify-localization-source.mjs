@@ -27,7 +27,7 @@ const digest = (value) => createHash("sha256").update(canonical(value)).digest("
 const fail = (message) => { throw new Error(message); };
 const approvedSpanishDigests = {
   shell: "702d3c0059d1ef3e048b1064050209ddb7c77b59cf55a821a3369cbf1058ae25",
-  home: "6c259ed9ecb79022dd778d8fad74ec6d287a9b02e084664ec2a2de8e732b4b2d",
+  home: "b9b246e2351118963eafb856964f256c7eeaad6b883bbc79d9658df99be31d8f",
   about: "29dc14fa4af33cd95392115c82693bb7263e37464288862953c4e9e5a684c645",
   contact: "0812252896e042a485682a2716c7e7792deb7dbf41f405cccb38fc2294ecafaf",
   services: "8d2cd90a9f164f7a0c1f10b110ec32e1e925a63bf244d6de4fbbf52d1b5caadf",
@@ -43,7 +43,7 @@ const verifyHomeDiscountBannerContract = () => {
   const types = readFileSync(resolve(root, "src/i18n/content-types.ts"), "utf8");
   if (!types.includes("export type HomeContentWithDiscountBanner") || !types.includes('policy: HomeSectionPolicy & { discountBanner: "include" };') || !types.includes("discountBanner: HomeDiscountBanner;") || !types.includes("export type HomeContentWithoutDiscountBanner") || !types.includes('policy: HomeSectionPolicy & { discountBanner: "omit" };') || !types.includes("discountBanner?: never;")) fail("Home discount-banner type must require included content and forbid omitted content.");
   if (englishHomeContent.policy.discountBanner !== "include" || !Object.hasOwn(englishHomeContent, "discountBanner")) fail("English Home must include its discount banner subtree.");
-  if (spanishHomeContent.policy.discountBanner !== "omit" || Object.hasOwn(spanishHomeContent, "discountBanner")) fail("Spanish Home must omit its discount banner subtree.");
+  if (spanishHomeContent.policy.discountBanner !== "include" || !Object.hasOwn(spanishHomeContent, "discountBanner")) fail("Spanish Home must include its discount banner subtree.");
 };
 
 export const verifyRecords = (ledger, manifest) => {
@@ -92,8 +92,8 @@ const verifyHomeContracts = () => {
   if (/<(?:div|main|section)\b/.test(composition)) fail("Home composition must not add wrapper markup.");
   const sectionPositions = sections.map((section) => composition.indexOf(`<${section}`));
   if (sectionPositions.some((position, index) => position === -1 || (index > 0 && position < sectionPositions[index - 1]))) fail("Home composition must retain the current section order.");
-  if (!composition.includes("const { content, locale = \"en-US\" }") || !composition.includes("<HeroSection content={content.hero} locale={locale} />") || !composition.includes("<FeaturedPackages content={content.featuredPackages} locale={locale} />") || !composition.includes("content.policy.testimonials === 'include' && <Testimonials />") || !composition.includes("homeContent.policy.discountBanner === \"include\"") || !composition.includes("hasDiscountBanner(content) && <DiscountBanner content={content.discountBanner} locale={locale} />")) fail("Home composition must forward locale and omit whole optional section subtrees.");
-  if (!homeContent.includes('"es-US": { testimonials: "omit", discountBanner: "omit" }')) fail("Future Spanish home policy must omit testimonials and the discount banner.");
+  if (!composition.includes("const { content, locale = \"en-US\" }") || !composition.includes("<HeroSection content={content.hero} locale={locale} />") || !composition.includes("<FeaturedPackages content={content.featuredPackages} locale={locale} />") || !composition.includes("content.policy.testimonials === 'include' && <Testimonials locale={locale} />") || !composition.includes("homeContent.policy.discountBanner === \"include\"") || !composition.includes("hasDiscountBanner(content) && <DiscountBanner content={content.discountBanner} locale={locale} />")) fail("Home composition must forward locale and omit whole optional section subtrees.");
+  if (!homeContent.includes('"es-US": { testimonials: "include", discountBanner: "include" }')) fail("Spanish home policy must include testimonials and the discount banner.");
   if (getCanonicalPagePath("contact", "en-US") !== "/contact/" || getCanonicalPagePath("contact", "es-US") !== "/es/contact/" || getCanonicalPagePath("services", "en-US") !== "/services/" || getCanonicalPagePath("services", "es-US") !== "/es/services/" || !hero.includes('getCanonicalPagePath("contact", locale)') || !hero.includes('getCanonicalPagePath("services", locale)') || !featuredPackages.includes('getCanonicalPagePath("services", locale)') || !discountBanner.includes('getCanonicalPagePath("contact", locale)')) fail("Home CTAs must resolve canonical locale page destinations.");
   if (!featuredPackages.includes('locale === "en-US" ? `/services/${service.slug}` : servicesHref') || !featuredPackages.includes("href={serviceHref(service)}") || featuredPackages.includes("href={`/services/${service.slug}`}")) fail("Featured package cards must keep English details and use the Spanish catalog candidate.");
   if (discountBanner.includes("englishHomeContent") || !discountBanner.includes("content: HomeDiscountBanner")) fail("Discount banner must require explicit included content without an English fallback.");

@@ -6,10 +6,27 @@ import Button from '../../ui/Button.astro';
 import type { HomeContent } from '../../../i18n/content-types';
 import type { Locale } from '../../../i18n/locales';
 import { getCanonicalPagePath } from '../../../i18n/routes';
+import { spanishServicesContent } from '../../../i18n/spanish-services-content';
 
 const { content, locale = "en-US" } = Astro.props as { content: HomeContent['featuredPackages']; locale?: Locale };
 const servicesHref = getCanonicalPagePath("services", locale);
 const serviceHref = (service: typeof services[number]) => locale === "en-US" ? `/services/${service.slug}` : servicesHref;
+
+const getCardPresentation = (service: typeof services[number]) => {
+  if (locale === "es-US") {
+    const spanishCard = spanishServicesContent.cards.byServiceId[service.id];
+    return {
+      title: spanishCard?.displayName ?? service.name,
+      description: spanishCard?.summary ?? service.description,
+      buttonText: "Ver más detalles",
+    };
+  }
+  return {
+    title: service.name,
+    description: service.description,
+    buttonText: "See more details",
+  };
+};
 ---
 
 <section class="bg-off-white py-10 lg:py-16 relative overflow-hidden border-y border-divider-light/70">
@@ -22,29 +39,41 @@ const serviceHref = (service: typeof services[number]) => locale === "en-US" ? `
         <span class="h-px w-10 bg-gold"></span>
         {content.eyebrow}
       </span>
-      <h2 class="text-text-dark font-bold text-h2 text-left w-full">
-        {content.title}
-      </h2>
-      <p class="text-text-dark/72 leading-relaxed">
-        {content.description}
-      </p>
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <h2 class="text-text-dark font-bold text-h2 text-left">
+            {content.title}
+          </h2>
+          <p class="text-text-dark/72 leading-relaxed mt-2 max-w-2xl">
+            {content.description}
+          </p>
+        </div>
+        <div class="shrink-0 self-start sm:self-auto inline-flex items-center gap-2 rounded-full border border-gold-deep/20 bg-gold/10 px-4 py-1.5 text-xs font-semibold text-text-dark shadow-xs">
+          <span class="size-1.5 rounded-full bg-gold-deep"></span>
+          <span>{locale === 'es-US' ? 'Desde $199 · Según tamaño y condición' : 'From $199 · Varies by size & condition'}</span>
+        </div>
+      </div>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full z-10">
-      {services.slice(0, 3).map((service, index) => (
-        <div
-          data-reveal="scale"
-          style={`--reveal-delay: ${index * 120}ms; --float-delay: ${index * 0.9}s`}
-          class={`motion-float-slow motion-card-hover ${index === 2 ? "sm:col-span-2 sm:max-w-1/2 sm:mx-auto lg:col-span-1 lg:max-w-none lg:mx-0" : ""}`}
-        >
-          <ServiceCard
-            image={service.images[0]}
-            title={service.name}
-            description={service.description}
-            href={serviceHref(service)}
-          />
-        </div>
-      ))}
+      {services.slice(0, 3).map((service, index) => {
+        const card = getCardPresentation(service);
+        return (
+          <div
+            data-reveal="scale"
+            style={`--reveal-delay: ${index * 120}ms; --float-delay: ${index * 0.9}s`}
+            class={`motion-float-slow motion-card-hover ${index === 2 ? "sm:col-span-2 sm:max-w-1/2 sm:mx-auto lg:col-span-1 lg:max-w-none lg:mx-0" : ""}`}
+          >
+            <ServiceCard
+              image={service.images[0]}
+              title={card.title}
+              description={card.description}
+              buttonText={card.buttonText}
+              href={serviceHref(service)}
+            />
+          </div>
+        );
+      })}
     </div>
 
     <div data-reveal="fade" style="--reveal-delay: 420ms">
@@ -54,7 +83,7 @@ const serviceHref = (service: typeof services[number]) => locale === "en-US" ? `
     </div>
   </div>
 
-  <div class="hidden lg:block absolute -bottom-1/2 -right-3/10 xl:-right-1/5 opacity-50">
+  <div class="pointer-events-none hidden lg:block absolute -bottom-1/2 -right-3/10 xl:-right-1/5 opacity-50">
     <CldImage
       src="star_talmlw"
       aria-hidden="true"

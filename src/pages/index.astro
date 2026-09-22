@@ -2,13 +2,18 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HomeComposition from '../components/sections/home/HomeComposition.astro';
 import { getCloudinaryImageUrl } from '../helpers/cloudinary';
-import { getLocalBusinessJsonLd, getWebSiteJsonLd } from '../data/business';
+import { getFaqPageJsonLd, getLocalBusinessJsonLd, getWebSiteJsonLd } from '../data/business';
 import { englishHomeContent } from '../i18n/home-content';
+import { homeFaqs } from '../data/home-faqs';
 
 const { metadata } = englishHomeContent;
 const ogImage = getCloudinaryImageUrl('og-image_usi1ab');
 const site = Astro.site ?? new URL('https://duartesautodetailing.com');
-const structuredData = [getLocalBusinessJsonLd(site), getWebSiteJsonLd(site)];
+const structuredData = [
+  getLocalBusinessJsonLd(site),
+  getWebSiteJsonLd(site),
+  getFaqPageJsonLd(homeFaqs),
+];
 ---
 
 <BaseLayout

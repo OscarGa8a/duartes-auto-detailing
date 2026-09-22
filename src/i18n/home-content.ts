@@ -3,7 +3,7 @@ import type { Locale } from "./locales";
 
 export const homeSectionPolicies = {
   "en-US": { testimonials: "include", discountBanner: "include" },
-  "es-US": { testimonials: "omit", discountBanner: "omit" },
+  "es-US": { testimonials: "include", discountBanner: "include" },
 } as const satisfies Record<Locale, HomeSectionPolicy>;
 
 export const englishHomeContent = {
@@ -18,8 +18,8 @@ export const englishHomeContent = {
   hero: {
     eyebrow: "Concierge Mobile Detailing · Bay Area",
     serviceLine: "Premium mobile detailing at your home or office",
-    heading: ["Diamond-Level Finish", "At Your Doorstep"],
-    description: "We clean, restore, and protect your vehicle with premium care — right at your home or office.",
+    heading: ["Diamond-Level Mobile Detailing", "Across the Bay Area"],
+    description: "Professional interior detailing, paint correction, and ceramic coating brought directly to your doorstep in the Bay Area.",
     vehiclesDetailed: "vehicles detailed",
     mobileService: "Fully Mobile Service",
     desktopService: "fully mobile",
@@ -82,8 +82,8 @@ export const spanishHomeContent = {
   hero: {
     eyebrow: "Detallado móvil · Área de la Bahía",
     serviceLine: "Detallado automotriz móvil en tu hogar u oficina",
-    heading: ["Cuidado para tu vehículo", "en tu ubicación"],
-    description: "Limpiamos, restauramos y protegemos tu vehículo con atención a los detalles en tu hogar u oficina.",
+    heading: ["Detallado móvil de nivel diamante", "en todo el Área de la Bahía"],
+    description: "Detallado interior profesional, corrección de pintura y recubrimiento cerámico directamente en tu puerta en el Área de la Bahía.",
     vehiclesDetailed: "vehículos detallados",
     mobileService: "Servicio móvil",
     desktopService: "servicio móvil",
@@ -125,5 +125,11 @@ export const spanishHomeContent = {
       "Limpieza profunda de tapicería de asientos",
       "Proceso de descontaminación profunda con barra de arcilla",
     ],
+  },
+  discountBanner: {
+    eyebrow: "Oferta especial",
+    title: "20% de descuento en tu primer servicio",
+    description: "Agenda hoy y disfruta un 20% de descuento en tu primera sesión de detallado premium en cualquier zona del Área de la Bahía.",
+    action: "Solicita tu servicio",
   },
 } as const satisfies HomeContent;
