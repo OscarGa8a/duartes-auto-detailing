@@ -20,11 +20,15 @@ const {
 
 const mobileSrc = getCloudinaryImageUrl(
   backgroundImage.mobile,
-  'f_auto,q_auto,w_900,c_fill,g_auto'
+  'f_auto,q_auto,w_640,c_fill,g_auto'
+);
+const tabletSrc = getCloudinaryImageUrl(
+  backgroundImage.mobile,
+  'f_auto,q_auto,w_1024,c_fill,g_auto'
 );
 const desktopSrc = getCloudinaryImageUrl(
   backgroundImage.desktop ?? backgroundImage.mobile,
-  'f_auto,q_auto,w_2000,c_fill,g_auto'
+  'f_auto,q_auto,w_1920,c_fill,g_auto'
 );
 
 ---
@@ -33,12 +37,13 @@ const desktopSrc = getCloudinaryImageUrl(
   class="relative flex items-center bg-black overflow-hidden min-h-[72dvh] lg:min-h-[82dvh] border-b border-border-soft"
 >
   <picture class="absolute inset-0">
-    <source media="(min-width: 1024px)" srcset={desktopSrc} />
+    <source media="(min-width: 1024px)" srcset={desktopSrc} width="1920" height="1080" />
+    <source media="(min-width: 640px)" srcset={tabletSrc} width="1024" height="683" />
     <img
       src={mobileSrc}
       alt={title}
-      width="900"
-      height="600"
+      width="640"
+      height="480"
       class="absolute inset-0 h-full w-full object-cover page-hero__image object-right"
       loading="eager"
       fetchpriority="high"
