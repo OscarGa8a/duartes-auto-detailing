@@ -15,7 +15,7 @@ const contactHref = getCanonicalPagePath("contact", locale);
     <div data-reveal="scale" class="relative overflow-hidden rounded-4xl border border-gold/20 bg-gold min-h-88 lg:min-h-72 shadow-lg">
       <div class="motion-sheen"></div>
       <div
-        class="motion-float-slow opacity-20 lg:opacity-100 pointer-events-none absolute inset-y-0 left-0 h-full w-full lg:w-[46%] xl:w-[45%] flex items-end justify-start"
+        class="motion-float-slow opacity-20 lg:opacity-100 pointer-events-none absolute inset-y-0 left-0 lg:-left-[220px] xl:-left-[180px] h-full w-full lg:w-auto flex items-end justify-start"
         data-reveal="left"
         data-reveal-mobile="off"
         style="--reveal-mobile-opacity: 0.18"
@@ -25,8 +25,8 @@ const contactHref = getCanonicalPagePath("contact", locale);
           aria-hidden="true"
           width={1200}
           height={800}
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 84vw, 45vw"
-          class="w-full h-full !object-contain !object-left-bottom"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 84vw, 55vw"
+          class="w-full h-full lg:w-auto !object-contain !object-left-bottom"
         />
       </div>
       <div class="absolute inset-y-0 left-0 w-24 bg-linear-to-r from-black/10 to-transparent pointer-events-none"></div>
