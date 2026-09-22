@@ -122,6 +122,23 @@ async function auditUrl(url, preset, port) {
   const runnerResult = await lighthouse(url, options, config);
   const { categories, audits } = runnerResult.lhr;
 
+  const opportunities = Object.entries(audits)
+    .filter(([_, a]) => a.details?.type === 'opportunity' && typeof a.score === 'number' && a.score < 0.9)
+    .map(([id, a]) => ({ id, title: a.title, savings: a.displayValue || '' }));
+
+  const diagnostics = Object.entries(audits)
+    .filter(([id, a]) => ['largest-contentful-paint-element', 'render-blocking-resources', 'layout-shifts'].includes(id) && typeof a.score === 'number' && a.score < 0.9)
+    .map(([id, a]) => ({ id, title: a.title, value: a.displayValue || '' }));
+
+  const categoryIssues = {};
+  for (const [catId, cat] of Object.entries(categories)) {
+    if (cat && typeof cat.score === 'number' && cat.score < 1) {
+      categoryIssues[catId] = cat.auditRefs
+        .filter(ref => audits[ref.id]?.score !== null && audits[ref.id]?.score < 1)
+        .map(ref => ({ id: ref.id, title: audits[ref.id]?.title, items: audits[ref.id]?.details?.items }));
+    }
+  }
+
   return {
     scores: {
       performance: Math.round((categories.performance?.score || 0) * 100),
@@ -136,6 +153,9 @@ async function auditUrl(url, preset, port) {
       cls: audits['cumulative-layout-shift']?.displayValue,
       speedIndex: audits['speed-index']?.displayValue,
     },
+    opportunities,
+    diagnostics,
+    categoryIssues,
   };
 }
 
@@ -149,19 +169,26 @@ async function run() {
   const chrome = await launchChrome(cdpPort);
 
   try {
+    const pathArg = process.argv.find(a => a.startsWith('--path='))?.split('=')[1] || '/';
+    const cleanRoute = pathArg.startsWith('/') ? pathArg : `/${pathArg}`;
+    const normalizedRoute = cleanRoute.endsWith('/') ? cleanRoute : `${cleanRoute}/`;
+    const enRoute = normalizedRoute;
+    const esRoute = normalizedRoute === '/' ? '/es/' : `/es${normalizedRoute}`;
+    const pageName = normalizedRoute === '/' ? 'Home' : normalizedRoute.replace(/\//g, ' ').trim().toUpperCase();
+
     const targets = [
-      { name: 'Home EN (Desktop)', url: `http://127.0.0.1:${port}/`, preset: 'desktop' },
-      { name: 'Home EN (Mobile)',  url: `http://127.0.0.1:${port}/`, preset: 'mobile' },
-      { name: 'Home ES (Desktop)', url: `http://127.0.0.1:${port}/es/`, preset: 'desktop' },
-      { name: 'Home ES (Mobile)',  url: `http://127.0.0.1:${port}/es/`, preset: 'mobile' },
+      { name: `${pageName} EN (Desktop)`, url: `http://127.0.0.1:${port}${enRoute}`, preset: 'desktop' },
+      { name: `${pageName} EN (Mobile)`,  url: `http://127.0.0.1:${port}${enRoute}`, preset: 'mobile' },
+      { name: `${pageName} ES (Desktop)`, url: `http://127.0.0.1:${port}${esRoute}`, preset: 'desktop' },
+      { name: `${pageName} ES (Mobile)`,  url: `http://127.0.0.1:${port}${esRoute}`, preset: 'mobile' },
     ];
 
     const results = [];
 
     for (const target of targets) {
-      console.log(`\n⏳ Running Lighthouse for ${target.name} ...`);
+      console.log(`\n⏳ Running Lighthouse for ${target.name} (${target.url}) ...`);
       const result = await auditUrl(target.url, target.preset, cdpPort);
-      results.push({ target: target.name, ...result.scores, ...result.metrics });
+      results.push({ target: target.name, ...result.scores, ...result.metrics, opportunities: result.opportunities, categoryIssues: result.categoryIssues });
     }
 
     console.log('\n📊 === LIGHTHOUSE AUDIT RESULTS ===\n');
@@ -175,6 +202,29 @@ async function run() {
       CLS: r.cls,
       TBT: r.tbt,
     })));
+
+    for (const r of results) {
+      if (r.opportunities && r.opportunities.length > 0) {
+        console.log(`\n💡 Opportunities for ${r.target}:`);
+        for (const opp of r.opportunities) {
+          console.log(`   - ${opp.title}: ${opp.savings}`);
+        }
+      }
+      if (r.categoryIssues && Object.keys(r.categoryIssues).length > 0) {
+        console.log(`\n⚠️ Category Issues for ${r.target}:`);
+        for (const [cat, issues] of Object.entries(r.categoryIssues)) {
+          if (issues.length > 0) {
+            console.log(`   [${cat}]:`);
+            for (const issue of issues) {
+              console.log(`     - ${issue.title}`);
+              if (issue.items && issue.items.length > 0) {
+                console.log(`       Nodes: ${issue.items.map(i => i.node?.snippet || i.node?.selector || '').filter(Boolean).slice(0, 3).join(' | ')}`);
+              }
+            }
+          }
+        }
+      }
+    }
 
   } finally {
     console.log('\n🧹 Cleaning up processes...');
