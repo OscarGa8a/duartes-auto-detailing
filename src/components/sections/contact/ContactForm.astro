@@ -46,7 +46,8 @@ const { content } = Astro.props;
             name="name"
             placeholder={content.fields.name.placeholder}
             aria-required="true"
-            class="contact-input rounded-xl bg-black/26 border border-border text-text-primary placeholder:text-text-muted px-4 py-3 focus:outline-none focus:border-gold focus:bg-black/36 transition-colors w-full"
+            aria-describedby="name-error"
+            class="contact-input rounded-xl bg-black/26 border border-border text-text-primary placeholder:text-text-muted px-4 py-3 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/50 focus:bg-black/36 transition-[border-color,background-color,box-shadow] duration-200 w-full"
           />
           <span class="error-msg text-red-400 text-xs hidden" id="name-error">{content.fields.name.error}</span>
         </div>
@@ -59,7 +60,8 @@ const { content } = Astro.props;
             name="email"
             placeholder={content.fields.email.placeholder}
             aria-required="true"
-            class="contact-input rounded-xl bg-black/26 border border-border text-text-primary placeholder:text-text-muted px-4 py-3 focus:outline-none focus:border-gold focus:bg-black/36 transition-colors w-full"
+            aria-describedby="email-error"
+            class="contact-input rounded-xl bg-black/26 border border-border text-text-primary placeholder:text-text-muted px-4 py-3 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/50 focus:bg-black/36 transition-[border-color,background-color,box-shadow] duration-200 w-full"
           />
           <span class="error-msg text-red-400 text-xs hidden" id="email-error">{content.fields.email.error}</span>
         </div>
@@ -72,7 +74,8 @@ const { content } = Astro.props;
             name="phone"
             placeholder={content.fields.phone.placeholder}
             aria-required="true"
-            class="contact-input rounded-xl bg-black/26 border border-border text-text-primary placeholder:text-text-muted px-4 py-3 focus:outline-none focus:border-gold focus:bg-black/36 transition-colors w-full"
+            aria-describedby="phone-error"
+            class="contact-input rounded-xl bg-black/26 border border-border text-text-primary placeholder:text-text-muted px-4 py-3 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/50 focus:bg-black/36 transition-[border-color,background-color,box-shadow] duration-200 w-full"
           />
           <span class="error-msg text-red-400 text-xs hidden" id="phone-error">{content.fields.phone.error}</span>
         </div>
@@ -87,7 +90,8 @@ const { content } = Astro.props;
           placeholder={content.fields.message.placeholder}
           rows="4"
           aria-required="true"
-          class="contact-input rounded-xl bg-black/26 border border-border text-text-primary placeholder:text-text-muted px-4 py-3 focus:outline-none focus:border-gold focus:bg-black/36 transition-colors w-full resize-none min-h-40"
+          aria-describedby="message-error"
+          class="contact-input rounded-xl bg-black/26 border border-border text-text-primary placeholder:text-text-muted px-4 py-3 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/50 focus:bg-black/36 transition-[border-color,background-color,box-shadow] duration-200 w-full resize-none min-h-40"
         ></textarea>
         <span class="error-msg text-red-400 text-xs hidden" id="message-error">{content.fields.message.error}</span>
       </div>
@@ -114,18 +118,22 @@ const { content } = Astro.props;
   const form = document.getElementById('contact-form') as HTMLFormElement;
 
   function showError(inputId: string, errorId: string) {
-    const input = document.getElementById(inputId) as HTMLInputElement;
-    const error = document.getElementById(errorId) as HTMLElement;
+    const input = document.getElementById(inputId) as HTMLInputElement | HTMLTextAreaElement | null;
+    const error = document.getElementById(errorId) as HTMLElement | null;
+    if (!input || !error) return;
     input.classList.add('border-red-500');
     input.classList.remove('border-border');
+    input.setAttribute('aria-invalid', 'true');
     error.classList.remove('hidden');
   }
 
   function clearError(inputId: string, errorId: string) {
-    const input = document.getElementById(inputId) as HTMLInputElement;
-    const error = document.getElementById(errorId) as HTMLElement;
+    const input = document.getElementById(inputId) as HTMLInputElement | HTMLTextAreaElement | null;
+    const error = document.getElementById(errorId) as HTMLElement | null;
+    if (!input || !error) return;
     input.classList.remove('border-red-500');
-    // input.classList.add('border-border');
+    input.classList.add('border-border');
+    input.removeAttribute('aria-invalid');
     error.classList.add('hidden');
   }
 

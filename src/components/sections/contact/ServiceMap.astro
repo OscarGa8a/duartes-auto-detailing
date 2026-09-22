@@ -64,7 +64,7 @@ const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${coor
         href={directionsUrl}
         target="_blank"
         rel="noopener noreferrer"
-        class="inline-flex items-center justify-center bg-black text-text-primary font-semibold px-5 py-3 rounded-full hover:bg-surface transition-colors"
+        class="inline-flex items-center justify-center bg-black text-text-primary font-semibold px-5 py-3 rounded-full hover:bg-surface active:scale-[0.98] transition-[background-color,border-color,transform] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
       >
         {content.directionsLabel}
       </a>
@@ -73,7 +73,7 @@ const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${coor
         href={googleMapsUrl}
         target="_blank"
         rel="noopener noreferrer"
-        class="inline-flex items-center justify-center border border-gold text-text-dark font-semibold px-5 py-3 rounded-full hover:bg-gold/8 transition-colors"
+        class="inline-flex items-center justify-center border border-gold text-text-dark font-semibold px-5 py-3 rounded-full hover:bg-gold/8 active:scale-[0.98] transition-[background-color,border-color,transform] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
       >
         {content.openMapLabel}
       </a>

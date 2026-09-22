@@ -46,9 +46,9 @@ const shellContent = locale === 'es-US' ? spanishShellContent : englishShellCont
         f.parentNode.insertBefore(j, f);
       }
       if ('requestIdleCallback' in window) {
-        requestIdleCallback(function() { setTimeout(initGTM, 1500); }, { timeout: 3500 });
+        requestIdleCallback(function() { setTimeout(initGTM, 3500); }, { timeout: 5000 });
       } else {
-        setTimeout(initGTM, 2500);
+        setTimeout(initGTM, 4000);
       }
       ['scroll', 'touchstart', 'mousemove', 'keydown', 'click'].forEach(function(e) {
         window.addEventListener(e, initGTM, { once: true, passive: true });
@@ -186,7 +186,6 @@ const shellContent = locale === 'es-US' ? spanishShellContent : englishShellCont
         document.documentElement.classList.add('js');
       });
       document.addEventListener('astro:page-load', initPageMotion);
-      initPageMotion();
     </script>
   </body>
 </html>

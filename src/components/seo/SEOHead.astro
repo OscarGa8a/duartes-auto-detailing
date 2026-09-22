@@ -40,6 +40,8 @@ const counterpartHref = counterpart ? new URL(counterpart.path, siteBase).href :
 <meta name="robots" content="index, follow, max-image-preview:large" />
 <link rel="canonical" href={canonicalHref} />
 <link rel="sitemap" href="/sitemap-index.xml" />
+<link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
+<link rel="dns-prefetch" href="https://res.cloudinary.com" />
 {counterpartHref && (
   <>
     <link rel="alternate" hreflang={localeDefinition.htmlLang} href={canonicalHref} />

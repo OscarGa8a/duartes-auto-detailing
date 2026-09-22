@@ -28,7 +28,10 @@ const aboutStructuredData = [
   getPageJsonLd(site, "AboutPage", schemaPath, aboutMetadata.schemaName, resolveAboutTemplate(aboutMetadata.schemaDescription)),
 ];
 const contactMetadata = spanishContactContent.metadata;
-const contactStructuredData = [getPageJsonLd(site, "ContactPage", schemaPath, contactMetadata.schemaName, contactMetadata.schemaDescription)];
+const contactStructuredData = [
+  getLocalBusinessJsonLd(site),
+  getPageJsonLd(site, "ContactPage", schemaPath, contactMetadata.schemaName, contactMetadata.schemaDescription)
+];
 const candidateOgImage = getCloudinaryImageUrl(services[0]?.images[0] ?? '', 'f_auto,q_auto,w_1200,h_630,c_fill');
 const servicesOgImage = candidateOgImage.startsWith('http') || candidateOgImage.startsWith('/') ? candidateOgImage : undefined;
 const servicesStructuredData = [getLocalBusinessJsonLd(site), getServicesItemListJsonLd(site)];
