@@ -27,6 +27,9 @@ export default defineConfig({
 
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      include: ["glightbox", "embla-carousel"],
+    },
   },
 
   integrations: [icon(), sitemap()],
