@@ -3,7 +3,7 @@ import type { Locale } from "./locales";
 
 export const contactSectionPolicies = {
   "en-US": { serviceMap: "include" },
-  "es-US": { serviceMap: "omit" },
+  "es-US": { serviceMap: "include" },
 } as const satisfies Record<Locale, ContactSectionPolicy>;
 
 export const englishContactContent = {
@@ -125,5 +125,17 @@ export const spanishContactContent = {
     help: "Para comunicarte directamente, usa WhatsApp, SMS o Instagram.",
     submitLabel: "Preparar mensaje",
     preparedStatus: "Tu mensaje está preparado, pero no se envió. Para comunicarte con Duartes Auto Detailing, usa WhatsApp, SMS o Instagram.",
+  },
+  map: {
+    eyebrow: "Cobertura móvil",
+    title: "Servicio 100% móvil en toda el Área de la Bahía.",
+    description: "Llevamos el detallado profesional directamente a la entrada de tu casa, oficina o estacionamiento privado. El mapa está centrado cerca de nuestra base en el Área de la Bahía y el radio de traslado puede variar según el servicio solicitado.",
+    help: "La cobertura y la disponibilidad de horarios pueden variar según el tipo de servicio, la distancia y la agenda de citas.",
+    iframeTitle: "Área de servicio - Duarte's Auto Detailing — Área de la Bahía, California",
+    overlayLabel: "Cobertura en el Área de la Bahía",
+    directionsLabel: "Cómo llegar",
+    openMapLabel: "Abrir en Google Maps",
+    noScriptPrefix: "JavaScript está deshabilitado. Usa este enlace directo:",
+    noScriptLinkLabel: "Ver ubicación en Google Maps.",
   },
 } as const satisfies ContactContent;
