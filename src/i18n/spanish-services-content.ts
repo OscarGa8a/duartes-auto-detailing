@@ -1,7 +1,7 @@
 import type { ServicesContent } from "./content-types";
 
 export const spanishServicesContent = {
-  policy: { areaTeaser: "omit", englishDetailDisclosure: "required" },
+  policy: { areaTeaser: "include", englishDetailDisclosure: "required" },
   metadata: {
     title: "Servicios de detallado automotriz móvil",
     description: "Explora servicios de detallado automotriz móvil en el Área de la Bahía, incluidos el detallado interior, exterior y completo, el recubrimiento cerámico y la corrección de pintura.",
@@ -46,6 +46,12 @@ export const spanishServicesContent = {
       "clay-bar-decontamination": { displayName: "Descontaminación con barra de arcilla", summary: "Tratamiento de descontaminación de pintura para retirar contaminantes adheridos." },
     },
   },
+  areaTeaser: {
+    eyebrow: "Área de servicio móvil",
+    title: "Detallado profesional en tu ubicación en el Área de la Bahía.",
+    description: "Duartes Auto Detailing es un servicio móvil para conductores del Área de la Bahía. Visita nuestro centro de áreas de servicio para conocer las ciudades prioritarias y cómo funcionan las citas a domicilio, oficinas y estacionamientos privados.",
+    action: "Ver área de servicio de la Bahía",
+  },
 } as const satisfies ServicesContent;
 
-export const spanishServicesContentDigest = "b78585256bc3a9280d8e80e71944a5a5f59478475cf9a6a0b9f84cec80a33b3a";
+export const spanishServicesContentDigest = "bc55a2b15231023ba174f9bf11f1189a3c62d6a114eb0bdda90b55b6ff4b97a5";

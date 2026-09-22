@@ -1,6 +1,6 @@
 ---
 import type { ServicesContent } from "../../../i18n/content-types";
-import { englishHomeContent } from "../../../i18n/home-content";
+import { englishHomeContent, spanishHomeContent } from "../../../i18n/home-content";
 import { servicesSectionPolicies } from "../../../i18n/services-content";
 import PageHero from "../../ui/PageHero.astro";
 import DiscountBanner from "../home/DiscountBanner.astro";
@@ -26,6 +26,7 @@ function getAreaTeaser(servicesContent: ServicesContent): NonNullable<ServicesCo
 }
 
 const areaTeaserContent = getAreaTeaser(content);
+const discountBannerContent = locale === "es-US" ? spanishHomeContent.discountBanner : englishHomeContent.discountBanner;
 ---
 
 <PageHero
@@ -56,5 +57,5 @@ const areaTeaserContent = getAreaTeaser(content);
   </section>
 )}
 {promotionPolicy.discountBanner === "include" && (
-  <DiscountBanner content={englishHomeContent.discountBanner} locale={locale} />
+  <DiscountBanner content={discountBannerContent} locale={locale} />
 )}

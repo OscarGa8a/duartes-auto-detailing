@@ -6,7 +6,7 @@
     "home": { "sha256": "b9b246e2351118963eafb856964f256c7eeaad6b883bbc79d9658df99be31d8f" },
     "about": { "sha256": "29dc14fa4af33cd95392115c82693bb7263e37464288862953c4e9e5a684c645" },
     "contact": { "sha256": "0812252896e042a485682a2716c7e7792deb7dbf41f405cccb38fc2294ecafaf" },
-    "services": { "sha256": "b78585256bc3a9280d8e80e71944a5a5f59478475cf9a6a0b9f84cec80a33b3a" }
+    "services": { "sha256": "bc55a2b15231023ba174f9bf11f1189a3c62d6a114eb0bdda90b55b6ff4b97a5" }
   },
   "routes": {
     "home": { "state": "approved", "requiredBlocks": ["shell", "home"] },
