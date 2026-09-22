@@ -156,6 +156,7 @@ async function auditUrl(url, preset, port) {
     opportunities,
     diagnostics,
     categoryIssues,
+    lcpElement: audits['largest-contentful-paint-element']?.details?.items?.[0]?.node?.snippet || audits['largest-contentful-paint-element']?.details?.items?.[0]?.node?.nodeLabel,
   };
 }
 
@@ -204,6 +205,10 @@ async function run() {
     })));
 
     for (const r of results) {
+      if (r.metrics?.lcp) {
+        const lcpItem = r.lcpElement ? ` (element: ${r.lcpElement})` : '';
+        console.log(`\n🎯 LCP for ${r.target}: ${r.metrics.lcp}${lcpItem}`);
+      }
       if (r.opportunities && r.opportunities.length > 0) {
         console.log(`\n💡 Opportunities for ${r.target}:`);
         for (const opp of r.opportunities) {
