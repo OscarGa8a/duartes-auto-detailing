@@ -11,7 +11,7 @@ export const spanishServicesContent = {
   },
   hero: {
     eyebrow: "Catálogo de servicios",
-    title: "Cuidado a medida para cada acabado",
+    title: "Servicios de detallado móvil a la medida de tu vehículo",
     description: "Explora servicios de detallado móvil según tu vehículo, tus objetivos para el acabado y el nivel de protección que deseas mantener.",
   },
   intro: {
@@ -19,9 +19,9 @@ export const spanishServicesContent = {
     title: "Servicios diseñados para el brillo, la protección y el cuidado a largo plazo.",
     description: "Cada servicio responde a un nivel distinto de mantenimiento, corrección o protección. Revisa el catálogo para comparar opciones, conocer el proceso y elegir una alternativa para tu vehículo.",
     benefits: [
-      { title: "Móvil", description: "Servicio en tu ubicación" },
-      { title: "Atención", description: "Enfoque en los detalles" },
-      { title: "Cuidado", description: "Atención al acabado" },
+      { title: "100% Móvil", description: "Agua y electricidad a bordo" },
+      { title: "500+ Autos", description: "Detallados en el Área de la Bahía" },
+      { title: "15+ Ciudades", description: "Atención directa en tu ubicación" },
     ],
     imageAlt: "Limpieza profesional de una rueda con producto en aerosol",
     processEyebrow: "Proceso de detallado",
@@ -48,4 +48,4 @@ export const spanishServicesContent = {
   },
 } as const satisfies ServicesContent;
 
-export const spanishServicesContentDigest = "8d2cd90a9f164f7a0c1f10b110ec32e1e925a63bf244d6de4fbbf52d1b5caadf";
+export const spanishServicesContentDigest = "ee2db21ca36f5e4016f0f27dd58785057b3f1624e83f8ae145b767c4103e52e5";
