@@ -8,6 +8,7 @@ interface Props {
 }
 
 const { content } = Astro.props;
+const isSpanish = content.eyebrow.startsWith("El ");
 ---
 
 <section class="bg-black py-10 lg:py-16 overflow-hidden relative border-b border-border-soft">
@@ -71,6 +72,19 @@ const { content } = Astro.props;
             <span class="text-gold font-bold text-2xl md:text-3xl" data-count-to={aboutMetricValues.bayAreaLocations} data-count-suffix="+" data-count-duration="1600">{aboutMetricValues.bayAreaLocations}+</span>
             <span class="mt-2 block text-sm text-text-secondary">{content.counters[2]}</span>
           </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 pt-2 text-xs font-medium uppercase tracking-wide text-text-secondary">
+          <span class="inline-flex items-center gap-1.5 text-gold">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+            <span>{isSpanish ? 'Totalmente asegurado' : 'Fully Insured'}</span>
+          </span>
+          <span aria-hidden="true" class="size-1 rounded-full bg-gold/60"></span>
+          <span>{isSpanish ? 'Servicio a domicilio y oficina' : 'Mobile Home & Office Service'}</span>
+          <span aria-hidden="true" class="size-1 rounded-full bg-gold/60"></span>
+          <span>{isSpanish ? 'Garantía de satisfacción' : '100% Satisfaction Guarantee'}</span>
         </div>
       </div>
     </div>

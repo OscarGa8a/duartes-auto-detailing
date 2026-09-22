@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import AboutComposition from "../components/sections/about/AboutComposition.astro";
-import { getPageJsonLd } from "../data/business";
+import { getPageJsonLd, getLocalBusinessJsonLd } from "../data/business";
 import { englishAboutContent, resolveAboutTemplate } from "../i18n/about-content";
 import { getCanonicalPagePath } from "../i18n/routes";
 
@@ -12,6 +12,7 @@ const pageDescription = resolveAboutTemplate(metadata.description);
 const schemaPath = getCanonicalPagePath(pageId, locale);
 const site = Astro.site ?? new URL("https://duartesautodetailing.com");
 const structuredData = [
+  getLocalBusinessJsonLd(site),
   getPageJsonLd(
     site,
     "AboutPage",
