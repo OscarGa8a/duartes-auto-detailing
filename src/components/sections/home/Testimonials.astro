@@ -1,7 +1,32 @@
 ---
 import Icon from "../../ui/Icon.astro";
-import { testimonials } from "../../../data/testimonials";
+import type { Locale } from "../../../i18n/locales";
+import { englishTestimonials, spanishTestimonials } from "../../../data/testimonials";
 
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = "en-US" } = Astro.props;
+const items = locale === "es-US" ? spanishTestimonials : englishTestimonials;
+
+const copy = locale === "es-US"
+  ? {
+      eyebrow: "Opiniones de clientes",
+      title: "Lo que dicen nuestros clientes",
+      description: "La confianza de conductores que buscan su vehículo impecable, protegido y listo para cada viaje.",
+      prevAria: "Anterior",
+      nextAria: "Siguiente",
+      dotAria: (index: number) => `Ir al testimonio ${index + 1}`,
+    }
+  : {
+      eyebrow: "Client words",
+      title: "What some of our customers say",
+      description: "Trusted by owners who want their vehicles to look polished, protected, and ready for every drive.",
+      prevAria: "Previous",
+      nextAria: "Next",
+      dotAria: (index: number) => `Go to testimonial ${index + 1}`,
+    };
 ---
 
 <section class="bg-black py-10 lg:py-16 overflow-hidden border-b border-border-soft relative">
@@ -12,13 +37,13 @@ import { testimonials } from "../../../data/testimonials";
     <div data-reveal="blur" class="flex flex-col items-start gap-3 w-full">
       <span class="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold">
         <span class="h-px w-10 bg-gold"></span>
-        Client words
+        {copy.eyebrow}
       </span>
       <h2 class="text-text-primary font-bold text-center text-h2">
-        What some of our customers say
+        {copy.title}
       </h2>
       <p class="text-text-secondary leading-relaxed">
-        Trusted by owners who want their vehicles to look polished, protected, and ready for every drive.
+        {copy.description}
       </p>
     </div>
 
@@ -26,7 +51,7 @@ import { testimonials } from "../../../data/testimonials";
     <div data-reveal="fade" style="--reveal-delay: 120ms" class="embla w-full" id="testimonials-embla">
       <div class="embla__viewport w-full overflow-hidden" id="testimonials-viewport">
         <div class="embla__container flex">
-          {testimonials.map((t) => (
+          {items.map((t) => (
             <div class="embla__slide shrink-0 min-w-0 pl-4">
               <div class="testimonial-card motion-card-hover relative overflow-hidden border border-border p-6 md:p-8 flex flex-col gap-4 h-full rounded-xl bg-surface-2/92 shadow-lg transition-all duration-300">
                 <div class="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-wine-soft/85 to-transparent opacity-70"></div>
@@ -49,21 +74,21 @@ import { testimonials } from "../../../data/testimonials";
 
     <!-- Controls -->
     <div data-reveal="up" style="--reveal-delay: 240ms" class="flex items-center gap-6">
-      <button id="testimonials-prev" aria-label="Anterior" class="w-10 h-10 rounded-full border border-border text-text-primary flex items-center justify-center cursor-pointer hover:border-gold hover:text-gold transition-colors">
+      <button id="testimonials-prev" aria-label={copy.prevAria} class="w-10 h-10 rounded-full border border-border text-text-primary flex items-center justify-center cursor-pointer hover:border-gold hover:text-gold transition-colors">
         <Icon name="arrow-left" size="md" />
       </button>
 
       <div id="testimonials-dots" class="flex gap-2 flex-wrap justify-center max-w-xs">
-        {testimonials.map((_, i) => (
+        {items.map((_, i) => (
           <button
-            aria-label={`Ir al testimonio ${i + 1}`}
+            aria-label={copy.dotAria(i)}
             class="w-2 h-2 rounded-full cursor-pointer transition-colors bg-border hover:bg-gold"
             data-index={i}
           ></button>
         ))}
       </div>
 
-      <button id="testimonials-next" aria-label="Siguiente" class="w-10 h-10 rounded-full border border-border text-text-primary flex items-center justify-center cursor-pointer hover:border-gold hover:text-gold transition-colors">
+      <button id="testimonials-next" aria-label={copy.nextAria} class="w-10 h-10 rounded-full border border-border text-text-primary flex items-center justify-center cursor-pointer hover:border-gold hover:text-gold transition-colors">
         <Icon name="arrow-right" size="md" />
       </button>
     </div>

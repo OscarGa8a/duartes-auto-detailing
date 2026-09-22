@@ -163,7 +163,12 @@ export const getBreadcrumbListJsonLd = (site: URL, items: BreadcrumbItem[]) => (
   })),
 });
 
-export const getFaqPageJsonLd = (faqs: ServiceAreaCity["faqs"]) => ({
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+export const getFaqPageJsonLd = (faqs: readonly FaqItem[]) => ({
   "@context": "https://schema.org",
   "@type": "FAQPage",
   mainEntity: faqs.map((faq) => ({

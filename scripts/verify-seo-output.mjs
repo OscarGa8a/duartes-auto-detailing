@@ -657,7 +657,7 @@ function verify404Output() {
 }
 
 function expectedJsonLdTypes(route) {
-	if (route === "/" || route === "/es/") return ["AutoWash", "WebSite"];
+	if (route === "/" || route === "/es/") return ["AutoWash", "WebSite", "FAQPage"];
 	if (route === "/services/" || route === "/es/services/") return ["AutoWash", "ItemList"];
 	if (route !== "/services/" && route.startsWith("/services/"))
 		return ["AutoWash", "Service", "BreadcrumbList"];
@@ -1004,6 +1004,21 @@ for (const file of htmlFiles) {
 	if (requiredJsonLdTypes.length > 0) {
 		for (const type of requiredJsonLdTypes) {
 			if (!hasJsonLdType(jsonLd, type)) fail(file, `missing ${type} JSON-LD`);
+		}
+		if (route === "/" || route === "/es/") {
+			const faqPage = findJsonLdType(jsonLd, "FAQPage");
+			if (!isValidFaqPage(faqPage)) {
+				fail(file, "homepage must include a valid FAQPage JSON-LD block");
+			} else {
+				const visibleFaqs = getVisibleFaqs(html);
+				const schemaFaqs = faqPage.mainEntity.map((item) => ({
+					question: item.name,
+					answer: item.acceptedAnswer.text,
+				}));
+				if (JSON.stringify(visibleFaqs) !== JSON.stringify(schemaFaqs)) {
+					fail(file, "homepage visible FAQs must exactly match FAQPage JSON-LD");
+				}
+			}
 		}
 		const expectedService = expectedServiceDetails.get(route);
 		if (expectedService) {

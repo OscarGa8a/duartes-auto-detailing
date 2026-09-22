@@ -7,14 +7,18 @@ import FeaturedPackages from './FeaturedPackages.astro';
 import Testimonials from './Testimonials.astro';
 import Gallery from './Gallery.astro';
 import DiscountBanner from './DiscountBanner.astro';
+import HomeFAQ from './HomeFAQ.astro';
+import { englishHomeFaqs, spanishHomeFaqs } from '../../../data/home-faqs';
 
 const { content, locale = "en-US" } = Astro.props as { content: HomeContent; locale?: Locale };
 const hasDiscountBanner = (homeContent: HomeContent): homeContent is HomeContentWithDiscountBanner => homeContent.policy.discountBanner === "include";
+const faqs = locale === "es-US" ? spanishHomeFaqs : englishHomeFaqs;
 ---
 
 <HeroSection content={content.hero} locale={locale} />
 <WhyDuartes content={content.whyDuartes} />
 <FeaturedPackages content={content.featuredPackages} locale={locale} />
-{content.policy.testimonials === 'include' && <Testimonials />}
+{content.policy.testimonials === 'include' && <Testimonials locale={locale} />}
 <Gallery content={content.gallery} />
+<HomeFAQ faqs={faqs} locale={locale} />
 {hasDiscountBanner(content) && <DiscountBanner content={content.discountBanner} locale={locale} />}

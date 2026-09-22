@@ -8,12 +8,17 @@ let glightboxStylesPromise: Promise<void> | null = null;
 function waitForStylesheet(stylesheet: HTMLLinkElement) {
   if (stylesheet.sheet) return Promise.resolve();
 
-  return new Promise<void>((resolve, reject) => {
-    stylesheet.addEventListener('load', () => resolve(), { once: true });
-    stylesheet.addEventListener('error', () => {
-      stylesheet.remove();
-      reject(new Error('Unable to load GLightbox styles.'));
-    }, { once: true });
+  return new Promise<void>((resolve) => {
+    let settled = false;
+    const finish = () => {
+      if (!settled) {
+        settled = true;
+        resolve();
+      }
+    };
+    stylesheet.addEventListener('load', finish, { once: true });
+    stylesheet.addEventListener('error', finish, { once: true });
+    setTimeout(finish, 2500);
   });
 }
 

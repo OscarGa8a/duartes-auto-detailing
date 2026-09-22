@@ -43,7 +43,11 @@ const links = content.navigation.map(({ pageId, label }) => ({
 }));
 ---
 
-<header class="sticky top-0 z-50 border-b border-white/6 bg-black/92 backdrop-blur-md">
+<header
+  id="site-header"
+  data-scrolled="false"
+  class="site-header fixed top-0 inset-x-0 z-50"
+>
   <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 md:h-20">
     <!-- Logo -->
     <a href={logoHref} class="flex items-center gap-2 shrink-0">
@@ -62,7 +66,7 @@ const links = content.navigation.map(({ pageId, label }) => ({
         <li>
           <a
             href={href}
-            class={`text-sm font-medium transition-colors hover:text-gold ${
+            class={`text-sm font-medium transition-colors hover:text-gold drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] ${
               isLinkActive(href) ? 'text-gold' : 'text-white'
             }`}
           >
@@ -77,7 +81,7 @@ const links = content.navigation.map(({ pageId, label }) => ({
         href={counterpart.path}
         hreflang={localeDefinitions[counterpart.locale].htmlLang}
         aria-label={languageControlLabel}
-        class="hidden md:inline-flex text-sm font-medium text-white transition-colors hover:text-gold"
+        class="hidden md:inline-flex text-sm font-medium text-white transition-colors hover:text-gold drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]"
       >
         {content.languageControl.destinationLabel}
       </a>
@@ -185,6 +189,23 @@ const links = content.navigation.map(({ pageId, label }) => ({
 </header>
 
 <style>
+  .site-header {
+    background: linear-gradient(180deg, rgba(15, 16, 18, 0.92) 0%, rgba(15, 16, 18, 0.6) 55%, transparent 100%);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    transition:
+      background 320ms cubic-bezier(0.4, 0, 0.2, 1),
+      backdrop-filter 320ms cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 320ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .site-header[data-scrolled='true'] {
+    background: rgba(15, 16, 18, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+  }
+
   #mobile-menu[data-open='true'] {
     pointer-events: auto;
   }
@@ -213,6 +234,7 @@ const links = content.navigation.map(({ pageId, label }) => ({
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .site-header,
     #mobile-menu-backdrop,
     #mobile-menu-panel,
     [data-menu-item] {
@@ -228,6 +250,7 @@ const links = content.navigation.map(({ pageId, label }) => ({
   function setupNavbar() {
     cleanupNavbar?.();
 
+    const siteHeader = document.getElementById('site-header');
     const hamburger = document.getElementById('hamburger');
     const mobileMenu = document.getElementById('mobile-menu');
     const closeBtn = document.getElementById('close-menu');
@@ -237,6 +260,14 @@ const links = content.navigation.map(({ pageId, label }) => ({
 
     const controller = new AbortController();
     const { signal } = controller;
+
+    const updateHeaderOnScroll = () => {
+      const isScrolled = window.scrollY > 20;
+      siteHeader?.setAttribute('data-scrolled', isScrolled ? 'true' : 'false');
+    };
+
+    window.addEventListener('scroll', updateHeaderOnScroll, { passive: true, signal });
+    updateHeaderOnScroll();
 
     function openMenu() {
       mobileMenu?.setAttribute('data-open', 'true');
