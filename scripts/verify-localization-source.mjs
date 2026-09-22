@@ -30,7 +30,7 @@ const approvedSpanishDigests = {
   home: "b9b246e2351118963eafb856964f256c7eeaad6b883bbc79d9658df99be31d8f",
   about: "29dc14fa4af33cd95392115c82693bb7263e37464288862953c4e9e5a684c645",
   contact: "0812252896e042a485682a2716c7e7792deb7dbf41f405cccb38fc2294ecafaf",
-  services: "ee2db21ca36f5e4016f0f27dd58785057b3f1624e83f8ae145b767c4103e52e5",
+  services: "b78585256bc3a9280d8e80e71944a5a5f59478475cf9a6a0b9f84cec80a33b3a",
 };
 const verifyApprovedSpanishSources = () => {
   for (const [name, value] of Object.entries({ shell: spanishShellContent, home: spanishHomeContent, about: spanishAboutContent, contact: spanishContactContent, services: spanishServicesContent })) {
@@ -191,7 +191,7 @@ const verifyServicesContracts = () => {
   const positions = sections.map((sectionName) => composition.indexOf(`<${sectionName}`));
   if (positions.some((position, index) => position === -1 || (index > 0 && position < positions[index - 1]))) fail("Services composition must retain the current section order.");
 
-  const approvedDigest = "ee2db21ca36f5e4016f0f27dd58785057b3f1624e83f8ae145b767c4103e52e5";
+  const approvedDigest = "b78585256bc3a9280d8e80e71944a5a5f59478475cf9a6a0b9f84cec80a33b3a";
   if (spanishServicesContentDigest !== approvedDigest || digest(spanishServicesContent) !== approvedDigest) fail("Spanish Services content must canonicalize to the approved digest and export that exact digest.");
   exactKeys(spanishServicesContent, ["policy", "metadata", "hero", "intro", "grid", "cards"], "Spanish Services content");
   exactKeys(spanishServicesContent.policy, ["areaTeaser", "englishDetailDisclosure"], "Spanish Services policy");

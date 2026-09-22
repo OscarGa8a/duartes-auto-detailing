@@ -4,7 +4,7 @@ export const spanishServicesContent = {
   policy: { areaTeaser: "omit", englishDetailDisclosure: "required" },
   metadata: {
     title: "Servicios de detallado automotriz móvil",
-    description: "Explora servicios de detallado automotriz móvil, incluidos el detallado interior, exterior y completo, el recubrimiento cerámico y la corrección de pintura.",
+    description: "Explora servicios de detallado automotriz móvil en el Área de la Bahía, incluidos el detallado interior, exterior y completo, el recubrimiento cerámico y la corrección de pintura.",
     socialImageAlt: "Resultado de un servicio de Duartes Auto Detailing",
     schemaName: "Servicios de detallado automotriz móvil",
     schemaDescription: "Servicios móviles de detallado automotriz de Duartes Auto Detailing para conductores del Área de la Bahía.",
@@ -25,12 +25,12 @@ export const spanishServicesContent = {
     ],
     imageAlt: "Limpieza profesional de una rueda con producto en aerosol",
     processEyebrow: "Proceso de detallado",
-    processDescription: "Desde lavados de mantenimiento hasta procesos de corrección y protección, cada servicio se realiza con atención al acabado.",
+    processDescription: "Desde lavados de mantenimiento hasta procesos de corrección y protección de alta exigencia, cada servicio se ejecuta con la misma disciplina y atención a la calidad del acabado.",
   },
   grid: {
     eyebrow: "Servicios disponibles",
-    title: "Elige el servicio que se ajuste a las necesidades de tu vehículo.",
-    description: "Compara las opciones y conoce el enfoque de cada servicio.",
+    title: "Elige el paquete que se adapte al aspecto y la durabilidad que buscas para tu vehículo.",
+    description: "Cada opción está diseñada para ser fácil de comparar, sencilla de reservar y clara sobre el nivel de acabado que puedes esperar.",
   },
   cards: {
     detailAction: "Ver detalles en inglés",
@@ -42,10 +42,10 @@ export const spanishServicesContent = {
       "ceramic-coating": { displayName: "Recubrimiento cerámico", summary: "Servicio de recubrimiento diseñado para ayudar a proteger la pintura y facilitar su mantenimiento." },
       "full-detail": { displayName: "Detallado completo (interior y exterior)", summary: "Detallado integral de interior y exterior en un solo servicio." },
       "seat-upholstery-deep-cleaning": { displayName: "Limpieza profunda de asientos y tapicería", summary: "Limpieza profunda para asientos, alfombras, tapetes y tapicería de tela." },
-      "headlight-restoration": { displayName: "Restauración de faros", summary: "Servicio de restauración orientado a mejorar la claridad y la apariencia de los faros." },
+      "headlight-restoration": { displayName: "Restauración de faros", summary: "Servicio de restauración orientado a mejorar la claridad de los faros, su apariencia y la visibilidad nocturna." },
       "clay-bar-decontamination": { displayName: "Descontaminación con barra de arcilla", summary: "Tratamiento de descontaminación de pintura para retirar contaminantes adheridos." },
     },
   },
 } as const satisfies ServicesContent;
 
-export const spanishServicesContentDigest = "ee2db21ca36f5e4016f0f27dd58785057b3f1624e83f8ae145b767c4103e52e5";
+export const spanishServicesContentDigest = "b78585256bc3a9280d8e80e71944a5a5f59478475cf9a6a0b9f84cec80a33b3a";
