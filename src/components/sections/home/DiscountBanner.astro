@@ -15,7 +15,7 @@ const contactHref = getCanonicalPagePath("contact", locale);
     <div data-reveal="scale" class="relative overflow-hidden rounded-4xl border border-gold/20 bg-gold min-h-88 lg:min-h-72 shadow-lg">
       <div class="motion-sheen"></div>
       <div
-        class="motion-float-slow opacity-20 lg:opacity-75 pointer-events-none absolute inset-y-0 left-0 h-full w-full sm:w-130 xl:w-auto flex items-start"
+        class="motion-float-slow opacity-20 lg:opacity-100 pointer-events-none absolute inset-y-0 left-0 lg:left-6 h-full w-full lg:w-[42%] xl:w-[42%] flex items-center justify-start"
         data-reveal="left"
         data-reveal-mobile="off"
         style="--reveal-mobile-opacity: 0.18"
@@ -25,13 +25,13 @@ const contactHref = getCanonicalPagePath("contact", locale);
           aria-hidden="true"
           width={1200}
           height={800}
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 84vw, 40vw"
-          class="w-full h-full object-cover object-right"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 84vw, 42vw"
+          class="w-full h-full !object-contain !object-left"
         />
       </div>
       <div class="absolute inset-y-0 left-0 w-24 bg-linear-to-r from-black/10 to-transparent pointer-events-none"></div>
 
-      <div class="relative z-10 ml-auto flex w-full lg:max-w-lg xl:max-w-xl flex-col items-center justify-center gap-4 px-8 py-10 text-center lg:items-start lg:px-14 lg:text-left" data-reveal="blur">
+      <div class="relative z-10 ml-auto flex w-full lg:w-[54%] xl:w-[54%] flex-col items-center justify-center gap-4 px-8 py-10 text-center lg:items-start lg:px-8 lg:text-left" data-reveal="blur">
         <p class="text-black/60 text-sm font-semibold uppercase tracking-wide w-full">{content.eyebrow}</p>
         <h2 class="text-black font-bold leading-tight text-h1 text-center lg:text-left w-full max-w-md lg:max-w-lg">
           {content.title}
