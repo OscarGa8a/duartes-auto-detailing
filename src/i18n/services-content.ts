@@ -5,7 +5,7 @@ import type { Locale } from "./locales";
 /** Promotion visibility is composition-owned rather than localized source content. */
 export const servicesSectionPolicies = {
   "en-US": { areaTeaser: "include", englishDetailDisclosure: "not-required", discountBanner: "include" },
-  "es-US": { areaTeaser: "omit", englishDetailDisclosure: "required", discountBanner: "omit" },
+  "es-US": { areaTeaser: "include", englishDetailDisclosure: "required", discountBanner: "include" },
 } as const satisfies Record<Locale, ServicesPromotionPolicy>;
 
 const englishServiceCards = Object.fromEntries(
@@ -22,7 +22,7 @@ export const englishServicesContent = {
     schemaDescription: "",
   },
   hero: {
-    title: "Tailored Care For Every Finish",
+    title: "Mobile Auto Detailing Services Tailored For Every Finish",
     eyebrow: "Services catalog",
     description: "Explore premium mobile detailing packages designed around your vehicle, your finish goals, and the level of protection you want to maintain.",
   },
@@ -31,9 +31,9 @@ export const englishServicesContent = {
     title: "Services designed around gloss, protection, and long-term care.",
     description: "Every package is built to match a different level of maintenance, correction, or protection. Browse the catalog below to compare services, understand the process, and choose the finish standard that fits your vehicle best.",
     benefits: [
-      { title: "Mobile", description: "At-home convenience" },
-      { title: "Premium", description: "Top-tier products" },
-      { title: "Results", description: "Visible after every visit" },
+      { title: "100% Mobile", description: "Self-contained water & power" },
+      { title: "500+ Vehicles", description: "Detailed across the Bay Area" },
+      { title: "15+ Cities", description: "Direct service at your location" },
     ],
     imageAlt: "Professional wheel cleaning with spray",
     processEyebrow: "Premium process",

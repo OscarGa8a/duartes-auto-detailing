@@ -19,25 +19,29 @@ const { content } = Astro.props as { content: ServicesContent["intro"] };
         {content.description}
       </p>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-2">
         {content.benefits.map((benefit, index) => (
-          <div data-reveal="scale" style={`--reveal-delay: ${140 + index * 100}ms`} class="motion-card-hover relative overflow-hidden rounded-xl border border-border-soft bg-surface-2 px-5 py-5 text-center">
-            <div class={`absolute inset-x-5 top-0 h-px bg-linear-to-r from-transparent ${index === 1 ? "via-gold/70" : "via-wine-soft/72"} to-transparent`}></div>
-            <span class="text-gold font-bold text-2xl">{benefit.title}</span>
-            <span class="mt-2 block text-sm text-text-secondary">{benefit.description}</span>
+          <div
+            data-reveal="scale"
+            style={`--reveal-delay: ${140 + index * 90}ms`}
+            class="relative overflow-hidden rounded-xl border border-white/10 bg-surface-2/90 px-4 py-4 text-center transition-all duration-300 hover:border-gold/30 hover:bg-surface-2"
+          >
+            <div class={`absolute inset-x-4 top-0 h-px bg-linear-to-r from-transparent ${index === 1 ? "via-gold/70" : "via-wine-soft/72"} to-transparent`}></div>
+            <span class="block text-gold font-bold text-2xl sm:text-3xl tracking-tight">{benefit.title}</span>
+            <span class="mt-1 block text-xs font-medium text-text-secondary leading-snug">{benefit.description}</span>
           </div>
         ))}
       </div>
     </div>
 
     <div data-reveal="scale" class="relative">
-      <div class="motion-float-slow overflow-hidden rounded-xl border border-white/8 shadow-lg min-h-96 lg:min-h-136">
+      <div class="overflow-hidden rounded-xl border border-white/8 shadow-lg min-h-80 sm:min-h-96 lg:min-h-136">
         <CldImage
           src="about-cta_xhm8le"
           alt={content.imageAlt}
-          width={1200}
-          height={900}
-          sizes="(max-width: 1024px) 100vw, 44vw"
+          width={1000}
+          height={800}
+          sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) 90vw, 44vw"
           class="w-full h-full object-cover"
         />
         <div class="absolute inset-0 bg-linear-to-t from-black/58 via-transparent to-transparent"></div>

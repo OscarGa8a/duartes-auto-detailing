@@ -6,7 +6,7 @@
     "home": { "state": "approved", "sha256": "b9b246e2351118963eafb856964f256c7eeaad6b883bbc79d9658df99be31d8f" },
     "about": { "state": "approved", "sha256": "29dc14fa4af33cd95392115c82693bb7263e37464288862953c4e9e5a684c645" },
     "contact": { "state": "approved", "sha256": "0812252896e042a485682a2716c7e7792deb7dbf41f405cccb38fc2294ecafaf" },
-    "services": { "state": "approved", "sha256": "8d2cd90a9f164f7a0c1f10b110ec32e1e925a63bf244d6de4fbbf52d1b5caadf" }
+    "services": { "state": "approved", "sha256": "bc55a2b15231023ba174f9bf11f1189a3c62d6a114eb0bdda90b55b6ff4b97a5" }
   },
   "routes": {
     "home": { "state": "approved", "requiredBlocks": ["shell", "home"] },
