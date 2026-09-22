@@ -21,6 +21,7 @@ export const englishShellContent = {
     navigationLabel: "Footer navigation",
     socialLabel: "Social media",
     links: [
+      { destination: "about", label: "About Us" },
       { destination: "services", label: "Services" },
       { destination: "service-area-bay-area-en", label: "Bay Area Service Area" },
       { destination: "contact", label: "Contact" },
@@ -38,7 +39,7 @@ export const englishShellContent = {
 export const spanishShellContent = {
   navigation: [
     { pageId: "home", label: "Inicio" },
-    { pageId: "about", label: "Acerca de nosotros" },
+    { pageId: "about", label: "Nosotros" },
     { pageId: "services", label: "Servicios" },
     { pageId: "contact", label: "Contacto" },
   ],
@@ -56,8 +57,9 @@ export const spanishShellContent = {
     navigationLabel: "Navegación del pie de página",
     socialLabel: "Redes sociales",
     links: [
+      { destination: "about", label: "Nosotros" },
       { destination: "services", label: "Servicios" },
-      { destination: "service-area-bay-area-en", label: "Área de servicio (en inglés)" },
+      { destination: "service-area-bay-area-en", label: "Área de servicio" },
       { destination: "contact", label: "Contacto" },
     ],
     copyrightSuffix: "Todos los derechos reservados.",

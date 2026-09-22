@@ -63,14 +63,17 @@ const footerLinks = content.footer.links.map((link) => ({
           <li><a class="transition-colors hover:text-gold" href={href}>{label}</a></li>
         ))}
         {counterpart && (
-          <li>
+          <li class="flex items-center gap-5 before:content-[''] before:h-3.5 before:w-px before:bg-white/14 before:hidden sm:before:block">
             <a
-              class="transition-colors hover:text-gold"
+              class="transition-colors hover:text-gold inline-flex items-center gap-1.5"
               href={counterpart.path}
               hreflang={localeDefinitions[counterpart.locale].htmlLang}
               aria-label={languageControlLabel}
             >
-              {content.languageControl.destinationLabel}
+              <svg class="h-3.5 w-3.5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18zm0 0c2.5 0 4.5-4.03 4.5-9S14.5 3 12 3m0 18c-2.5 0-4.5-4.03-4.5-9S9.5 3 12 3m-9 9h18" />
+              </svg>
+              <span>{content.languageControl.destinationLabel}</span>
             </a>
           </li>
         )}
