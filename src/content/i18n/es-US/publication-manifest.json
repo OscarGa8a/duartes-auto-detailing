@@ -5,7 +5,7 @@
     "shell": { "sha256": "daf33823487c4526b52b50a328e400c3e2e4be68023e96fa2e1fc16b545a12dd" },
     "home": { "sha256": "b9b246e2351118963eafb856964f256c7eeaad6b883bbc79d9658df99be31d8f" },
     "about": { "sha256": "29dc14fa4af33cd95392115c82693bb7263e37464288862953c4e9e5a684c645" },
-    "contact": { "sha256": "0812252896e042a485682a2716c7e7792deb7dbf41f405cccb38fc2294ecafaf" },
+    "contact": { "sha256": "45ea3c18a39c760f21a99b7e9f6fe1dcfbf186c498df8ef087ad505d70f042c9" },
     "services": { "sha256": "bc55a2b15231023ba174f9bf11f1189a3c62d6a114eb0bdda90b55b6ff4b97a5" }
   },
   "routes": {

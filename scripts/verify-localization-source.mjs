@@ -29,7 +29,7 @@ const approvedSpanishDigests = {
   shell: "daf33823487c4526b52b50a328e400c3e2e4be68023e96fa2e1fc16b545a12dd",
   home: "b9b246e2351118963eafb856964f256c7eeaad6b883bbc79d9658df99be31d8f",
   about: "29dc14fa4af33cd95392115c82693bb7263e37464288862953c4e9e5a684c645",
-  contact: "0812252896e042a485682a2716c7e7792deb7dbf41f405cccb38fc2294ecafaf",
+  contact: "45ea3c18a39c760f21a99b7e9f6fe1dcfbf186c498df8ef087ad505d70f042c9",
   services: "bc55a2b15231023ba174f9bf11f1189a3c62d6a114eb0bdda90b55b6ff4b97a5",
 };
 const verifyApprovedSpanishSources = () => {
@@ -155,7 +155,7 @@ const verifyContactContracts = () => {
   const sections = ["PageHero", "ContactSection", "ServiceMap"];
   const positions = sections.map((section) => composition.indexOf(`<${section}`));
   if (positions.some((position, index) => position === -1 || (index > 0 && position < positions[index - 1]))) fail("Contact composition must retain the current section order.");
-  if (!composition.includes('import type { ContactContent, ContactContentWithServiceMap } from "../../../i18n/content-types";') || !composition.includes('const hasServiceMap = (content: ContactContent): content is ContactContentWithServiceMap => content.policy.serviceMap === "include";') || !composition.includes('{hasServiceMap(content) && <ServiceMap content={content.map} />}') || !content.includes('"en-US": { serviceMap: "include" }') || !content.includes('"es-US": { serviceMap: "omit" }')) fail("Contact map policy must narrow through a local include guard before rendering the complete map subtree.");
+  if (!composition.includes('import type { ContactContent, ContactContentWithServiceMap } from "../../../i18n/content-types";') || !composition.includes('const hasServiceMap = (content: ContactContent): content is ContactContentWithServiceMap => content.policy.serviceMap === "include";') || !composition.includes('{hasServiceMap(content) && <ServiceMap content={content.map} />}') || !content.includes('"en-US": { serviceMap: "include" }') || !content.includes('"es-US": { serviceMap: "include" }')) fail("Contact map policy must narrow through a local include guard before rendering the complete map subtree.");
   if (!types.includes("export type ContactContentWithServiceMap") || !types.includes('policy: { serviceMap: "include" };') || !types.includes("map: ContactMapContent;") || !types.includes("export type ContactContentWithoutServiceMap") || !types.includes('policy: { serviceMap: "omit" };') || !types.includes("map?: never;") || !types.includes("export type ContactContent = ContactContentWithServiceMap | ContactContentWithoutServiceMap;")) fail("Contact types must require included maps and forbid omitted maps.");
   if (!types.includes("export interface ContactMessageChannelContent") || !types.includes("ContactChannelContent,") || !content.includes("preparedStatus") || !englishContactContent.form.preparedStatus.includes("prepared but not sent") || !spanishContactContent.form.preparedStatus.includes("preparado, pero no se envió") || !form.includes('role="status" aria-live="polite"') || form.includes("form.reset()")) fail("Contact form status must truthfully preserve submitted values.");
   if (/description:\s*["'](?:phone|@duartes_detailing)|@duartes_detailing|phoneFormatted|phoneUSE164/.test(content)) fail("Localized Contact channels must not own canonical display or destination data.");
@@ -163,7 +163,7 @@ const verifyContactContracts = () => {
   if (!map.includes('import type { ContactMapContent } from "../../../i18n/content-types";') || !map.includes("content: ContactMapContent;") || map.includes('ContactContent["map"]')) fail("ServiceMap must require the named non-optional ContactMapContent prop after composition narrows inclusion.");
   if (!map.includes("37.63506596297662") || !map.includes("-122.08118753590793") || !map.includes("aria-describedby=\"service-map-help\"")) fail("Contact map must retain canonical coordinates and accessibility relationship.");
   if (englishContactContent.policy.serviceMap !== "include" || !Object.hasOwn(englishContactContent, "map")) fail("English Contact must retain its complete map subtree.");
-  if (spanishContactContent.policy.serviceMap !== "omit" || Object.hasOwn(spanishContactContent, "map")) fail("Spanish Contact must omit the complete map subtree.");
+  if (spanishContactContent.policy.serviceMap !== "include" || !Object.hasOwn(spanishContactContent, "map")) fail("Spanish Contact must retain its complete map subtree.");
   const channelOrder = spanishContactContent.channels.map((channel) => channel.title);
   if (canonical(channelOrder) !== canonical(["Escríbenos por WhatsApp", "Envíanos un mensaje de texto", "Envíanos un mensaje directo por Instagram"])) fail("Spanish Contact channels must retain approved channel order.");
   const spanishContact = JSON.stringify(spanishContactContent);

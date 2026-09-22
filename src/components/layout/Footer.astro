@@ -37,13 +37,18 @@ const footerLinks = content.footer.links.map((link) => ({
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center gap-5">
     <!-- Logo -->
     <a href={logoHref}>
-      <img
-        src="/images/logo.png"
-        alt={content.brandLogoAlt}
-        width="226"
-        height="67"
-        class="h-10 w-auto object-contain"
-      />
+      <picture class="contents">
+        <source srcset="/images/logo.webp" type="image/webp" />
+        <img
+          src="/images/logo.png"
+          alt={content.brandLogoAlt}
+          width="226"
+          height="67"
+          class="h-10 w-auto object-contain"
+          loading="lazy"
+          decoding="async"
+        />
+      </picture>
     </a>
 
     <!-- Social icons -->

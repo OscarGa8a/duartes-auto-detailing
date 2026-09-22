@@ -59,13 +59,18 @@ const links = content.navigation.map(({ pageId: itemPageId, label }) => ({
   <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 md:h-20">
     <!-- Logo -->
     <a href={logoHref} class="flex items-center gap-2 shrink-0">
-      <img
-        src="/images/logo.png"
-        alt={content.brandLogoAlt}
-        width="226"
-        height="67"
-        class="h-10! md:h-15! w-auto object-contain"
-      />
+      <picture class="contents">
+        <source srcset="/images/logo.webp" type="image/webp" />
+        <img
+          src="/images/logo.png"
+          alt={content.brandLogoAlt}
+          width="226"
+          height="67"
+          class="h-10! md:h-15! w-auto object-contain"
+          loading="eager"
+          decoding="async"
+        />
+      </picture>
     </a>
 
     <!-- Desktop nav -->
