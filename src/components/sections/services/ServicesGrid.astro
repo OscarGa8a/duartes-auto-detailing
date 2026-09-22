@@ -14,9 +14,6 @@ if (content.policy.englishDetailDisclosure === "required" && !englishDetailDiscl
 ---
 
 <section class="relative bg-off-white py-10 lg:py-16 overflow-hidden border-b border-divider-light/70">
-  <div class="motion-drift absolute -left-14 top-20 h-64 w-64 rounded-full bg-wine/10 blur-3xl"></div>
-  <div class="motion-drift absolute -right-12 bottom-10 h-72 w-72 rounded-full bg-gold/8 blur-3xl" style="--float-delay: 1.2s"></div>
-
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10 relative flex flex-col gap-10">
     <div data-reveal="blur" class="flex flex-col gap-3 text-left">
       <span class="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold-deep">
@@ -32,8 +29,7 @@ if (content.policy.englishDetailDisclosure === "required" && !englishDetailDiscl
         const presentation = content.cards.byServiceId[service.id];
 
         return (
-          <div data-reveal="scale" style={`--reveal-delay: ${index * 110}ms; --float-delay: ${index * 0.45}s`} class="motion-float-slow motion-card-hover relative">
-            {(index === 0 || index === 3) && <div class="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-wine/10 blur-2xl"></div>}
+          <div data-reveal="scale" style={`--reveal-delay: ${index * 70}ms`} class="relative h-full">
             <ServiceCard
               service={service}
               displayName={presentation.displayName}

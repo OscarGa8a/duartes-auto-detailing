@@ -46,8 +46,11 @@ const areaTeaserContent = getAreaTeaser(content);
         <h2 class="text-text-dark font-bold text-h2">{areaTeaserContent.title}</h2>
         <p class="max-w-3xl text-text-dark/72 leading-relaxed">{areaTeaserContent.description}</p>
       </div>
-      <a data-reveal="right" href="/service-area/bay-area/" class="inline-flex items-center justify-center rounded-full bg-black px-6 py-3 text-sm font-semibold text-text-primary transition-colors hover:bg-surface">
-        {areaTeaserContent.action}
+      <a data-reveal="right" href="/service-area/bay-area/" class="group inline-flex items-center justify-center gap-2 rounded-full bg-black px-6 py-3.5 text-sm font-semibold text-text-primary transition-all duration-200 hover:bg-surface hover:text-gold border border-transparent hover:border-gold/30 active:scale-[0.98] shadow-sm hover:shadow-md">
+        <span>{areaTeaserContent.action}</span>
+        <svg class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
       </a>
     </div>
   </section>
