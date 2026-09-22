@@ -11,7 +11,8 @@ interface Props {
 }
 
 const { service, displayName, summary, detailAction } = Astro.props as Props;
-const href = `/services/${service.slug}`;
+const isSpanish = detailAction.toLowerCase().startsWith("ver");
+const href = isSpanish ? `/es/services/${service.slug}/` : `/services/${service.slug}`;
 
 const categoryBadges: Record<string, { en: string; es: string }> = {
   "full-detail": { en: "Signature Package", es: "Paquete Insignia" },
@@ -24,7 +25,6 @@ const categoryBadges: Record<string, { en: string; es: string }> = {
   "clay-bar-decontamination": { en: "Decontamination", es: "Descontaminación" },
 };
 
-const isSpanish = detailAction.toLowerCase().includes("inglés") || detailAction.toLowerCase().includes("detalles en");
 const badge = isSpanish ? categoryBadges[service.id]?.es : categoryBadges[service.id]?.en;
 const isFeatured = service.id === "full-detail" || service.id === "ceramic-coating";
 ---

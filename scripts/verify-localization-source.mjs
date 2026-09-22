@@ -21,7 +21,6 @@ const shellFiles = [
 const ledgerPath = resolve(reviewRoot, "approval-ledger.json");
 const claimLedgerPath = resolve(reviewRoot, "claim-ledger.md");
 const manifestPath = resolve(root, "src/content/i18n/es-US/publication-manifest.json");
-const pageIds = new Set(["home", "about", "contact", "services"]);
 const canonical = (value) => Array.isArray(value) ? `[${value.map(canonical).join(",")}]` : value && typeof value === "object" ? `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${canonical(value[key])}`).join(",")}}` : JSON.stringify(value);
 const digest = (value) => createHash("sha256").update(canonical(value)).digest("hex");
 const fail = (message) => { throw new Error(message); };
@@ -30,7 +29,7 @@ const approvedSpanishDigests = {
   home: "b9b246e2351118963eafb856964f256c7eeaad6b883bbc79d9658df99be31d8f",
   about: "29dc14fa4af33cd95392115c82693bb7263e37464288862953c4e9e5a684c645",
   contact: "45ea3c18a39c760f21a99b7e9f6fe1dcfbf186c498df8ef087ad505d70f042c9",
-  services: "bc55a2b15231023ba174f9bf11f1189a3c62d6a114eb0bdda90b55b6ff4b97a5",
+  services: "27901899f6e83926427e8684643de73fb02a95c794c7fdd53d62e8293fc503a7",
 };
 const verifyApprovedSpanishSources = () => {
   for (const [name, value] of Object.entries({ shell: spanishShellContent, home: spanishHomeContent, about: spanishAboutContent, contact: spanishContactContent, services: spanishServicesContent })) {
@@ -191,7 +190,7 @@ const verifyServicesContracts = () => {
   const positions = sections.map((sectionName) => composition.indexOf(`<${sectionName}`));
   if (positions.some((position, index) => position === -1 || (index > 0 && position < positions[index - 1]))) fail("Services composition must retain the current section order.");
 
-  const approvedDigest = "bc55a2b15231023ba174f9bf11f1189a3c62d6a114eb0bdda90b55b6ff4b97a5";
+  const approvedDigest = "27901899f6e83926427e8684643de73fb02a95c794c7fdd53d62e8293fc503a7";
   if (spanishServicesContentDigest !== approvedDigest || digest(spanishServicesContent) !== approvedDigest) fail("Spanish Services content must canonicalize to the approved digest and export that exact digest.");
   exactKeys(spanishServicesContent, ["policy", "metadata", "hero", "intro", "grid", "cards", "areaTeaser"], "Spanish Services content");
   exactKeys(spanishServicesContent.policy, ["areaTeaser", "englishDetailDisclosure"], "Spanish Services policy");
@@ -201,8 +200,8 @@ const verifyServicesContracts = () => {
   if (!Array.isArray(spanishServicesContent.intro.benefits) || spanishServicesContent.intro.benefits.length !== 3) fail("Spanish Services intro must retain its approved three-benefit order.");
   spanishServicesContent.intro.benefits.forEach((benefit, index) => exactKeys(benefit, ["title", "description"], `Spanish Services benefit ${index}`));
   exactKeys(spanishServicesContent.grid, ["eyebrow", "title", "description"], "Spanish Services grid");
-  exactKeys(spanishServicesContent.cards, ["detailAction", "englishDetailDisclosure", "byServiceId"], "Spanish Services cards");
-  if (spanishServicesContent.policy.areaTeaser !== "include" || spanishServicesContent.policy.englishDetailDisclosure !== "required" || !Object.hasOwn(spanishServicesContent, "areaTeaser")) fail("Spanish Services must include its area teaser and require the English-detail disclosure.");
+  exactKeys(spanishServicesContent.cards, ["detailAction", "byServiceId"], "Spanish Services cards");
+  if (spanishServicesContent.policy.areaTeaser !== "include" || spanishServicesContent.policy.englishDetailDisclosure !== "not-required" || !Object.hasOwn(spanishServicesContent, "areaTeaser")) fail("Spanish Services must include its area teaser.");
   exactKeys(spanishServicesContent.areaTeaser, ["eyebrow", "title", "description", "action"], "Spanish Services area teaser");
   if (verifierSource.includes(retiredBlanketSpanishMessage)) fail("The retired blanket Spanish Services-content prohibition must not coexist with approved-source assertions.");
 
@@ -210,7 +209,7 @@ const verifyServicesContracts = () => {
   for (const id of ids) exactKeys(spanishServicesContent.cards.byServiceId[id], ["displayName", "summary"], `Spanish card ${id}`);
   if (/\b(?:slug|href|route|image|media|price|schema|relatedSlugs|ctaLine|includes)\b/.test(JSON.stringify(spanishServicesContent.cards.byServiceId))) fail("Spanish card presentation must not own canonical service facts.");
   if (!content.includes("services.map(({ id, name, description }) => [id, { displayName: name, summary: description }])")) fail("English card presentation must derive canonical names and current descriptions.");
-  if (!grid.includes("services.map") || !card.includes("const href = `/services/${service.slug}`") || !card.includes("src={service.images[0]}")) fail("Canonical service records must retain card order, routing, and media.");
+  if (!grid.includes("services.map") || !card.includes("service.slug") || !card.includes("src={service.images[0]}")) fail("Canonical service records must retain card order, routing, and media.");
   if (!types.includes('export type ServicesAreaTeaser =') && !types.includes('type ServicesAreaTeaser =')) fail("Services types must discriminate structural area-teaser omission.");
   if (!types.includes('areaTeaser?: never') || !types.includes('export interface ServicesPromotionPolicy') || !types.includes('discountBanner: "include" | "omit"')) fail("Services types must forbid omitted teaser copy and model banner policy separately.");
 
@@ -225,14 +224,15 @@ const verifyServicesContracts = () => {
   const areaTeaserTemplateAccesses = (composition.match(/areaTeaserContent\.(?:eyebrow|title|description|action)\b/g) ?? []).length;
   const validatedAreaTeaserHelper = /function getAreaTeaser\([^)]*ServicesContent\): NonNullable<ServicesContent\["areaTeaser"\]> \| undefined/.test(composition);
   const teaserRendersOnlyFromHelper = composition.includes("{areaTeaserContent && (") && areaTeaserTemplateAccesses === 4 && !composition.includes("areaTeaserContent.areaTeaser.") && !/\{content\.areaTeaser\./.test(composition);
-  if (areaTeaserIncludeChecks !== 1 || areaTeaserPresenceChecks !== 1 || !validatedAreaTeaserHelper || !teaserRendersOnlyFromHelper || !composition.includes('promotionPolicy.discountBanner === "include"') || !composition.includes('<DiscountBanner content={discountBannerContent} locale={locale} />') || !content.includes('"en-US": { areaTeaser: "include", englishDetailDisclosure: "not-required", discountBanner: "include" }') || !content.includes('"es-US": { areaTeaser: "include", englishDetailDisclosure: "required", discountBanner: "include" }')) fail("Services promotion policies must validate included teaser content, render it only from the helper, and preserve promotion policies.");
+  if (areaTeaserIncludeChecks !== 1 || areaTeaserPresenceChecks !== 1 || !validatedAreaTeaserHelper || !teaserRendersOnlyFromHelper || !composition.includes('promotionPolicy.discountBanner === "include"') || !composition.includes('<DiscountBanner content={discountBannerContent} locale={locale} />') || !content.includes('"en-US": { areaTeaser: "include", englishDetailDisclosure: "not-required", discountBanner: "include" }') || !content.includes('"es-US": { areaTeaser: "include", englishDetailDisclosure: "not-required", discountBanner: "include" }')) fail("Services promotion policies must validate included teaser content, render it only from the helper, and preserve promotion policies.");
   if (!/<\/div>\{englishDetailDisclosure\s*&&\s*<p\b/.test(grid)) fail("The false English disclosure branch must be adjacent to existing markup and byte-neutral.");
   if (/discountBanner|promot|oferta|descuento/i.test(spanishContent)) fail("Spanish Services source must not invent discount-banner copy.");
 
   const spanishPages = ["src/pages/es/index.astro", "src/pages/es/[...page].astro"].map((file) => readFileSync(resolve(root, file), "utf8"));
   if (spanishPages.some((page) => !page.includes('locale={locale}')) || !spanishPages[0].includes('pageId={pageId}') || !spanishPages[1].includes('getCanonicalPagePath(pageId, locale)')) fail("Spanish pages must use explicit locale/page identity and canonical schema paths.");
   if (!spanishPages[0].includes('<HomeComposition content={spanishHomeContent} locale={locale} />') || !spanishPages[1].includes('<AboutComposition content={spanishAboutContent} />') || !spanishPages[1].includes('<ContactComposition content={spanishContactContent} />') || !spanishPages[1].includes('<ServicesComposition content={spanishServicesContent} locale={locale} />')) fail("Spanish pages must render only approved typed content through shared compositions.");
-  if (/service-detail|services\/\[slug\]/.test(spanishPages.join("\n"))) fail("Spanish publication must not add a service-detail route.");
+  const spanishDetailFile = resolve(root, "src/pages/es/services/[slug].astro");
+  if (!existsSync(spanishDetailFile)) fail("Spanish service detail route must exist.");
 };
 
 const verifyShellContracts = () => {

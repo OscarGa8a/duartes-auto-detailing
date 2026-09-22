@@ -1,6 +1,6 @@
 ---
 import { localeDefinitions, type Locale } from "../../i18n/locales";
-import { getPublishedCounterpart, getShellDestinationPath, type PageId } from "../../i18n/routes";
+import { getPublishedCounterpart, getShellDestinationPath, resolveCounterpartPath, type PageId, type RoutePath } from "../../i18n/routes";
 import type { ShellContent } from "../../i18n/content-types";
 import Icon from "../ui/Icon.astro";
 
@@ -11,7 +11,13 @@ interface Props {
 }
 
 const { content, locale = "en-US", pageId } = Astro.props;
-const counterpart = getPublishedCounterpart(pageId, locale);
+let counterpart = getPublishedCounterpart(pageId, locale);
+if (counterpart) {
+  counterpart = {
+    ...counterpart,
+    path: resolveCounterpartPath(counterpart.path, Astro.url.pathname) as RoutePath,
+  };
+}
 const languageControlLabel = `${content.languageControl.label}: ${content.languageControl.destinationLabel}`;
 const logoHref = getShellDestinationPath("home", locale);
 const navigationIcons: Record<PageId, string> = {

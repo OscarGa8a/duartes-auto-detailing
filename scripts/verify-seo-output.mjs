@@ -112,6 +112,16 @@ const expectedServiceDetails = new Map([
 	["/services/headlight-restoration/", { name: "Headlight Restoration", publicId: "img1_q5lnkj" }],
 	["/services/clay-bar-decontamination/", { name: "Clay Bar Decontamination", publicId: "img1_ufdvdm" }],
 ]);
+const expectedSpanishServiceDetails = new Map([
+	["/es/services/interior-detailing/", { name: "Detallado interior", publicId: "img14_yapstm" }],
+	["/es/services/exterior-detailing/", { name: "Detallado exterior", publicId: "img10_ny7bbo" }],
+	["/es/services/paint-correction/", { name: "Corrección de pintura", publicId: "img1_pl62ks" }],
+	["/es/services/ceramic-coating/", { name: "Recubrimiento cerámico", publicId: "img1_yqzcqr" }],
+	["/es/services/full-detailing/", { name: "Detallado completo (interior y exterior)", publicId: "img5_tfs4mg" }],
+	["/es/services/seat-upholstery-deep-cleaning/", { name: "Limpieza profunda de asientos y tapicería", publicId: "img4_yy8jcu" }],
+	["/es/services/headlight-restoration/", { name: "Restauración de faros", publicId: "img1_q5lnkj" }],
+	["/es/services/clay-bar-decontamination/", { name: "Descontaminación con barra de arcilla", publicId: "img1_ufdvdm" }],
+]);
 const expectedExplicitSocialImages = new Map([
 	["/", cloudinaryImageUrl("og-image_usi1ab", "f_auto,q_auto")],
 	["/services/", cloudinaryImageUrl("img14_yapstm", serviceImageTransformations)],
@@ -119,13 +129,24 @@ const expectedExplicitSocialImages = new Map([
 		route,
 		cloudinaryImageUrl(service.publicId, serviceImageTransformations),
 	]),
+	...Array.from(expectedSpanishServiceDetails, ([route, service]) => [
+		route,
+		cloudinaryImageUrl(service.publicId, serviceImageTransformations),
+	]),
 ]);
-const expectedSpanishRoutes = new Set(["/es/", "/es/about/", "/es/contact/", "/es/services/"]);
+const expectedSpanishRoutes = new Set([
+	"/es/",
+	"/es/about/",
+	"/es/contact/",
+	"/es/services/",
+	...expectedSpanishServiceDetails.keys(),
+]);
 const spanishCounterparts = new Map([
 	["/", "/es/"],
 	["/about/", "/es/about/"],
 	["/contact/", "/es/contact/"],
 	["/services/", "/es/services/"],
+	...[...expectedSpanishServiceDetails.keys()].map((es) => [es.replace(/^\/es/, ""), es]),
 ]);
 const expectedPageSchemas = new Map([
 	[
@@ -659,7 +680,7 @@ function verify404Output() {
 function expectedJsonLdTypes(route) {
 	if (route === "/" || route === "/es/") return ["AutoWash", "WebSite", "FAQPage"];
 	if (route === "/services/" || route === "/es/services/") return ["AutoWash", "ItemList"];
-	if (route !== "/services/" && route.startsWith("/services/"))
+	if ((route !== "/services/" && route.startsWith("/services/")) || (route !== "/es/services/" && route.startsWith("/es/services/")))
 		return ["AutoWash", "Service", "BreadcrumbList"];
 	if (serviceAreaRoutes.has(route))
 		return ["AutoWash", "Service", "BreadcrumbList"];
@@ -847,7 +868,7 @@ for (const file of htmlFiles) {
 		const expectedAlternateHrefs = [new URL(route, siteBase).href, new URL(counterpartRoute, siteBase).href];
 		if (JSON.stringify(alternateHrefs) !== JSON.stringify(expectedAlternateHrefs)) fail(file, "published language counterparts must emit reciprocal self and counterpart hreflang links");
 		if (!getRouteLinks(html).has(counterpartRoute)) fail(file, "published language counterparts must link to each other");
-	} else if (alternateHrefs.length || getInternalHrefPaths(html).some(isSpanishPath)) {
+	} else if (alternateHrefs.length || (!isSpanishPath(route) && getInternalHrefPaths(html).some(isSpanishPath))) {
 		fail(file, "unpublished pages must not advertise or link to Spanish counterparts");
 	}
 	if (getInternalHrefPaths(html).some(isUnpublishedSpanishPath)) fail(file, "must not link to unpublished Spanish routes");
@@ -1031,6 +1052,26 @@ for (const file of htmlFiles) {
 				{ position: 1, name: "Home", item: new URL("/", siteBase).href },
 				{ position: 2, name: "Services", item: new URL("/services/", siteBase).href },
 				{ position: 3, name: expectedService.name, item: new URL(route, siteBase).href },
+			];
+			if (
+				JSON.stringify(breadcrumbList?.itemListElement) !==
+				JSON.stringify(expectedBreadcrumbs.map((item) => ({ "@type": "ListItem", ...item })))
+			) {
+				fail(file, "service-detail BreadcrumbList must exactly match the ordered route hierarchy");
+			}
+		}
+
+		const expectedSpanishService = expectedSpanishServiceDetails.get(route);
+		if (expectedSpanishService) {
+			const serviceJsonLd = findJsonLdType(jsonLd, "Service");
+			if (serviceJsonLd?.name !== expectedSpanishService.name) {
+				fail(file, `service-detail Service JSON-LD name must be ${expectedSpanishService.name}`);
+			}
+			const breadcrumbList = findJsonLdType(jsonLd, "BreadcrumbList");
+			const expectedBreadcrumbs = [
+				{ position: 1, name: "Inicio", item: new URL("/es/", siteBase).href },
+				{ position: 2, name: "Servicios", item: new URL("/es/services/", siteBase).href },
+				{ position: 3, name: expectedSpanishService.name, item: new URL(route, siteBase).href },
 			];
 			if (
 				JSON.stringify(breadcrumbList?.itemListElement) !==

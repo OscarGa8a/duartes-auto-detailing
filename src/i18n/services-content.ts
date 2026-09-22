@@ -5,7 +5,7 @@ import type { Locale } from "./locales";
 /** Promotion visibility is composition-owned rather than localized source content. */
 export const servicesSectionPolicies = {
   "en-US": { areaTeaser: "include", englishDetailDisclosure: "not-required", discountBanner: "include" },
-  "es-US": { areaTeaser: "include", englishDetailDisclosure: "required", discountBanner: "include" },
+  "es-US": { areaTeaser: "include", englishDetailDisclosure: "not-required", discountBanner: "include" },
 } as const satisfies Record<Locale, ServicesPromotionPolicy>;
 
 const englishServiceCards = Object.fromEntries(

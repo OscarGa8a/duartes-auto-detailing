@@ -252,7 +252,11 @@ const countLabel = videoCount > 0
     let disposed = false;
 
     function stopAllVideos() {
-      document.querySelectorAll<HTMLVideoElement>(`.service-gallery-video[data-gallery-id="${galleryId}"]`).forEach((v) => v.pause());
+      document.querySelectorAll<HTMLVideoElement>('.gslide video').forEach((v) => {
+        try {
+          v.pause();
+        } catch {}
+      });
     }
 
     const openLightboxAt = async (trigger: HTMLButtonElement, index: number) => {
@@ -263,13 +267,7 @@ const countLabel = videoCount > 0
 
       try {
         const GLightbox = await loadGLightbox();
-        if (
-          disposed ||
-          !root.isConnected ||
-          !trigger.isConnected ||
-          !root.contains(trigger) ||
-          !Array.from(document.querySelectorAll<HTMLElement>('[data-service-gallery]')).includes(root)
-        ) return;
+        if (disposed || !root.isConnected || !trigger.isConnected) return;
 
         lightbox?.destroy();
         lightbox = GLightbox({
@@ -287,23 +285,26 @@ const countLabel = videoCount > 0
 
         lightbox.on('close', stopAllVideos);
 
-        lightbox.on(
-          'slide_before_change',
-          ((event: any) => {
-            const currentSlide = event.current;
-            stopAllVideos();
-            if (currentSlide?.slideConfig?.type !== 'image') {
-              const video = document.querySelector<HTMLVideoElement>(`.service-gallery-video-${currentSlide.slideIndex}[data-gallery-id="${galleryId}"]`);
-              video?.play().catch(() => {});
-            }
-          }) as () => void
-        );
-
-        if (mainTriggers[index]?.dataset.galleryType === 'image') {
+        lightbox.on('slide_before_change', (...[event]: [event?: {
+          current?: {
+            slideConfig?: { type?: 'image' | 'video' | 'inline' };
+            slideIndex?: number;
+          };
+        }]) => {
           stopAllVideos();
-        } else {
-          const video = document.querySelector<HTMLVideoElement>(`.service-gallery-video-${index}[data-gallery-id="${galleryId}"]`);
-          video?.play().catch(() => {});
+          const currentSlide = event?.current;
+          const slideIndex = currentSlide?.slideIndex;
+          if (currentSlide?.slideConfig?.type !== 'image' && typeof slideIndex === 'number') {
+            const video = document.querySelector<HTMLVideoElement>(`.service-gallery-video-${slideIndex}`);
+            video?.play().catch(() => {});
+          }
+        });
+
+        if (mainTriggers[index]?.dataset.galleryType === 'video') {
+          setTimeout(() => {
+            const video = document.querySelector<HTMLVideoElement>(`.service-gallery-video-${index}`);
+            video?.play().catch(() => {});
+          }, 150);
         }
       } catch (error) {
         console.error('Unable to load the service gallery lightbox.', error);
@@ -336,11 +337,20 @@ const countLabel = videoCount > 0
     nextBtn?.addEventListener('click', () => mainEmbla.scrollNext());
 
     thumbButtons.forEach((button, index) => {
-      button.addEventListener('click', () => mainEmbla.scrollTo(index));
+      button.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (mainEmbla.selectedScrollSnap() === index) {
+          const trigger = mainTriggers[index];
+          if (trigger) void openLightboxAt(trigger, index);
+        } else {
+          mainEmbla.scrollTo(index);
+        }
+      });
     });
 
     mainTriggers.forEach((trigger) => {
-      trigger.addEventListener('click', () => {
+      trigger.addEventListener('click', (e) => {
+        e.preventDefault();
         const index = Number.parseInt(trigger.dataset.galleryIndex ?? '0', 10);
         void openLightboxAt(trigger, index);
       });
