@@ -872,8 +872,9 @@ const spanishHubFile = routeFiles.get("/es/service-area/bay-area/");
 if (spanishHubFile) {
 	const spanishHubLinks = getRouteLinks(readFileSync(spanishHubFile, "utf8"));
 	for (const route of serviceAreaRoutes.keys()) {
-		if (route !== "/es/service-area/bay-area/" && !spanishHubLinks.has(route)) {
-			fail(spanishHubFile, `spanish service-area hub must link to ${route}`);
+		const expectedSpanishRoute = `/es${route}`;
+		if (expectedSpanishRoute !== "/es/service-area/bay-area/" && !spanishHubLinks.has(expectedSpanishRoute)) {
+			fail(spanishHubFile, `spanish service-area hub must link to ${expectedSpanishRoute}`);
 		}
 	}
 }
