@@ -4,7 +4,6 @@ import PageHero from '../../../components/ui/PageHero.astro';
 import CTABanner from '../../../components/ui/CTABanner.astro';
 import { services } from '../../../data/services';
 import {
-  additionalServiceAreaCityNames,
   priorityServiceAreaCities,
 } from '../../../data/service-areas';
 import {
@@ -13,6 +12,8 @@ import {
   getSpanishServiceAreaHubJsonLd,
 } from '../../../data/business';
 import { spanishServiceDetails } from '../../../i18n/spanish-service-details';
+import { spanishServiceAreaCities } from '../../../i18n/spanish-service-areas';
+import { getPageHeroImageUrls } from '../../../helpers/cloudinary';
 
 const locale = "es-US";
 const site = Astro.site ?? new URL('https://duartesautodetailing.com');
@@ -29,6 +30,12 @@ const structuredData = [
 const featuredServices = services.filter((service) =>
   ['interior-detailing', 'exterior-detailing', 'full-detailing', 'ceramic-coating'].includes(service.slug)
 );
+
+const heroBackground = {
+  mobile: 'banner-services-mobile_a1pwkn',
+  desktop: 'banner-services-web_db80lf',
+};
+const heroPreload = getPageHeroImageUrls(heroBackground);
 ---
 
 <BaseLayout
@@ -38,10 +45,11 @@ const featuredServices = services.filter((service) =>
   structuredData={structuredData}
   locale={locale}
   pageId="services"
+  preloadImage={heroPreload}
 >
   <PageHero
     title="Área de Cobertura de Detallado Móvil en la Bahía"
-    backgroundImage={{ mobile: 'banner-services-mobile_a1pwkn', desktop: 'banner-services-web_db80lf' }}
+    backgroundImage={heroBackground}
     eyebrow="Área de servicio"
     description="Detallado automotriz móvil profesional en el Área de la Bahía, con atención a domicilio para conductores que buscan limpieza interior, exterior, protección y corrección de pintura."
   />
@@ -70,20 +78,24 @@ const featuredServices = services.filter((service) =>
           Explora nuestras guías locales configuradas a continuación. Cada página detalla cómo funciona nuestro servicio móvil en esa zona y los paquetes recomendados para tu vehículo.
         </p>
         <div class="mt-5 grid gap-3 sm:grid-cols-2">
-          {priorityServiceAreaCities.map((city) => (
-            <a
-              href={`/service-area/${city.slug}/`}
-              class="group flex items-center justify-between rounded-2xl border border-white/8 bg-black/32 p-4 transition-all duration-200 hover:border-gold/36 hover:bg-wine/10 active:scale-[0.98]"
-            >
-              <div>
-                <span class="text-sm font-semibold text-gold group-hover:text-gold-light transition-colors">{city.name}</span>
-                <span class="mt-0.5 block text-xs uppercase tracking-wide text-text-muted">Auto detallado móvil</span>
-              </div>
-              <svg class="h-4 w-4 text-gold/40 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-gold shrink-0 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-              </svg>
-            </a>
-          ))}
+          {priorityServiceAreaCities.map((city) => {
+            const localized = spanishServiceAreaCities[city.slug];
+            const regionName = localized?.region ?? city.region;
+            return (
+              <a
+                href={`/es/service-area/${city.slug}/`}
+                class="group flex items-center justify-between rounded-2xl border border-white/8 bg-black/32 p-4 transition-all duration-200 hover:border-gold/40 hover:bg-gold/[0.04] hover:-translate-y-0.5 active:scale-[0.98]"
+              >
+                <div>
+                  <span class="text-sm font-semibold text-gold group-hover:text-gold-light transition-colors">{city.name}</span>
+                  <span class="mt-0.5 block text-xs tracking-wide text-text-muted">{regionName} · Detallado móvil</span>
+                </div>
+                <svg class="h-4 w-4 text-gold/40 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-gold shrink-0 ml-2" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -118,7 +130,7 @@ const featuredServices = services.filter((service) =>
               <p class="mt-2 text-sm leading-relaxed text-text-dark/68">{serviceTagline}</p>
               <div class="mt-auto pt-4 flex items-center gap-1.5 text-xs font-semibold text-gold-deep border-t border-divider-light/60">
                 <span>Ver detalles del servicio</span>
-                <svg class="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <svg class="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
               </div>
@@ -131,26 +143,58 @@ const featuredServices = services.filter((service) =>
 
   <section class="bg-black py-10 lg:py-16 border-b border-border-soft">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-8 lg:grid-cols-[1fr_1fr]">
-      <div data-reveal="up" class="rounded-4xl border border-white/8 bg-surface p-6 lg:p-8">
-        <h2 class="text-h2 font-bold text-text-primary">¿Necesitás servicio en otra ciudad cercana?</h2>
-        <p class="mt-3 text-text-secondary leading-relaxed">
-          Nuestra cobertura abarca las principales comunidades del Área de la Bahía. Si tu ubicación se encuentra cerca de estas zonas, <a href="/es/contact/" class="text-gold font-medium hover:underline inline-flex items-center gap-0.5">comunicate con Duartes Auto Detailing</a> indicando tu dirección exacta para confirmar disponibilidad y coordinar tu cita.
-        </p>
-        {additionalServiceAreaCityNames.length > 0 && (
-          <ul class="mt-5 flex flex-wrap gap-2">
-            {additionalServiceAreaCityNames.map((city) => (
-              <li class="rounded-full border border-gold/18 bg-black/28 px-3 py-1.5 text-sm text-text-secondary">{city}</li>
-            ))}
-          </ul>
-        )}
+      <div data-reveal="up" class="rounded-4xl border border-white/8 bg-surface p-6 lg:p-8 flex flex-col justify-between">
+        <div>
+          <span class="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold">
+            <span class="h-px w-10 bg-gold"></span>
+            Cobertura ampliada
+          </span>
+          <h2 class="mt-2 text-h2 font-bold text-text-primary">¿Necesitás servicio en otra ciudad cercana?</h2>
+          <p class="mt-3 text-text-secondary leading-relaxed">
+            Nuestra cobertura abarca las principales comunidades del Área de la Bahía. Si tu ubicación se encuentra cerca de estas zonas, <a href="/es/contact/" class="text-gold font-medium hover:underline inline-flex items-center gap-0.5">comunicate con Duartes Auto Detailing</a> indicando tu dirección exacta para confirmar disponibilidad y coordinar tu cita.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-white/6">
+          <a
+            href="/es/contact/"
+            class="inline-flex items-center gap-2 text-sm font-semibold text-gold hover:text-gold-light transition-colors active:scale-[0.98]"
+          >
+            <span>Consultar por otra ubicación</span>
+            <svg class="h-4 w-4" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
       </div>
 
       <div data-reveal="up" style="--reveal-delay: 120ms" class="rounded-4xl border border-gold/16 bg-[linear-gradient(180deg,rgba(30,32,36,0.96),rgba(79,29,30,0.22))] p-6 lg:p-8">
-        <h2 class="text-h2 font-bold text-text-primary">Cómo funcionan las citas a domicilio</h2>
-        <ol class="mt-5 grid gap-4 text-text-secondary">
-          <li><strong class="text-gold">1. Seleccioná tu servicio.</strong> Elegí el paquete que mejor se adapte al estado de tu vehículo y a los resultados que buscás.</li>
-          <li><strong class="text-gold">2. Compartí los detalles de ubicación.</strong> Confirmá el acceso a estacionamiento, espacio disponible y cualquier detalle particular.</li>
-          <li><strong class="text-gold">3. Detallado profesional en tu lugar.</strong> Llevamos todo el equipo necesario directamente a tu casa, oficina o garaje privado.</li>
+        <span class="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold">
+          <span class="h-px w-10 bg-gold"></span>
+          Proceso de reserva
+        </span>
+        <h2 class="mt-2 text-h2 font-bold text-text-primary">Cómo funcionan las citas a domicilio</h2>
+        <ol class="mt-5 grid gap-3 text-text-secondary list-none p-0 m-0">
+          <li class="flex items-start gap-3.5 rounded-2xl border border-white/6 bg-black/28 p-3.5">
+            <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold/15 text-xs font-bold text-gold mt-0.5">1</span>
+            <div class="text-sm leading-relaxed">
+              <strong class="text-text-primary block font-semibold mb-0.5">Seleccioná tu servicio.</strong>
+              <span>Elegí el paquete que mejor se adapte al estado de tu vehículo y a los resultados que buscás.</span>
+            </div>
+          </li>
+          <li class="flex items-start gap-3.5 rounded-2xl border border-white/6 bg-black/28 p-3.5">
+            <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold/15 text-xs font-bold text-gold mt-0.5">2</span>
+            <div class="text-sm leading-relaxed">
+              <strong class="text-text-primary block font-semibold mb-0.5">Compartí los detalles de ubicación.</strong>
+              <span>Confirmá el acceso a estacionamiento, espacio disponible y cualquier detalle particular.</span>
+            </div>
+          </li>
+          <li class="flex items-start gap-3.5 rounded-2xl border border-white/6 bg-black/28 p-3.5">
+            <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold/15 text-xs font-bold text-gold mt-0.5">3</span>
+            <div class="text-sm leading-relaxed">
+              <strong class="text-text-primary block font-semibold mb-0.5">Detallado profesional en tu lugar.</strong>
+              <span>Llevamos todo el equipo necesario directamente a tu casa, oficina o garaje privado.</span>
+            </div>
+          </li>
         </ol>
       </div>
     </div>

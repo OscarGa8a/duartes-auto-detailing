@@ -63,12 +63,21 @@ const isSpanish = content.hero.eyebrow === "Contacto";
           {isSpanish ? 'Áreas de servicio en la Bay Area' : 'Bay Area Service Locations'}
         </span>
         <div class="flex flex-wrap gap-2 text-xs text-text-secondary">
-          <a href="/service-area/san-jose/" class="rounded-full bg-white/4 px-3 py-1 border border-white/8 hover:border-gold/40 hover:text-gold transition-colors active:scale-[0.98]">San Jose</a>
-          <a href="/service-area/san-francisco/" class="rounded-full bg-white/4 px-3 py-1 border border-white/8 hover:border-gold/40 hover:text-gold transition-colors active:scale-[0.98]">San Francisco</a>
-          <a href="/service-area/oakland/" class="rounded-full bg-white/4 px-3 py-1 border border-white/8 hover:border-gold/40 hover:text-gold transition-colors active:scale-[0.98]">Oakland</a>
-          <a href="/service-area/fremont/" class="rounded-full bg-white/4 px-3 py-1 border border-white/8 hover:border-gold/40 hover:text-gold transition-colors active:scale-[0.98]">Fremont</a>
-          <a href="/service-area/berkeley/" class="rounded-full bg-white/4 px-3 py-1 border border-white/8 hover:border-gold/40 hover:text-gold transition-colors active:scale-[0.98]">Berkeley</a>
-          <a href="/service-area/walnut-creek/" class="rounded-full bg-white/4 px-3 py-1 border border-white/8 hover:border-gold/40 hover:text-gold transition-colors active:scale-[0.98]">Walnut Creek</a>
+          {[
+            { name: "San Jose", slug: "san-jose" },
+            { name: "San Francisco", slug: "san-francisco" },
+            { name: "Oakland", slug: "oakland" },
+            { name: "Fremont", slug: "fremont" },
+            { name: "Berkeley", slug: "berkeley" },
+            { name: "Walnut Creek", slug: "walnut-creek" },
+          ].map((city) => (
+            <a
+              href={isSpanish ? `/es/service-area/${city.slug}/` : `/service-area/${city.slug}/`}
+              class="rounded-full bg-white/4 px-3 py-1 border border-white/8 hover:border-gold/40 hover:text-gold transition-colors active:scale-[0.98]"
+            >
+              {city.name}
+            </a>
+          ))}
           <a href={isSpanish ? "/es/service-area/bay-area/" : "/service-area/bay-area/"} class="inline-flex items-center gap-1 rounded-full bg-gold/10 px-3 py-1 border border-gold/30 text-gold hover:bg-gold/20 transition-colors active:scale-[0.98] font-medium">
             <span>{isSpanish ? 'Ver todas las ciudades' : 'View All Cities'}</span>
             <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">

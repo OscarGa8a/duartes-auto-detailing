@@ -32,3 +32,25 @@ export const getCloudinaryVideoUrl = (
   if (!cloudName) return value;
   return `https://res.cloudinary.com/${cloudName}/video/upload/${transformations}/${encodeCloudinaryPublicId(value)}`;
 };
+
+export interface PageHeroImages {
+  mobile: string;
+  desktop?: string;
+}
+
+export const getPageHeroImageUrls = (backgroundImage: PageHeroImages) => {
+  const mobile = getCloudinaryImageUrl(
+    backgroundImage.mobile,
+    'f_auto,q_auto:good,w_560,c_fill,g_auto'
+  );
+  const tablet = getCloudinaryImageUrl(
+    backgroundImage.mobile,
+    'f_auto,q_auto,w_1024,c_fill,g_auto'
+  );
+  const desktop = getCloudinaryImageUrl(
+    backgroundImage.desktop ?? backgroundImage.mobile,
+    'f_auto,q_auto,w_1920,c_fill,g_auto'
+  );
+
+  return { mobile, tablet, desktop };
+};

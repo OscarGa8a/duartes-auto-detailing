@@ -1,12 +1,9 @@
 ---
-import { getCloudinaryImageUrl } from '../../helpers/cloudinary';
+import { getPageHeroImageUrls, type PageHeroImages } from '../../helpers/cloudinary';
 
 interface Props {
   title: string;
-  backgroundImage: {
-    mobile: string;
-    desktop: string;
-  };
+  backgroundImage: PageHeroImages;
   eyebrow?: string;
   description?: string;
 }
@@ -18,18 +15,7 @@ const {
   description,
 } = Astro.props;
 
-const mobileSrc = getCloudinaryImageUrl(
-  backgroundImage.mobile,
-  'f_auto,q_auto,w_640,c_fill,g_auto'
-);
-const tabletSrc = getCloudinaryImageUrl(
-  backgroundImage.mobile,
-  'f_auto,q_auto,w_1024,c_fill,g_auto'
-);
-const desktopSrc = getCloudinaryImageUrl(
-  backgroundImage.desktop ?? backgroundImage.mobile,
-  'f_auto,q_auto,w_1920,c_fill,g_auto'
-);
+const { mobile: mobileSrc, tablet: tabletSrc, desktop: desktopSrc } = getPageHeroImageUrls(backgroundImage);
 
 ---
 
@@ -42,8 +28,8 @@ const desktopSrc = getCloudinaryImageUrl(
     <img
       src={mobileSrc}
       alt={title}
-      width="640"
-      height="480"
+      width="560"
+      height="420"
       class="absolute inset-0 h-full w-full object-cover page-hero__image object-right"
       loading="eager"
       fetchpriority="high"

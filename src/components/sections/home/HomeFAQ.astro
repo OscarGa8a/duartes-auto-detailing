@@ -71,12 +71,21 @@ const copy = isSpanish
             <span>{isSpanish ? 'Totalmente asegurado · Paquetes desde $199' : 'Fully Insured · Packages from $199'}</span>
           </div>
           <div class="mt-4 flex flex-wrap gap-2 pt-2 border-t border-white/6 text-xs text-text-secondary">
-            <span class="rounded-full bg-white/4 px-2.5 py-1 border border-white/8">San Jose</span>
-            <span class="rounded-full bg-white/4 px-2.5 py-1 border border-white/8">San Francisco</span>
-            <span class="rounded-full bg-white/4 px-2.5 py-1 border border-white/8">Oakland</span>
-            <span class="rounded-full bg-white/4 px-2.5 py-1 border border-white/8">Fremont</span>
-            <span class="rounded-full bg-white/4 px-2.5 py-1 border border-white/8">Berkeley</span>
-            <span class="rounded-full bg-white/4 px-2.5 py-1 border border-white/8">Walnut Creek</span>
+            {[
+              { name: "San Jose", slug: "san-jose" },
+              { name: "San Francisco", slug: "san-francisco" },
+              { name: "Oakland", slug: "oakland" },
+              { name: "Fremont", slug: "fremont" },
+              { name: "Berkeley", slug: "berkeley" },
+              { name: "Walnut Creek", slug: "walnut-creek" },
+            ].map((city) => (
+              <a
+                href={isSpanish ? `/es/service-area/${city.slug}/` : `/service-area/${city.slug}/`}
+                class="rounded-full bg-white/4 px-2.5 py-1 border border-white/8 hover:border-gold/40 hover:text-gold transition-colors active:scale-[0.98]"
+              >
+                {city.name}
+              </a>
+            ))}
           </div>
           <div class="mt-5 flex items-center justify-between">
             <a
