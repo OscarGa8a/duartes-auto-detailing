@@ -74,17 +74,17 @@ const isSpanish = content.eyebrow.startsWith("El ");
           </div>
         </div>
 
-        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 pt-2 text-xs font-medium uppercase tracking-wide text-text-secondary">
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 pt-2 text-xs font-semibold uppercase tracking-wider text-text-secondary drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)]">
           <span class="inline-flex items-center gap-1.5 text-gold">
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
             <span>{isSpanish ? 'Totalmente asegurado' : 'Fully Insured'}</span>
           </span>
-          <span aria-hidden="true" class="size-1 rounded-full bg-gold/60"></span>
-          <span>{isSpanish ? 'Servicio a domicilio y oficina' : 'Mobile Home & Office Service'}</span>
-          <span aria-hidden="true" class="size-1 rounded-full bg-gold/60"></span>
-          <span>{isSpanish ? 'Garantía de satisfacción' : '100% Satisfaction Guarantee'}</span>
+          <span aria-hidden="true" class="size-1.5 rounded-full bg-gold shadow-[0_0_6px_rgba(212,175,55,0.6)]"></span>
+          <span class="text-text-primary/95">{isSpanish ? 'Servicio a domicilio y oficina' : 'Mobile Home & Office Service'}</span>
+          <span aria-hidden="true" class="size-1.5 rounded-full bg-gold shadow-[0_0_6px_rgba(212,175,55,0.6)]"></span>
+          <span class="text-text-primary/95">{isSpanish ? 'Garantía de satisfacción' : '100% Satisfaction Guarantee'}</span>
         </div>
       </div>
     </div>
