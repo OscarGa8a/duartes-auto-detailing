@@ -35,7 +35,9 @@ const socialLinks = socialNetworks.map((social) => {
 });
 const footerLinks = content.footer.links.map((link) => ({
   ...link,
-  href: getShellDestinationPath(link.destination, locale),
+  href: link.destination === "service-area-bay-area-en" && locale === "es-US"
+    ? "/es/service-area/bay-area/"
+    : getShellDestinationPath(link.destination, locale),
 }));
 ---
 

@@ -195,6 +195,20 @@ export const getServiceAreaHubJsonLd = (site: URL) => ({
   },
 });
 
+export const getSpanishServiceAreaHubJsonLd = (site: URL) => ({
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "@id": getUrl(site, `/es/service-area/${serviceAreaHub.slug}/#service`),
+  name: "Servicio móvil de auto detallado en el Área de la Bahía",
+  description: "Servicio profesional de detallado automotriz móvil en el Área de la Bahía. Cobertura en San José, San Francisco, Oakland, Fremont y más ciudades.",
+  serviceType: "Mobile auto detailing",
+  url: getUrl(site, `/es/service-area/${serviceAreaHub.slug}/`),
+  areaServed: [serviceArea, ...priorityServiceAreaCities.map(getCityAreaServed)],
+  provider: {
+    "@id": getBusinessId(site),
+  },
+});
+
 export const getCityServiceAreaJsonLd = (site: URL, city: ServiceAreaCity) => ({
   "@context": "https://schema.org",
   "@type": "Service",

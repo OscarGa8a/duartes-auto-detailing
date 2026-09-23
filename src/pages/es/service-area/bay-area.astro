@@ -1,0 +1,168 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHero from '../../../components/ui/PageHero.astro';
+import CTABanner from '../../../components/ui/CTABanner.astro';
+import { services } from '../../../data/services';
+import {
+  additionalServiceAreaCityNames,
+  priorityServiceAreaCities,
+} from '../../../data/service-areas';
+import {
+  getBreadcrumbListJsonLd,
+  getLocalBusinessJsonLd,
+  getSpanishServiceAreaHubJsonLd,
+} from '../../../data/business';
+import { spanishServiceDetails } from '../../../i18n/spanish-service-details';
+
+const locale = "es-US";
+const site = Astro.site ?? new URL('https://duartesautodetailing.com');
+
+const structuredData = [
+  getLocalBusinessJsonLd(site),
+  getSpanishServiceAreaHubJsonLd(site),
+  getBreadcrumbListJsonLd(site, [
+    { name: 'Inicio', path: '/es/' },
+    { name: 'Área de servicio', path: '/es/service-area/bay-area/' },
+  ]),
+];
+
+const featuredServices = services.filter((service) =>
+  ['interior-detailing', 'exterior-detailing', 'full-detailing', 'ceramic-coating'].includes(service.slug)
+);
+---
+
+<BaseLayout
+  title="Área de Servicio de Detallado Móvil en la Bay Area"
+  description="Servicio profesional de detallado automotriz móvil en el Área de la Bahía. Cobertura en San José, San Francisco, Oakland, Fremont y más ciudades."
+  imageAlt="Servicio móvil de auto detallado Duartes Auto Detailing en el Área de la Bahía"
+  structuredData={structuredData}
+  locale={locale}
+  pageId="services"
+>
+  <PageHero
+    title="Área de Cobertura de Detallado Móvil en la Bahía"
+    backgroundImage={{ mobile: 'banner-services-mobile_a1pwkn', desktop: 'banner-services-web_db80lf' }}
+    eyebrow="Área de servicio"
+    description="Detallado automotriz móvil profesional en el Área de la Bahía, con atención a domicilio para conductores que buscan limpieza interior, exterior, protección y corrección de pintura."
+  />
+
+  <section class="bg-black py-10 lg:py-16 border-b border-border-soft relative overflow-hidden">
+    <div class="motion-drift absolute -left-12 top-14 h-64 w-64 rounded-full bg-gold/10 blur-3xl"></div>
+    <div class="motion-drift absolute right-0 bottom-0 h-64 w-64 rounded-full bg-wine/12 blur-3xl" style="--float-delay: 1.2s"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
+      <div data-reveal="up" class="flex flex-col gap-4">
+        <span class="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold">
+          <span class="h-px w-10 bg-gold"></span>
+          Detallado móvil cerca de ti
+        </span>
+        <h2 class="text-h2 font-bold text-text-primary">Detallado profesional en todo el Área de la Bahía.</h2>
+        <p class="text-text-secondary leading-relaxed">
+          Duartes Auto Detailing lleva el cuidado vehicular de primer nivel directamente a clientes en todo el Área de la Bahía. Nuestro servicio móvil está diseñado para quienes buscan limpieza interior profunda, detallado exterior, paquetes completos, corrección de pintura o recubrimiento cerámico sin perder tiempo en traslados a un taller tradicional.
+        </p>
+        <p class="text-text-secondary leading-relaxed">
+          Coordinamos citas en domicilios, oficinas y garajes privados donde haya acceso seguro al vehículo y espacio suficiente para trabajar. La disponibilidad puede variar según la distancia, el estado del vehículo y el paquete elegido.
+        </p>
+      </div>
+
+      <div data-reveal="scale" class="rounded-4xl border border-gold/16 bg-surface/80 p-5 shadow-lg lg:p-7">
+        <h3 class="text-h3 font-bold text-text-primary">Guías por ciudad</h3>
+        <p class="mt-2 text-sm leading-relaxed text-text-secondary">
+          Explora nuestras guías locales configuradas a continuación. Cada página detalla cómo funciona nuestro servicio móvil en esa zona y los paquetes recomendados para tu vehículo.
+        </p>
+        <div class="mt-5 grid gap-3 sm:grid-cols-2">
+          {priorityServiceAreaCities.map((city) => (
+            <a
+              href={`/service-area/${city.slug}/`}
+              class="group flex items-center justify-between rounded-2xl border border-white/8 bg-black/32 p-4 transition-all duration-200 hover:border-gold/36 hover:bg-wine/10 active:scale-[0.98]"
+            >
+              <div>
+                <span class="text-sm font-semibold text-gold group-hover:text-gold-light transition-colors">{city.name}</span>
+                <span class="mt-0.5 block text-xs uppercase tracking-wide text-text-muted">Auto detallado móvil</span>
+              </div>
+              <svg class="h-4 w-4 text-gold/40 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-gold shrink-0 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-off-white py-10 lg:py-16 border-b border-divider-light/70">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+      <div data-reveal="up" class="flex flex-col gap-3">
+        <span class="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold-deep">
+          <span class="h-px w-10 bg-gold"></span>
+          Opciones de servicio
+        </span>
+        <h2 class="text-text-dark font-bold text-h2">Paquetes de detallado disponibles en tu área.</h2>
+        <p class="text-text-dark/72 leading-relaxed">
+          Elegí el nivel de cuidado ideal para tu vehículo: una renovación interior completa, un acabado exterior reluciente, un servicio integral por dentro y por fuera, o protección cerámica de larga duración.
+        </p>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        {featuredServices.map((service, index) => {
+          const localized = spanishServiceDetails[service.id];
+          const serviceName = localized?.name ?? service.name.trim();
+          const serviceTagline = localized?.tagline ?? service.tagline;
+          return (
+            <a
+              data-reveal="up"
+              style={`--reveal-delay: ${index * 80}ms`}
+              href={`/es/services/${service.slug}/`}
+              class="group flex flex-col rounded-3xl border border-divider-light bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-gold/60 hover:shadow-lg active:scale-[0.98]"
+            >
+              <h3 class="text-lg font-bold text-text-dark group-hover:text-gold-deep transition-colors">{serviceName}</h3>
+              <p class="mt-2 text-sm leading-relaxed text-text-dark/68">{serviceTagline}</p>
+              <div class="mt-auto pt-4 flex items-center gap-1.5 text-xs font-semibold text-gold-deep border-t border-divider-light/60">
+                <span>Ver detalles del servicio</span>
+                <svg class="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-black py-10 lg:py-16 border-b border-border-soft">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-8 lg:grid-cols-[1fr_1fr]">
+      <div data-reveal="up" class="rounded-4xl border border-white/8 bg-surface p-6 lg:p-8">
+        <h2 class="text-h2 font-bold text-text-primary">¿Necesitás servicio en otra ciudad cercana?</h2>
+        <p class="mt-3 text-text-secondary leading-relaxed">
+          Nuestra cobertura abarca las principales comunidades del Área de la Bahía. Si tu ubicación se encuentra cerca de estas zonas, <a href="/es/contact/" class="text-gold font-medium hover:underline inline-flex items-center gap-0.5">comunicate con Duartes Auto Detailing</a> indicando tu dirección exacta para confirmar disponibilidad y coordinar tu cita.
+        </p>
+        {additionalServiceAreaCityNames.length > 0 && (
+          <ul class="mt-5 flex flex-wrap gap-2">
+            {additionalServiceAreaCityNames.map((city) => (
+              <li class="rounded-full border border-gold/18 bg-black/28 px-3 py-1.5 text-sm text-text-secondary">{city}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div data-reveal="up" style="--reveal-delay: 120ms" class="rounded-4xl border border-gold/16 bg-[linear-gradient(180deg,rgba(30,32,36,0.96),rgba(79,29,30,0.22))] p-6 lg:p-8">
+        <h2 class="text-h2 font-bold text-text-primary">Cómo funcionan las citas a domicilio</h2>
+        <ol class="mt-5 grid gap-4 text-text-secondary">
+          <li><strong class="text-gold">1. Seleccioná tu servicio.</strong> Elegí el paquete que mejor se adapte al estado de tu vehículo y a los resultados que buscás.</li>
+          <li><strong class="text-gold">2. Compartí los detalles de ubicación.</strong> Confirmá el acceso a estacionamiento, espacio disponible y cualquier detalle particular.</li>
+          <li><strong class="text-gold">3. Detallado profesional en tu lugar.</strong> Llevamos todo el equipo necesario directamente a tu casa, oficina o garaje privado.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <CTABanner
+    image="cta_banner_utp6hb"
+    eyebrow="¿Listo para agendar?"
+    title="Agendá Tu Detallado Móvil en la Bahía"
+    description="Indicamos tu ciudad, tipo de vehículo y el servicio que necesitás para confirmar disponibilidad y recomendarte el paquete ideal."
+    buttonText="Contactar a Duartes"
+    buttonHref="/es/contact"
+    variant="premium"
+  />
+</BaseLayout>

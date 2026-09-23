@@ -36,6 +36,10 @@ const currentPath = normalizePath(Astro.url.pathname);
 const homeHref = normalizePath(getShellDestinationPath("home", locale));
 
 const isLinkActive = (href: string, itemPageId?: PageId) => {
+  if (currentPath.includes('/service-area/')) {
+    return false;
+  }
+
   if (pageId && itemPageId) {
     return pageId === itemPageId;
   }
