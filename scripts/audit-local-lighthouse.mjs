@@ -189,7 +189,7 @@ async function run() {
     for (const target of targets) {
       console.log(`\n⏳ Running Lighthouse for ${target.name} (${target.url}) ...`);
       const result = await auditUrl(target.url, target.preset, cdpPort);
-      results.push({ target: target.name, ...result.scores, ...result.metrics, opportunities: result.opportunities, categoryIssues: result.categoryIssues });
+      results.push({ target: target.name, ...result.scores, ...result.metrics, opportunities: result.opportunities, categoryIssues: result.categoryIssues, lcpElement: result.lcpElement });
     }
 
     console.log('\n📊 === LIGHTHOUSE AUDIT RESULTS ===\n');
@@ -205,9 +205,9 @@ async function run() {
     })));
 
     for (const r of results) {
-      if (r.metrics?.lcp) {
+      if (r.lcp) {
         const lcpItem = r.lcpElement ? ` (element: ${r.lcpElement})` : '';
-        console.log(`\n🎯 LCP for ${r.target}: ${r.metrics.lcp}${lcpItem}`);
+        console.log(`\n🎯 LCP for ${r.target}: ${r.lcp}${lcpItem}`);
       }
       if (r.opportunities && r.opportunities.length > 0) {
         console.log(`\n💡 Opportunities for ${r.target}:`);

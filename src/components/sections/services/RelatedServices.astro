@@ -48,7 +48,7 @@ const buttonText = isSpanish ? "Ver detalles" : "See more details";
             image={service.images[0]}
             title={isSpanish ? (spanishServiceDetails[service.id]?.name ?? service.name) : service.name}
             description={isSpanish ? (spanishServiceDetails[service.id]?.tagline ?? service.description) : service.description}
-            href={isSpanish ? `/es/services/${service.slug}/` : `/services/${service.slug}`}
+            href={isSpanish ? `/es/services/${service.slug}/` : `/services/${service.slug}/`}
             buttonText={buttonText}
           />
         </div>

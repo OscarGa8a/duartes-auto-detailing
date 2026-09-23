@@ -9,7 +9,7 @@ interface Props {
 
 const { variant = 'primary', href, type = 'link', class: className = '', target } = Astro.props;
 
-const base = 'inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full font-semibold text-sm transition-all duration-200 active:scale-[0.98] cursor-pointer';
+const base = 'inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full font-semibold text-sm transition-[transform,background-color,box-shadow,border-color,color] duration-200 ease-out active:scale-[0.98] cursor-pointer';
 
 const variants = {
   primary: 'bg-gold text-black hover:bg-gold-dark',
@@ -17,7 +17,7 @@ const variants = {
   'outline-dark': 'border border-gold text-text-dark hover:bg-gold/8',
   dark: 'bg-black text-text-primary hover:bg-surface shadow-lg',
   white: 'bg-white text-black hover:bg-off-white',
-  'primary-bright': 'relative overflow-hidden text-black bg-linear-to-b from-gold via-[#D4AF37] to-gold-dark border border-[#F4E8BC]/70 shadow-lg transition-all duration-300 hover:from-[#FFE082] hover:via-[#E0BC4A] hover:to-[#C89B1E] hover:shadow-[0_0_0_1px_rgba(255,236,179,0.35),0_10px_26px_rgba(212,175,55,0.38),inset_0_1px_0_rgba(255,250,210,1),inset_0_-2px_8px_rgba(138,106,22,0.4)]',
+  'primary-bright': 'relative overflow-hidden text-black bg-linear-to-b from-gold via-[#D4AF37] to-gold-dark border border-[#F4E8BC]/70 shadow-lg transition-[transform,background-color,box-shadow,border-color,color] duration-300 ease-out hover:from-[#FFE082] hover:via-[#E0BC4A] hover:to-[#C89B1E] hover:shadow-[0_0_0_1px_rgba(255,236,179,0.35),0_10px_26px_rgba(212,175,55,0.38),inset_0_1px_0_rgba(255,250,210,1),inset_0_-2px_8px_rgba(138,106,22,0.4)]',
 };
 ---
 

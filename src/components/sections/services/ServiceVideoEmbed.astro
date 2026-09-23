@@ -1,13 +1,15 @@
 ---
 import type { ServiceVideo } from "../../../data/services";
-import "cloudinary-video-player/cld-video-player.min.css";
+import type { Locale } from "../../../i18n/locales";
 
 interface Props {
   video: ServiceVideo;
   serviceSlug?: string;
+  locale?: Locale;
 }
 
-const { video, serviceSlug = "service" } = Astro.props as Props;
+const { video, serviceSlug = "service", locale = "en-US" } = Astro.props as Props;
+const isSpanish = locale === "es-US";
 
 const normalizedSlug = serviceSlug.toLowerCase().replace(/[^a-z0-9-]/g, "-");
 const playerId = `service-video-player-${normalizedSlug}`;
@@ -29,13 +31,15 @@ const poster = cloudinaryVideo?.poster;
     <div data-reveal="blur" class="flex flex-col items-center gap-3 text-center max-w-2xl">
       <span class="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold-deep">
         <span class="h-px w-10 bg-gold"></span>
-        Service in motion
+        {isSpanish ? "Servicio en acción" : "Service in motion"}
       </span>
       <h2 class="text-text-dark font-bold text-center text-h3">
-        Watch this service in action
+        {isSpanish ? "Conoce este servicio en acción" : "Watch this service in action"}
       </h2>
       <p class="text-text-dark/72 leading-relaxed">
-        See the process, finish quality, and transformation standard this service is designed to deliver.
+        {isSpanish
+          ? "Observa el proceso, la calidad del acabado y el estándar de transformación que este servicio está diseñado para ofrecer."
+          : "See the process, finish quality, and transformation standard this service is designed to deliver."}
       </p>
     </div>
 
@@ -62,13 +66,15 @@ const poster = cloudinaryVideo?.poster;
               controls
               playsinline
               preload="metadata"
-              aria-label="Detailed service demonstration video"
+              aria-label={isSpanish ? "Video de demostración detallado del servicio" : "Detailed service demonstration video"}
             ></video>
           </div>
         </div>
 
         <p class="text-sm text-text-dark/60 text-center">
-          Streaming quality adapts automatically to your network for smoother playback.
+          {isSpanish
+            ? "La calidad de reproducción se adapta automáticamente a tu conexión."
+            : "Streaming quality adapts automatically to your network for smoother playback."}
         </p>
       </>
     ) : externalEmbedUrl ? (
@@ -77,7 +83,7 @@ const poster = cloudinaryVideo?.poster;
         <div class="w-full rounded-xl overflow-hidden shadow-lg aspect-video">
           <iframe
             src={externalEmbedUrl}
-            title="Service detailing video"
+            title={isSpanish ? "Video demostrativo del servicio" : "Service detailing video"}
             width="100%"
             height="100%"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -88,7 +94,9 @@ const poster = cloudinaryVideo?.poster;
         </div>
       </div>
     ) : (
-      <p class="text-text-dark/60 text-sm">Service video coming soon.</p>
+      <p class="text-text-dark/60 text-sm">
+        {isSpanish ? "Video del servicio disponible próximamente." : "Service video coming soon."}
+      </p>
     )}
   </div>
 </section>
@@ -107,13 +115,22 @@ const poster = cloudinaryVideo?.poster;
       return;
     }
 
-    const [cloudinary] = await Promise.all([
+    const [cloudinary, { default: videoCssUrl }] = await Promise.all([
       import("cloudinary-video-player"),
+      import("cloudinary-video-player/cld-video-player.min.css?url"),
       // @ts-expect-error Cloudinary's runtime plugin entry point has no declaration file.
       import("cloudinary-video-player/adaptive-streaming"),
       // @ts-expect-error Cloudinary's runtime plugin entry point has no declaration file.
       import("cloudinary-video-player/dash"),
     ]);
+
+    if (!document.querySelector('link[data-cld-video-player-css]')) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = videoCssUrl;
+      link.dataset.cldVideoPlayerCss = 'true';
+      document.head.append(link);
+    }
 
     containers.forEach((container) => {
       if (container.dataset.initialized === "true") return;

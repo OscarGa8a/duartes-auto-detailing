@@ -31,10 +31,11 @@ const site = Astro.site ?? new URL('https://duartesautodetailing.com');
 const serviceJsonLd = {
   "@context": "https://schema.org",
   "@type": "Service",
-  "@id": new URL(`/es/services/${service.slug}#service`, site).href,
+  "@id": new URL(`/es/services/${service.slug}/#service`, site).href,
   name: localized?.name ?? service.name.trim(),
   description: localized?.description ?? service.description,
   serviceType: localized?.name ?? service.name.trim(),
+  url: new URL(`/es/services/${service.slug}/`, site).href,
   areaServed: {
     "@type": "AdministrativeArea",
     name: "Bay Area, California",
@@ -71,10 +72,11 @@ const phoneUrl = `sms:${config.phoneUSE164}?body=${phoneMessage}`;
     service={service}
     localizedContent={localized}
     uiContent={spanishServiceDetailUiContent}
+    locale={locale}
   />
 
   {service.video && (
-    <ServiceVideoEmbed video={service.video} serviceSlug={service.slug} />
+    <ServiceVideoEmbed video={service.video} serviceSlug={service.slug} locale={locale} />
   )}
 
   {related.length > 0 && (
