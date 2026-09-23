@@ -141,6 +141,7 @@ const expectedSpanishRoutes = new Set([
 	"/es/services/",
 	"/es/service-area/bay-area/",
 	...expectedSpanishServiceDetails.keys(),
+	...[...serviceAreaRoutes.keys()].filter((r) => r !== "/service-area/bay-area/").map((r) => `/es${r}`),
 ]);
 const spanishCounterparts = new Map([
 	["/", "/es/"],
@@ -149,6 +150,7 @@ const spanishCounterparts = new Map([
 	["/services/", "/es/services/"],
 	["/service-area/bay-area/", "/es/service-area/bay-area/"],
 	...[...expectedSpanishServiceDetails.keys()].map((es) => [es.replace(/^\/es/, ""), es]),
+	...[...serviceAreaRoutes.keys()].filter((r) => r !== "/service-area/bay-area/").map((r) => [r, `/es${r}`]),
 ]);
 const expectedPageSchemas = new Map([
 	[
@@ -684,7 +686,11 @@ function expectedJsonLdTypes(route) {
 	if (route === "/services/" || route === "/es/services/") return ["AutoWash", "ItemList"];
 	if ((route !== "/services/" && route.startsWith("/services/")) || (route !== "/es/services/" && route.startsWith("/es/services/")))
 		return ["AutoWash", "Service", "BreadcrumbList"];
-	if (serviceAreaRoutes.has(route) || route === "/es/service-area/bay-area/")
+	if (
+		serviceAreaRoutes.has(route) ||
+		route === "/es/service-area/bay-area/" ||
+		(route.startsWith("/es/service-area/") && serviceAreaRoutes.has(route.replace(/^\/es/, "")))
+	)
 		return ["AutoWash", "Service", "BreadcrumbList"];
 	if (expectedPageSchemas.has(route)) return [expectedPageSchemas.get(route).type];
 	return [];
@@ -745,6 +751,7 @@ if (JSON.stringify([...sitemapSpanishRoutes].sort()) !== JSON.stringify([...expe
 const titles = new Map();
 const descriptions = new Map();
 const normalizedCityGuides = new Map();
+const normalizedSpanishCityGuides = new Map();
 
 if (sitemapFiles.length === 0) {
 	fail(distDir, "missing generated sitemap XML files");
@@ -1097,7 +1104,11 @@ for (const file of htmlFiles) {
 		}
 
 		const isSpanishHub = route === "/es/service-area/bay-area/";
-		const expectedAreaName = serviceAreaRoutes.get(route) ?? (isSpanishHub ? "Bay Area" : undefined);
+		const isSpanishCity = route.startsWith("/es/service-area/") && route !== "/es/service-area/bay-area/";
+		const englishCityRoute = isSpanishCity ? route.replace(/^\/es/, "") : undefined;
+		const expectedAreaName =
+			serviceAreaRoutes.get(route) ??
+			(isSpanishHub ? "Bay Area" : (englishCityRoute ? serviceAreaRoutes.get(englishCityRoute) : undefined));
 		if (expectedAreaName) {
 			const serviceJsonLd = findJsonLdType(jsonLd, "Service");
 			const serviceJson = stringifyJsonLd(serviceJsonLd);
@@ -1135,15 +1146,24 @@ for (const file of htmlFiles) {
 			}
 
 			if (route !== "/service-area/bay-area/" && route !== "/es/service-area/bay-area/") {
-				const relatedCityRoutes = expectedRelatedCityRoutes.get(route);
-				const linkedCityRoutes = [...getRouteLinks(html)].filter((link) => cityServiceAreaRoutes.has(link));
-				if (!relatedCityRoutes || JSON.stringify(linkedCityRoutes) !== JSON.stringify(relatedCityRoutes)) {
+				const isSpanish = isSpanishPath(route);
+				const englishRoute = isSpanish ? route.replace(/^\/es/, "") : route;
+				const relatedCityRoutes = expectedRelatedCityRoutes.get(englishRoute);
+				const expectedRelated = isSpanish ? relatedCityRoutes?.map((r) => `/es${r}`) : relatedCityRoutes;
+				const relevantCitySet = isSpanish
+					? new Set([...cityServiceAreaRoutes].map((r) => `/es${r}`))
+					: cityServiceAreaRoutes;
+				const linkedCityRoutes = [...getRouteLinks(html)].filter((link) => relevantCitySet.has(link));
+				if (!relatedCityRoutes || JSON.stringify(linkedCityRoutes) !== JSON.stringify(expectedRelated)) {
 					fail(file, "must link to its configured three related city routes in order, with no self or unknown city links");
 				}
-				if (!getText(html).includes(`Featured services for ${expectedAreaName}`)) {
-					fail(file, "must use the neutral Featured services heading");
+				const expectedFeaturedHeading = isSpanish
+					? `Servicios recomendados para ${expectedAreaName}`
+					: `Featured services for ${expectedAreaName}`;
+				if (!getText(html).includes(expectedFeaturedHeading)) {
+					fail(file, `must use the neutral Featured services heading (${expectedFeaturedHeading})`);
 				}
-				if (unsupportedCityPageClaims.test(getText(html))) {
+				if (!isSpanish && unsupportedCityPageClaims.test(getText(html))) {
 					fail(file, "must not include unsupported local-condition or customer-behavior claims");
 				}
 				const cityGuideMarkup = html.match(/<[^>]*\bdata-city-service-guide\b[^>]*>([\s\S]*?)<\/[^>]+>/i);
@@ -1154,7 +1174,11 @@ for (const file of htmlFiles) {
 					if (normalizedGuide.length < 180) {
 						fail(file, "city service guidance must be at least 180 normalized characters");
 					}
-					normalizedCityGuides.set(route, normalizedGuide);
+					if (isSpanish) {
+						normalizedSpanishCityGuides.set(route, normalizedGuide);
+					} else {
+						normalizedCityGuides.set(route, normalizedGuide);
+					}
 				}
 				const faqPage = findJsonLdType(jsonLd, "FAQPage");
 				if (!isValidFaqPage(faqPage)) {
@@ -1169,9 +1193,15 @@ for (const file of htmlFiles) {
 						fail(file, "visible FAQs must exactly match FAQPage JSON-LD");
 					}
 					const faqText = schemaFaqs.map((faq) => `${faq.question} ${faq.answer}`).join(" ");
+					const expectedFaqQuestion = isSpanish
+						? `¿Cómo elijo el servicio más adecuado para mi vehículo en ${expectedAreaName}?`
+						: `How should I choose a featured service for my vehicle in ${expectedAreaName}?`;
+					const expectedPrepTerm = isSpanish
+						? "espacio de estacionamiento seguro con suficiente lugar alrededor del vehículo"
+						: "safe parking area with enough room around the vehicle";
 					if (
-						!faqText.includes(`How should I choose a featured service for my vehicle in ${expectedAreaName}?`) ||
-						!faqText.includes("safe parking area with enough room around the vehicle")
+						!faqText.includes(expectedFaqQuestion) ||
+						!faqText.includes(expectedPrepTerm)
 					) {
 						fail(file, "FAQs must include configured service-selection and mobile-access preparation guidance");
 					}
@@ -1191,6 +1221,13 @@ if (
 	new Set(normalizedCityGuides.values()).size !== expectedRelatedCityRoutes.size
 ) {
 	fail(distDir, "all city service guides must remain meaningfully distinct after city and region tokens are removed");
+}
+
+if (
+	normalizedSpanishCityGuides.size !== expectedRelatedCityRoutes.size ||
+	new Set(normalizedSpanishCityGuides.values()).size !== expectedRelatedCityRoutes.size
+) {
+	fail(distDir, "all Spanish city service guides must remain meaningfully distinct after city and region tokens are removed");
 }
 
 const sourceLlms = readFileSync("public/llms.txt");

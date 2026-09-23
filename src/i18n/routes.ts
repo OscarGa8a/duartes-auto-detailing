@@ -14,10 +14,12 @@ export const resolveCounterpartPath = (counterpartPath: string, currentPath: str
       ? `/es/services/${slug}/`
       : `/services/${slug}/`;
   }
-  if (currentPath.match(/(?:\/es)?\/service-area\/bay-area\/?$/)) {
+  const serviceAreaMatch = currentPath.match(/(?:\/es)?\/service-area\/([a-z0-9-]+)\/?$/);
+  if (serviceAreaMatch) {
+    const slug = serviceAreaMatch[1];
     return counterpartPath.startsWith("/es/")
-      ? "/es/service-area/bay-area/"
-      : "/service-area/bay-area/";
+      ? `/es/service-area/${slug}/`
+      : `/service-area/${slug}/`;
   }
   return counterpartPath;
 };
