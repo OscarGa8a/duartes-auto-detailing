@@ -222,3 +222,18 @@ export const getCityServiceAreaJsonLd = (site: URL, city: ServiceAreaCity) => ({
     "@id": getBusinessId(site),
   },
 });
+
+export const getSpanishCityServiceAreaJsonLd = (site: URL, city: ServiceAreaCity, description?: string) => ({
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "@id": getUrl(site, `/es/service-area/${city.slug}/#service`),
+  name: `Servicio móvil de auto detallado en ${city.name}`,
+  description: description ?? `Servicio profesional de detallado automotriz móvil en ${city.name}. Opciones de detallado interior, exterior, integral, corrección y cerámico.`,
+  serviceType: "Mobile auto detailing",
+  url: getUrl(site, `/es/service-area/${city.slug}/`),
+  areaServed: getCityAreaServed(city),
+  provider: {
+    "@id": getBusinessId(site),
+  },
+});
+
