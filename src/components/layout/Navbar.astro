@@ -110,16 +110,28 @@ const links = content.navigation.map(({ pageId: itemPageId, label }) => ({
       </a>
     )}
 
-    <!-- Mobile hamburger -->
-    <button
-      id="hamburger"
-      aria-label={content.menu.openLabel}
-      aria-expanded="false"
-      aria-controls="mobile-menu"
-      class="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-full border border-gold/18 bg-[linear-gradient(180deg,rgba(30,32,36,0.96),rgba(79,29,30,0.34))] text-text-primary shadow-[0_18px_28px_-22px_rgba(110,43,44,0.7)] transition-all duration-300 hover:border-wine-soft/55 hover:bg-[linear-gradient(180deg,rgba(38,41,46,1),rgba(110,43,44,0.42))] hover:text-gold"
-    >
-      <Icon name="tabler:menu-2" size="xl" class="text-current" />
-    </button>
+    <!-- Mobile hamburger & language control -->
+    <div class="flex items-center gap-2 md:hidden">
+      {counterpart && (
+        <a
+          href={counterpart.path}
+          hreflang={localeDefinitions[counterpart.locale].htmlLang}
+          aria-label={languageControlLabel}
+          class="inline-flex h-9 items-center justify-center rounded-full border border-gold/25 bg-black/40 px-3 text-xs font-semibold text-text-primary transition-colors hover:border-gold hover:text-gold active:scale-[0.98]"
+        >
+          {content.languageControl.destinationLabel}
+        </a>
+      )}
+      <button
+        id="hamburger"
+        aria-label={content.menu.openLabel}
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-gold/18 bg-[linear-gradient(180deg,rgba(30,32,36,0.96),rgba(79,29,30,0.34))] text-text-primary shadow-[0_18px_28px_-22px_rgba(110,43,44,0.7)] transition-all duration-300 hover:border-wine-soft/55 hover:bg-[linear-gradient(180deg,rgba(38,41,46,1),rgba(110,43,44,0.42))] hover:text-gold"
+      >
+        <Icon name="tabler:menu-2" size="xl" class="text-current" />
+      </button>
+    </div>
   </nav>
 
   <!-- Mobile overlay menu -->
@@ -128,19 +140,19 @@ const links = content.navigation.map(({ pageId: itemPageId, label }) => ({
     data-open="false"
     aria-hidden="true"
     inert
-    class="fixed inset-0 z-50 md:hidden pointer-events-none"
+    class="fixed inset-0 h-dvh w-screen z-50 md:hidden pointer-events-none"
   >
     <button
       id="mobile-menu-backdrop"
       aria-label={content.menu.closeLabel}
-      class="absolute inset-0 bg-[linear-gradient(180deg,rgba(15,16,18,0.78),rgba(79,29,30,0.48))] opacity-0 backdrop-blur-sm transition-opacity duration-300"
+      class="absolute inset-0 h-dvh w-screen bg-[#090a0c]/98 opacity-0 backdrop-blur-xl transition-opacity duration-300"
     ></button>
 
     <div
       id="mobile-menu-panel"
-      class="absolute top-0 opacity-0 min-h-dvh w-full flex items-center justify-center rounded-xl"
+      class="absolute top-0 opacity-0 min-h-dvh w-full flex items-center justify-center p-4 sm:p-6"
     >
-      <div class="overflow-hidden rounded-xl border border-wine-soft/18 bg-[linear-gradient(180deg,rgba(30,32,36,0.99),rgba(23,24,27,0.98))] px-5 pb-6 pt-5 shadow-[0_30px_70px_-36px_rgba(0,0,0,0.98)] scale-[0.985] transition-all duration-300">
+      <div class="w-full max-w-sm overflow-hidden rounded-2xl border border-wine-soft/24 bg-[#16181c] bg-linear-to-b from-[#1b1d22] to-[#121316] px-5 pb-6 pt-5 shadow-[0_30px_70px_-36px_rgba(0,0,0,0.98)] scale-[0.985] transition-all duration-300">
         <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(212,175,55,0.12),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(110,43,44,0.24),transparent_32%)]"></div>
         <div class="motion-drift absolute -left-8 top-0 h-32 w-32 rounded-full bg-gold/10 blur-3xl"></div>
         <div class="motion-drift absolute right-0 bottom-0 h-28 w-28 rounded-full bg-wine/16 blur-3xl" style="--float-delay: 1s"></div>
@@ -196,20 +208,23 @@ const links = content.navigation.map(({ pageId: itemPageId, label }) => ({
           );
         })}
         </ul>
-  
-        <!-- <div class="relative z-10 mt-5 rounded-[1.35rem] border border-gold/16 bg-gold/10 px-4 py-4">
-          <p class="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-gold">Need a faster quote?</p>
-          <p class="mt-2 text-sm leading-relaxed text-text-secondary">
-            Open the contact page and start your booking with the channel that feels easiest for you.
-          </p>
-          <a
-            href="/contact"
-            class="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-linear-to-b from-gold via-[#D4AF37] to-gold-dark px-5 py-3 text-sm font-semibold text-text-dark shadow-lg transition-all duration-300 hover:from-[#FFE082] hover:via-[#E0BC4A] hover:to-[#C89B1E]"
-          >
-            <Icon name="tabler:phone" size="sm" />
-            Book a premium service
-          </a>
-        </div> -->
+
+        {counterpart && (
+          <div class="relative z-10 mt-5 pt-4 border-t border-white/8 flex items-center justify-between">
+            <span class="text-xs uppercase tracking-wider text-text-muted">
+              {content.languageControl.label}
+            </span>
+            <a
+              href={counterpart.path}
+              hreflang={localeDefinitions[counterpart.locale].htmlLang}
+              aria-label={languageControlLabel}
+              class="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-3.5 py-1.5 text-xs font-semibold text-gold transition-colors hover:border-gold hover:bg-gold/20 active:scale-[0.98]"
+            >
+              <Icon name="tabler:world" size="sm" class="text-current" />
+              <span>{content.languageControl.destinationLabel}</span>
+            </a>
+          </div>
+        )}
       </div>
     </div>
   </div>
@@ -218,8 +233,6 @@ const links = content.navigation.map(({ pageId: itemPageId, label }) => ({
 <style>
   .site-header {
     background: linear-gradient(180deg, rgba(15, 16, 18, 0.92) 0%, rgba(15, 16, 18, 0.6) 55%, transparent 100%);
-    backdrop-filter: blur(0px);
-    -webkit-backdrop-filter: blur(0px);
     transition:
       background 320ms cubic-bezier(0.4, 0, 0.2, 1),
       backdrop-filter 320ms cubic-bezier(0.4, 0, 0.2, 1),
@@ -231,6 +244,11 @@ const links = content.navigation.map(({ pageId: itemPageId, label }) => ({
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+  }
+
+  .site-header:has(#mobile-menu[data-open='true']) {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 
   #mobile-menu[data-open='true'] {

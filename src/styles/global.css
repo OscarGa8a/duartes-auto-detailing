@@ -352,3 +352,11 @@ html.js [data-reveal].is-visible {
     filter: none !important;
   }
 }
+
+/* Hide fixed site header when GLightbox modal is active */
+body.glightbox-open #site-header {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(-8px);
+  transition: opacity 250ms ease, transform 250ms ease;
+}

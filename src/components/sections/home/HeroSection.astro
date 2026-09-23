@@ -118,13 +118,13 @@ const heroSlides: HeroSlide[] = [
         {content.description}
       </p>
 
-      <div class="motion-enter flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium uppercase tracking-wide text-text-secondary/92 lg:text-text-muted" style="--enter-delay: 340ms">
-        <span>{formattedNumber(config.vehiclesDetailed)}+ {content.vehiclesDetailed}</span>
-        <span aria-hidden="true" class="size-1 rounded-full bg-gold/60"></span>
-        <span>{locale === 'es-US' ? 'Totalmente asegurado' : 'Fully Insured'}</span>
-        <span aria-hidden="true" class="size-1 rounded-full bg-gold/60"></span>
-        <span class="lg:hidden">{content.mobileService}</span>
-        <span class="hidden lg:inline">{content.desktopService}</span>
+      <div class="motion-enter flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-semibold uppercase tracking-wider text-text-secondary drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)]" style="--enter-delay: 340ms">
+        <span class="text-text-primary/95">{formattedNumber(config.vehiclesDetailed)}+ {content.vehiclesDetailed}</span>
+        <span aria-hidden="true" class="size-1.5 rounded-full bg-gold shadow-[0_0_6px_rgba(212,175,55,0.6)]"></span>
+        <span class="text-text-primary/95">{locale === 'es-US' ? 'Totalmente asegurado' : 'Fully Insured'}</span>
+        <span aria-hidden="true" class="size-1.5 rounded-full bg-gold shadow-[0_0_6px_rgba(212,175,55,0.6)]"></span>
+        <span class="lg:hidden text-text-primary/95">{content.mobileService}</span>
+        <span class="hidden lg:inline text-text-primary/95">{content.desktopService}</span>
       </div>
 
       <div class="motion-enter flex flex-col gap-3 pt-1 sm:flex-row lg:gap-4 lg:pt-2" style="--enter-delay: 420ms">
@@ -140,7 +140,7 @@ const heroSlides: HeroSlide[] = [
       <div class="motion-enter flex items-center justify-between gap-4 pt-2 lg:hidden" style="--enter-delay: 520ms">
         <div id="hero-mobile-dots" class="flex items-center gap-2">
           {heroSlides.map((_, index) => (
-            <button type="button" aria-label={`${content.carousel.mobileSlide} ${index + 1}`} class="h-1.5 w-6 rounded-full bg-white/24 transition-all duration-300" data-index={index}></button>
+            <button type="button" aria-label={`${content.carousel.mobileSlide} ${index + 1}`} class="h-2 w-6 rounded-full bg-white/24 transition-all duration-300 touch-manipulation cursor-pointer" data-index={index}></button>
           ))}
         </div>
         <div class="inline-flex items-center rounded-full border border-white/16 bg-black/28 px-3.5 py-1.5 text-xxs font-semibold uppercase tracking-wide text-text-primary backdrop-blur-md">
@@ -152,7 +152,7 @@ const heroSlides: HeroSlide[] = [
     <div class="motion-enter absolute bottom-8 right-8 hidden items-end gap-5 lg:flex" style="--enter-delay: 560ms">
       <div id="hero-desktop-dots" class="flex items-center gap-2 rounded-full border border-white/12 bg-black/34 px-3 py-2 backdrop-blur-md">
         {heroSlides.map((_, index) => (
-          <button type="button" aria-label={`${content.carousel.desktopSlide} ${index + 1}`} class="h-1.5 w-6 rounded-full bg-white/24 transition-all duration-300" data-index={index}></button>
+          <button type="button" aria-label={`${content.carousel.desktopSlide} ${index + 1}`} class="h-2 w-6 rounded-full bg-white/24 transition-all duration-300 touch-manipulation cursor-pointer" data-index={index}></button>
         ))}
       </div>
       <ul class="flex items-center gap-3">
