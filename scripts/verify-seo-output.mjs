@@ -836,10 +836,10 @@ if (servicesFile) {
 	if (JSON.stringify(itemList?.itemListElement) !== JSON.stringify(expectedItems)) {
 		fail(servicesFile, "ItemList entries must exactly match canonical service names, positions, and URLs");
 	}
-	const canonicalDetailRoutes = [...expectedServiceDetails.keys()].map((route) => route.replace(/\/$/, ""));
+	const canonicalDetailRoutes = [...expectedServiceDetails.keys()];
 	const expectedDetailLinks = canonicalDetailRoutes.flatMap((route) => [route, route]);
 	const detailLinks = getAnchorHrefPaths(servicesHtml).filter((href) =>
-		canonicalDetailRoutes.includes(href.replace(/\/$/, "")),
+		canonicalDetailRoutes.includes(href),
 	);
 	if (JSON.stringify(detailLinks) !== JSON.stringify(expectedDetailLinks)) {
 		fail(servicesFile, "service cards must link from each image and button in canonical card order");

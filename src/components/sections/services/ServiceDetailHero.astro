@@ -3,6 +3,7 @@ import Button from '../../ui/Button.astro';
 import ServiceGallery from './ServiceGallery.astro';
 import type { Service } from '../../../data/services';
 import type { LocalizedServiceDetail, ServiceDetailUiContent } from '../../../i18n/spanish-service-details';
+import type { Locale } from '../../../i18n/locales';
 import Icon from '../../ui/Icon.astro';
 import { config } from '../../../data/config';
 
@@ -10,9 +11,11 @@ interface Props {
   service: Service;
   localizedContent?: LocalizedServiceDetail;
   uiContent?: ServiceDetailUiContent;
+  locale?: Locale;
 }
 
-const { service, localizedContent, uiContent } = Astro.props;
+const { service, localizedContent, uiContent, locale } = Astro.props;
+const currentLocale = locale ?? (localizedContent ? 'es-US' : 'en-US');
 
 const displayName = localizedContent?.name ?? service.name;
 const tagline = localizedContent?.tagline ?? service.tagline;
@@ -28,6 +31,9 @@ const phoneMessage = encodeURIComponent(
   uiContent ? `${uiContent.smsMessagePrefix} ${displayName}` : `Hello, I'd like to book the service: ${service.name}`
 );
 const phoneUrl = `sms:${config.phoneUSE164}?body=${phoneMessage}`;
+
+const isSpanish = currentLocale === 'es-US';
+const contactHref = isSpanish ? '/es/contact/' : '/contact/';
 ---
 
 <section class="bg-black pt-24 pb-10 sm:pt-28 sm:pb-12 lg:pt-32 lg:pb-16 overflow-hidden relative border-b border-border-soft">
@@ -35,7 +41,7 @@ const phoneUrl = `sms:${config.phoneUSE164}?body=${phoneMessage}`;
   <div class="motion-drift absolute right-0 bottom-0 h-72 w-72 rounded-full bg-wine/12 blur-3xl" style="--float-delay: 1.1s"></div>
 
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-[minmax(0,0.96fr)_minmax(0,1.04fr)] gap-10 lg:gap-16 items-start">
-    <div data-reveal="blur" class="min-w-0 flex flex-col gap-6 max-w-2xl w-full">
+    <div class="min-w-0 flex flex-col gap-6 max-w-2xl w-full motion-enter">
       <span class="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold">
         <span class="h-px w-10 bg-gold"></span>
         {eyebrow}
@@ -55,7 +61,7 @@ const phoneUrl = `sms:${config.phoneUSE164}?body=${phoneMessage}`;
       </p>
 
       {ctaLine && (
-        <div data-reveal="scale" style="--reveal-delay: 160ms" class="motion-card-hover relative overflow-hidden rounded-xl border border-wine-soft/20 bg-[linear-gradient(180deg,rgba(110,43,44,0.16),rgba(23,24,27,0.96))] px-6 py-5 shadow-lg">
+        <div class="motion-card-hover relative overflow-hidden rounded-xl border border-wine-soft/20 bg-[linear-gradient(180deg,rgba(110,43,44,0.16),rgba(23,24,27,0.96))] px-6 py-5 shadow-lg">
           <div class="motion-sheen"></div>
           <p class="text-wine-tint italic font-medium leading-relaxed">
             {ctaLine}
@@ -64,16 +70,18 @@ const phoneUrl = `sms:${config.phoneUSE164}?body=${phoneMessage}`;
       )}
 
       <div class="flex flex-col gap-4">
-        <div class="flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold">
+        <h2 class="flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-gold">
           <span class="h-px w-10 bg-gold"></span>
           {includesHeading}
-        </div>
+        </h2>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {includes.map((item, index) => (
-            <div data-reveal="scale" style={`--reveal-delay: ${index * 60}ms`} class="motion-card-hover relative overflow-hidden rounded-xl border border-border-soft bg-surface-2 px-4 py-3 flex items-start gap-3">
-              <div class={`absolute inset-x-4 top-0 h-px bg-linear-to-r from-transparent ${index % 3 === 0 ? 'via-wine-soft/72' : 'via-gold/70'} to-transparent`}></div>
-              <span class={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${index % 3 === 0 ? 'bg-wine/16 text-wine-tint' : 'bg-gold/14 text-gold'}`}>
+          {includes.map((item) => (
+            <div
+              class="motion-card-hover relative overflow-hidden rounded-xl border border-border-soft bg-surface-2 px-4 py-3 flex items-start gap-3 transition-colors duration-200 hover:border-gold/35 active:scale-[0.99]"
+            >
+              <div class="absolute inset-x-4 top-0 h-px bg-linear-to-r from-transparent via-gold/60 to-transparent"></div>
+              <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold/14 text-gold">
                 <Icon name="tabler:check" size="sm" />
               </span>
               <span class="text-sm leading-relaxed text-text-secondary">{item}</span>
@@ -82,18 +90,31 @@ const phoneUrl = `sms:${config.phoneUSE164}?body=${phoneMessage}`;
         </div>
       </div>
 
-      <div data-reveal="up" style="--reveal-delay: 220ms" class="pt-2">
-        <Button href={phoneUrl} variant="primary-bright" target="_blank" class='w-full sm:w-auto sm:min-w-64'>
-          <Icon name="tabler:phone" />
-          {ctaButtonText}
-        </Button>
+      <div class="pt-2 flex flex-col gap-3.5">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+          <Button href={phoneUrl} variant="primary-bright" target="_blank" class='w-full sm:w-auto sm:min-w-64'>
+            <Icon name="tabler:phone" />
+            {ctaButtonText}
+          </Button>
+          <a
+            href={contactHref}
+            class="inline-flex items-center justify-center gap-1.5 text-xs sm:text-sm font-medium text-text-secondary hover:text-gold transition-colors duration-200 py-2.5 px-3 rounded-lg hover:bg-white/4"
+          >
+            <span>{isSpanish ? "O agenda mediante formulario web" : "Or book via custom form"}</span>
+            <Icon name="tabler:arrow-right" size="sm" />
+          </a>
+        </div>
+        <p class="text-xs text-text-muted flex items-center gap-2">
+          <span class="size-1.5 rounded-full bg-gold shrink-0"></span>
+          <span>{isSpanish ? "Unidades 100% autónomas con agua y electricidad · A tu hogar u oficina" : "100% self-contained units with onboard water & power · Home or office"}</span>
+        </p>
       </div>
     </div>
 
-    <div data-reveal="scale" class="relative w-full min-w-0">
+    <div class="relative w-full min-w-0 motion-enter" style="--enter-delay: 100ms">
       <div class="relative rounded-xl border border-white/8 bg-surface px-4 py-4 sm:px-5 sm:py-5 shadow-lg">
         <div class="motion-glow-pulse absolute -right-6 -top-6 h-24 w-24 rounded-full bg-wine/12 blur-2xl"></div>
-        <ServiceGallery media={service.media ? service.media : []} serviceName={displayName} />
+        <ServiceGallery media={service.media ? service.media : []} serviceName={displayName} locale={currentLocale} />
       </div>
     </div>
   </div>

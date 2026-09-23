@@ -3,27 +3,41 @@ import Icon from '../../ui/Icon.astro';
 import { CldImage } from 'astro-cloudinary';
 import { getCloudinaryImageUrl, getCloudinaryVideoUrl } from '../../../helpers/cloudinary';
 import type { GalleryMediaItem } from '../../../data/services';
+import type { Locale } from '../../../i18n/locales';
 
 interface Props {
   media: GalleryMediaItem[];
   serviceName: string;
+  locale?: Locale;
 }
 
-const { media, serviceName } = Astro.props;
+const { media, serviceName, locale = 'en-US' } = Astro.props;
+const isSpanish = locale === 'es-US';
 const galleryItems = Array.isArray(media) ? media.filter(Boolean) : [];
 const hasItems = galleryItems.length > 0;
 const imageCount = galleryItems.filter((item) => !item.isVideo).length;
 const videoCount = galleryItems.filter((item) => item.isVideo).length;
+const photoWord = isSpanish
+  ? (imageCount === 1 ? 'foto' : 'fotos')
+  : (imageCount === 1 ? 'photo' : 'photos');
+const videoWord = isSpanish
+  ? (videoCount === 1 ? 'video' : 'videos')
+  : (videoCount === 1 ? 'video' : 'videos');
 const countLabel = videoCount > 0
-  ? `${imageCount} ${imageCount === 1 ? 'photo' : 'photos'}, ${videoCount} ${videoCount === 1 ? 'video' : 'videos'}`
-  : `${imageCount} ${imageCount === 1 ? 'photo' : 'photos'}`;
+  ? `${imageCount} ${photoWord}, ${videoCount} ${videoWord}`
+  : `${imageCount} ${photoWord}`;
+const eyebrowText = isSpanish ? "Resultados reales. Cero filtros." : "Real results. Zero filters.";
+const fullViewText = isSpanish ? "Pantalla completa" : "Full view";
+const prevMediaLabel = isSpanish ? "Elemento anterior" : "Previous media";
+const nextMediaLabel = isSpanish ? "Elemento siguiente" : "Next media";
+const galleryRegionLabel = isSpanish ? `Galería multimedia de ${serviceName}` : `${serviceName} media gallery`;
 
 ---
 
 <div class="service-gallery min-w-0 flex flex-col gap-4" data-service-gallery>
   <div class="flex items-center justify-between gap-4">
     <p class="text-gold font-semibold text-[0.72rem] uppercase tracking-[0.24em]">
-      Real results. Zero filters.
+      {eyebrowText}
     </p>
     {hasItems && (
       <span class="rounded-full border border-wine-soft/20 bg-wine/14 px-3 py-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-wine-tint backdrop-blur-sm">
@@ -34,7 +48,7 @@ const countLabel = videoCount > 0
 
   {hasItems ? (
     <>
-      <div class="embla service-gallery__main relative" role="region" aria-label={`${serviceName} media gallery`} tabindex="0">
+      <div class="embla service-gallery__main relative" role="region" aria-label={galleryRegionLabel} tabindex="0">
         <div class="relative aspect-4/3 min-h-80 lg:min-h-120 w-full rounded-[1.5rem] border border-white/8 overflow-hidden">
           <div class="embla__viewport absolute inset-0 overflow-hidden bg-black" data-gallery-main-viewport>
             <div class="embla__container flex h-full">
@@ -42,7 +56,13 @@ const countLabel = videoCount > 0
                 const isVideo = !!item.isVideo;
                 const imageUrl = getCloudinaryImageUrl(item.src, 'f_auto,q_auto,w_1800');
                 const videoUrl = isVideo ? getCloudinaryVideoUrl(item.mediaSrc ?? '') : '';
-                const labelPrefix = isVideo ? 'Play video' : 'Open image';
+                const labelPrefix = isVideo
+                  ? (isSpanish ? 'Reproducir video' : 'Play video')
+                  : (isSpanish ? 'Abrir imagen' : 'Open image');
+                const triggerAriaLabel = isSpanish
+                  ? `${labelPrefix} ${i + 1} de ${galleryItems.length} en pantalla completa`
+                  : `${labelPrefix} ${i + 1} of ${galleryItems.length} in fullscreen`;
+                const imageAlt = item.alt ?? (isSpanish ? `${serviceName} — resultado real ${i + 1}` : `${serviceName} — real result ${i + 1}`);
                 return (
                   <div class="embla__slide shrink-0 min-w-0 basis-full">
                     <button
@@ -53,16 +73,18 @@ const countLabel = videoCount > 0
                       data-gallery-src={imageUrl}
                       data-gallery-type={isVideo ? 'video' : 'image'}
                       data-gallery-media-src={videoUrl}
-                      aria-label={`${labelPrefix} ${i + 1} of ${galleryItems.length} in fullscreen`}
+                      aria-label={triggerAriaLabel}
                     >
                       <CldImage
                         src={item.src}
-                        alt={item.alt ?? `${serviceName} — real result ${i + 1}`}
+                        alt={imageAlt}
                         width={1024}
                         height={800}
-                        sizes="(max-width: 1024px) 100vw, 50vw"
+                        sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) 90vw, 600px"
                         class="w-full h-full object-cover"
                         loading={i === 0 ? 'eager' : 'lazy'}
+                        fetchpriority={i === 0 ? 'high' : undefined}
+                        decoding={i === 0 ? 'sync' : 'async'}
                       />
 
                       <div class={`absolute inset-0 transition-colors duration-300 ${isVideo ? 'bg-black/20 group-hover:bg-black/40' : 'bg-black/6 group-hover:bg-wine/18'}`} />
@@ -74,9 +96,9 @@ const countLabel = videoCount > 0
                           </div>
                         </div>
                       ) : (
-                        <div class="absolute right-3 bottom-3 bg-black/72 text-text-primary text-xs font-medium px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-wine-soft/18 backdrop-blur-sm">
+                        <div class="absolute right-3 bottom-3 bg-black/72 text-text-primary text-xs font-medium px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-wine-soft/18 backdrop-blur-sm transition-all duration-300 ease-out group-hover:scale-105 group-hover:bg-black/90 group-hover:border-gold/40 shadow-sm">
                           <Icon name="tabler:zoom-in" size='sm' />
-                          Full view
+                          {fullViewText}
                         </div>
                       )}
                     </button>
@@ -91,18 +113,18 @@ const countLabel = videoCount > 0
           <>
             <button
               type="button"
-              class="gallery-nav-btn absolute left-3 top-1/2 -translate-y-1/2 bg-black/68 hover:bg-wine/28 text-text-primary w-10 h-10 rounded-full flex items-center justify-center transition-all border border-white/10 backdrop-blur-sm"
+              class="gallery-nav-btn absolute left-3 top-1/2 -translate-y-1/2 bg-black/68 hover:bg-wine/28 hover:border-gold/40 text-text-primary w-10 h-10 rounded-full flex items-center justify-center transition-all duration-150 ease-out active:scale-90 border border-white/10 backdrop-blur-sm cursor-pointer"
               data-gallery-prev
-              aria-label="Previous media"
+              aria-label={prevMediaLabel}
             >
               <Icon name="tabler:chevron-left" />
             </button>
 
             <button
               type="button"
-              class="gallery-nav-btn absolute right-3 top-1/2 -translate-y-1/2 bg-black/68 hover:bg-wine/28 text-text-primary w-10 h-10 rounded-full flex items-center justify-center transition-all border border-white/10 backdrop-blur-sm"
+              class="gallery-nav-btn absolute right-3 top-1/2 -translate-y-1/2 bg-black/68 hover:bg-wine/28 hover:border-gold/40 text-text-primary w-10 h-10 rounded-full flex items-center justify-center transition-all duration-150 ease-out active:scale-90 border border-white/10 backdrop-blur-sm cursor-pointer"
               data-gallery-next
-              aria-label="Next media"
+              aria-label={nextMediaLabel}
             >
               <Icon name="tabler:chevron-right" />
             </button>
@@ -126,21 +148,22 @@ const countLabel = videoCount > 0
                   <div class="embla-thumbs__slide shrink-0 py-2">
                     <button
                       type="button"
-                      class="gallery-thumb relative w-20 h-16 overflow-hidden rounded-xl border-2 cursor-pointer bg-black/40"
+                      class="gallery-thumb relative w-20 h-16 overflow-hidden rounded-xl border-2 cursor-pointer bg-black/40 transition-all duration-200 ease-out hover:scale-[1.04] hover:border-gold/60 active:scale-95"
                       data-gallery-thumb
                       data-gallery-index={i}
                       data-selected={i === 0 ? 'true' : 'false'}
-                      aria-label={`Show ${isVideo ? 'video' : 'image'} ${i + 1}`}
+                      aria-label={isSpanish ? `Mostrar ${isVideo ? 'video' : 'imagen'} ${i + 1}` : `Show ${isVideo ? 'video' : 'image'} ${i + 1}`}
                       aria-current={i === 0 ? 'true' : 'false'}
                     >
                       <CldImage
                         src={item.src}
-                        alt={item.alt ?? `${serviceName} thumbnail ${i + 1}`}
+                        alt={item.alt ?? (isSpanish ? `${serviceName} miniatura ${i + 1}` : `${serviceName} thumbnail ${i + 1}`)}
                         width={80}
                         height={64}
-                        sizes="100px"
+                        sizes="80px"
                         class="w-full h-full object-cover"
-                        loading={i === 0 ? 'eager' : 'lazy'}
+                        loading="lazy"
+                        decoding="async"
                       />
 
                       {isVideo && (
@@ -158,7 +181,7 @@ const countLabel = videoCount > 0
       )}
     </>
   ) : (
-    <p class="text-sm text-text-secondary">No gallery media available yet for this service.</p>
+    <p class="text-sm text-text-secondary">{isSpanish ? 'No hay contenido multimedia disponible todavía para este servicio.' : 'No gallery media available yet for this service.'}</p>
   )}
 </div>
 
