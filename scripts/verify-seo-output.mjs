@@ -139,6 +139,7 @@ const expectedSpanishRoutes = new Set([
 	"/es/about/",
 	"/es/contact/",
 	"/es/services/",
+	"/es/service-area/bay-area/",
 	...expectedSpanishServiceDetails.keys(),
 ]);
 const spanishCounterparts = new Map([
@@ -146,6 +147,7 @@ const spanishCounterparts = new Map([
 	["/about/", "/es/about/"],
 	["/contact/", "/es/contact/"],
 	["/services/", "/es/services/"],
+	["/service-area/bay-area/", "/es/service-area/bay-area/"],
 	...[...expectedSpanishServiceDetails.keys()].map((es) => [es.replace(/^\/es/, ""), es]),
 ]);
 const expectedPageSchemas = new Map([
@@ -682,7 +684,7 @@ function expectedJsonLdTypes(route) {
 	if (route === "/services/" || route === "/es/services/") return ["AutoWash", "ItemList"];
 	if ((route !== "/services/" && route.startsWith("/services/")) || (route !== "/es/services/" && route.startsWith("/es/services/")))
 		return ["AutoWash", "Service", "BreadcrumbList"];
-	if (serviceAreaRoutes.has(route))
+	if (serviceAreaRoutes.has(route) || route === "/es/service-area/bay-area/")
 		return ["AutoWash", "Service", "BreadcrumbList"];
 	if (expectedPageSchemas.has(route)) return [expectedPageSchemas.get(route).type];
 	return [];
@@ -813,9 +815,12 @@ for (const [from, to] of staticRedirects) {
 for (const [route, file] of routeFiles) {
 	if (staticRedirects.has(route)) continue;
 	const links = getRouteLinks(readFileSync(file, "utf8"));
+	const expectedHub = expectedSpanishRoutes.has(route)
+		? "/es/service-area/bay-area/"
+		: "/service-area/bay-area/";
 
-	if (!links.has("/service-area/bay-area/")) {
-		fail(file, "internal navigation must link to /service-area/bay-area/");
+	if (!links.has(expectedHub)) {
+		fail(file, `internal navigation must link to ${expectedHub}`);
 	}
 }
 
@@ -852,6 +857,16 @@ if (hubFile) {
 	for (const route of serviceAreaRoutes.keys()) {
 		if (route !== "/service-area/bay-area/" && !hubLinks.has(route)) {
 			fail(hubFile, `service-area hub must link to ${route}`);
+		}
+	}
+}
+
+const spanishHubFile = routeFiles.get("/es/service-area/bay-area/");
+if (spanishHubFile) {
+	const spanishHubLinks = getRouteLinks(readFileSync(spanishHubFile, "utf8"));
+	for (const route of serviceAreaRoutes.keys()) {
+		if (route !== "/es/service-area/bay-area/" && !spanishHubLinks.has(route)) {
+			fail(spanishHubFile, `spanish service-area hub must link to ${route}`);
 		}
 	}
 }
@@ -1081,7 +1096,8 @@ for (const file of htmlFiles) {
 			}
 		}
 
-		const expectedAreaName = serviceAreaRoutes.get(route);
+		const isSpanishHub = route === "/es/service-area/bay-area/";
+		const expectedAreaName = serviceAreaRoutes.get(route) ?? (isSpanishHub ? "Bay Area" : undefined);
 		if (expectedAreaName) {
 			const serviceJsonLd = findJsonLdType(jsonLd, "Service");
 			const serviceJson = stringifyJsonLd(serviceJsonLd);
@@ -1110,14 +1126,15 @@ for (const file of htmlFiles) {
 			}
 			if (!title?.includes(expectedAreaName))
 				fail(file, `title must reference ${expectedAreaName}`);
-			if (!description?.toLowerCase().includes("mobile auto detailing")) {
+			const expectedServiceDescriptionTerm = isSpanishPath(route) ? "detallado" : "mobile auto detailing";
+			if (!description?.toLowerCase().includes(expectedServiceDescriptionTerm)) {
 				fail(
 					file,
-					"service-area meta description must reference mobile auto detailing",
+					`service-area meta description must reference ${expectedServiceDescriptionTerm}`,
 				);
 			}
 
-			if (route !== "/service-area/bay-area/") {
+			if (route !== "/service-area/bay-area/" && route !== "/es/service-area/bay-area/") {
 				const relatedCityRoutes = expectedRelatedCityRoutes.get(route);
 				const linkedCityRoutes = [...getRouteLinks(html)].filter((link) => cityServiceAreaRoutes.has(link));
 				if (!relatedCityRoutes || JSON.stringify(linkedCityRoutes) !== JSON.stringify(relatedCityRoutes)) {

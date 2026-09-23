@@ -14,6 +14,11 @@ export const resolveCounterpartPath = (counterpartPath: string, currentPath: str
       ? `/es/services/${slug}/`
       : `/services/${slug}/`;
   }
+  if (currentPath.match(/(?:\/es)?\/service-area\/bay-area\/?$/)) {
+    return counterpartPath.startsWith("/es/")
+      ? "/es/service-area/bay-area/"
+      : "/service-area/bay-area/";
+  }
   return counterpartPath;
 };
 
