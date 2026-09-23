@@ -13,6 +13,7 @@ import {
 } from '../../../data/business';
 import { spanishServiceDetails } from '../../../i18n/spanish-service-details';
 import { spanishServiceAreaCities } from '../../../i18n/spanish-service-areas';
+import { getPageHeroImageUrls } from '../../../helpers/cloudinary';
 
 const locale = "es-US";
 const site = Astro.site ?? new URL('https://duartesautodetailing.com');
@@ -29,6 +30,12 @@ const structuredData = [
 const featuredServices = services.filter((service) =>
   ['interior-detailing', 'exterior-detailing', 'full-detailing', 'ceramic-coating'].includes(service.slug)
 );
+
+const heroBackground = {
+  mobile: 'banner-services-mobile_a1pwkn',
+  desktop: 'banner-services-web_db80lf',
+};
+const heroPreload = getPageHeroImageUrls(heroBackground);
 ---
 
 <BaseLayout
@@ -38,10 +45,11 @@ const featuredServices = services.filter((service) =>
   structuredData={structuredData}
   locale={locale}
   pageId="services"
+  preloadImage={heroPreload}
 >
   <PageHero
     title="Área de Cobertura de Detallado Móvil en la Bahía"
-    backgroundImage={{ mobile: 'banner-services-mobile_a1pwkn', desktop: 'banner-services-web_db80lf' }}
+    backgroundImage={heroBackground}
     eyebrow="Área de servicio"
     description="Detallado automotriz móvil profesional en el Área de la Bahía, con atención a domicilio para conductores que buscan limpieza interior, exterior, protección y corrección de pintura."
   />

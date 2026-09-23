@@ -12,6 +12,7 @@ import {
   getLocalBusinessJsonLd,
   getServiceAreaHubJsonLd,
 } from '../../data/business';
+import { getPageHeroImageUrls } from '../../helpers/cloudinary';
 
 const site = Astro.site ?? new URL('https://duartesautodetailing.com');
 const structuredData = [
@@ -26,6 +27,12 @@ const structuredData = [
 const featuredServices = services.filter((service) =>
   ['interior-detailing', 'exterior-detailing', 'full-detailing', 'ceramic-coating'].includes(service.slug)
 );
+
+const heroBackground = {
+  mobile: 'banner-services-mobile_a1pwkn',
+  desktop: 'banner-services-web_db80lf',
+};
+const heroPreload = getPageHeroImageUrls(heroBackground);
 ---
 
 <BaseLayout
@@ -35,10 +42,11 @@ const featuredServices = services.filter((service) =>
   structuredData={structuredData}
   locale="en-US"
   pageId="services"
+  preloadImage={heroPreload}
 >
   <PageHero
     title="Bay Area Mobile Auto Detailing Service Area"
-    backgroundImage={{ mobile: 'banner-services-mobile_a1pwkn', desktop: 'banner-services-web_db80lf' }}
+    backgroundImage={heroBackground}
     eyebrow="Service area"
     description={serviceAreaHub.heroDescription}
   />

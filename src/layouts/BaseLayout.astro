@@ -19,9 +19,25 @@ interface Props {
   structuredData?: JsonLd;
   locale?: Locale;
   pageId?: PageId;
+  preloadImage?:
+    | string
+    | {
+        mobile?: string;
+        tablet?: string;
+        desktop?: string;
+      };
 }
 
-const { title, description, ogImage, imageAlt, structuredData, locale = 'en-US', pageId } = Astro.props;
+const {
+  title,
+  description,
+  ogImage,
+  imageAlt,
+  structuredData,
+  locale = 'en-US',
+  pageId,
+  preloadImage,
+} = Astro.props;
 const localeDefinition = localeDefinitions[locale];
 const shellContent = locale === 'es-US' ? spanishShellContent : englishShellContent;
 ---
@@ -59,6 +75,23 @@ const shellContent = locale === 'es-US' ? spanishShellContent : englishShellCont
       document.documentElement.classList.add('js');
     </script>
     <SEOHead title={title} description={description} ogImage={ogImage} imageAlt={imageAlt} locale={locale} pageId={pageId} />
+    {preloadImage && typeof preloadImage === 'string' && (
+      <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />
+    )}
+    {preloadImage && typeof preloadImage === 'object' && (
+      <>
+        {preloadImage.desktop && (
+          <link rel="preload" as="image" href={preloadImage.desktop} media="(min-width: 1024px)" fetchpriority="high" />
+        )}
+        {preloadImage.tablet && (
+          <link rel="preload" as="image" href={preloadImage.tablet} media="(min-width: 640px) and (max-width: 1023px)" fetchpriority="high" />
+        )}
+        {preloadImage.mobile && (
+          <link rel="preload" as="image" href={preloadImage.mobile} media="(max-width: 639px)" fetchpriority="high" />
+        )}
+      </>
+    )}
+    <slot name="head" />
     {structuredData && <StructuredData data={structuredData} />}
     <style>
       .gslide-media {

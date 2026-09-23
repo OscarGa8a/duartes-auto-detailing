@@ -10,6 +10,7 @@ import {
   getFaqPageJsonLd,
   getLocalBusinessJsonLd,
 } from '../../data/business';
+import { getPageHeroImageUrls } from '../../helpers/cloudinary';
 
 export function getStaticPaths() {
   return priorityServiceAreaCities.map((city) => ({
@@ -36,6 +37,12 @@ const structuredData = [
     { name: city.name, path: `/service-area/${city.slug}/` },
   ]),
 ];
+
+const heroBackground = {
+  mobile: 'banner-services-mobile_a1pwkn',
+  desktop: 'banner-services-web_db80lf',
+};
+const heroPreload = getPageHeroImageUrls(heroBackground);
 ---
 
 <BaseLayout
@@ -45,10 +52,11 @@ const structuredData = [
   structuredData={structuredData}
   locale="en-US"
   pageId="services"
+  preloadImage={heroPreload}
 >
   <PageHero
     title={`Mobile Auto Detailing in ${city.name}`}
-    backgroundImage={{ mobile: 'banner-services-mobile_a1pwkn', desktop: 'banner-services-web_db80lf' }}
+    backgroundImage={heroBackground}
     eyebrow={`${city.region} service area`}
     description={city.heroDescription}
   />

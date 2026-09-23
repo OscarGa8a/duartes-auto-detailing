@@ -12,6 +12,7 @@ import {
 } from '../../../data/business';
 import { spanishServiceDetails } from '../../../i18n/spanish-service-details';
 import { spanishServiceAreaCities } from '../../../i18n/spanish-service-areas';
+import { getPageHeroImageUrls } from '../../../helpers/cloudinary';
 
 export function getStaticPaths() {
   return priorityServiceAreaCities.map((city) => ({
@@ -52,6 +53,12 @@ const structuredData = [
     { name: city.name, path: `/es/service-area/${city.slug}/` },
   ]),
 ];
+
+const heroBackground = {
+  mobile: 'banner-services-mobile_a1pwkn',
+  desktop: 'banner-services-web_db80lf',
+};
+const heroPreload = getPageHeroImageUrls(heroBackground);
 ---
 
 <BaseLayout
@@ -61,10 +68,11 @@ const structuredData = [
   structuredData={structuredData}
   locale="es-US"
   pageId="services"
+  preloadImage={heroPreload}
 >
   <PageHero
     title={`Auto Detallado Móvil en ${city.name}`}
-    backgroundImage={{ mobile: 'banner-services-mobile_a1pwkn', desktop: 'banner-services-web_db80lf' }}
+    backgroundImage={heroBackground}
     eyebrow={`Área de cobertura en ${localizedCity.region}`}
     description={localizedCity.heroDescription}
   />
