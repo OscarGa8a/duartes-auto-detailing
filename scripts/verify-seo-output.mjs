@@ -647,19 +647,19 @@ function verify404Output() {
 	if (!robotsDirectives.has("noindex") || !robotsDirectives.has("nofollow")) {
 		fail(file, "robots meta must include noindex and nofollow");
 	}
-	if (!/<html\b[^>]*\blang=["']es-US["']/i.test(html)) {
-		fail(file, "html lang must be es-US");
+	if (!/<html\b[^>]*\blang=["']en["']/i.test(html)) {
+		fail(file, "html lang must be en");
 	}
 	if ((html.match(/<main\b/gi) ?? []).length !== 1) {
 		fail(file, "must contain exactly one <main>");
 	}
 
 	const h1s = [...html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)];
-	if (h1s.length !== 1 || getText(h1s[0][1]) !== "Parece que este camino necesita un detalle.") {
-		fail(file, "must contain exactly one Spanish h1 with the required text");
+	if (h1s.length !== 1 || getText(h1s[0][1]) !== "Looks like this route could use a detail.") {
+		fail(file, "must contain exactly one English h1 with the required text");
 	}
-	if (!/<[a-z][\w:-]*\b[^>]*\blang=["']en["'][^>]*>\s*Looks like this route could use a detail\.\s*<\/[a-z][\w:-]*>/i.test(html)) {
-		fail(file, "must include the required English support text marked lang=en");
+	if (!/<[a-z][\w:-]*\b[^>]*\blang=["']es["'][^>]*>[\s\S]*?Parece que este camino necesita un detalle\.[\s\S]*?<\/[a-z][\w:-]*>/i.test(html)) {
+		fail(file, "must include the required Spanish support text marked lang=es");
 	}
 
 	const anchors = [...html.matchAll(/<a\b[^>]*\bhref\s*=\s*(["'])(.*?)\1[^>]*>/gi)];
