@@ -62,7 +62,7 @@ const getCardPresentation = (service: typeof services[number]) => {
           <div
             data-reveal="scale"
             style={`--reveal-delay: ${index * 120}ms; --float-delay: ${index * 0.9}s`}
-            class={`motion-float-slow motion-card-hover ${index === 2 ? "sm:col-span-2 sm:max-w-1/2 sm:mx-auto lg:col-span-1 lg:max-w-none lg:mx-0" : ""}`}
+            class={`motion-float-slow motion-card-hover ${index === 2 ? "sm:col-span-2 sm:max-w-md sm:mx-auto lg:col-span-1 lg:max-w-none lg:mx-0" : ""}`}
           >
             <ServiceCard
               image={service.images[0]}
