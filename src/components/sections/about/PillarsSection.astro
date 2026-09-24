@@ -32,7 +32,7 @@ const pillarIcons = ["tabler:check", "tabler:target-arrow", "tabler:star-filled"
       {content.items.map((pillar, index) => (
         <div
           data-reveal="scale"
-          class={`motion-card-hover relative overflow-hidden rounded-xl border border-border-soft p-8 flex flex-col items-start text-left gap-5 ${index === 0 ? "bg-surface" : "bg-surface/92"} ${index === 2 ? "sm:col-span-2 sm:max-w-1/2 sm:mx-auto lg:col-span-1 lg:max-w-none lg:mx-0" : ""}`}
+          class={`motion-card-hover relative overflow-hidden rounded-xl border border-border-soft p-8 flex flex-col items-start text-left gap-5 ${index === 0 ? "bg-surface" : "bg-surface/92"} ${index === 2 ? "sm:col-span-2 sm:max-w-md sm:mx-auto lg:col-span-1 lg:max-w-none lg:mx-0" : ""}`}
           style={`--reveal-delay: ${index * 100}ms`}
         >
           <div class={`absolute inset-x-6 top-0 h-px bg-linear-to-r from-transparent ${index === 1 ? "via-wine-soft/78" : "via-gold/75"} to-transparent`}></div>

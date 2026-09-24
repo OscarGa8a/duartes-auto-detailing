@@ -78,16 +78,16 @@ const heroPreload = getPageHeroImageUrls(heroBackground);
       <aside data-reveal="scale" class="rounded-4xl border border-gold/16 bg-surface/80 p-5 shadow-lg lg:p-7">
         <h2 class="text-h3 font-bold text-text-primary">Helpful appointment notes</h2>
         <ul class="mt-4 grid gap-3 text-sm leading-relaxed text-text-secondary">
-          <li class="flex items-start gap-3 rounded-2xl border border-white/8 bg-black/28 p-4">
-            <span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-gold shrink-0"></span>
+          <li class="flex items-start gap-3 rounded-2xl border border-white/8 bg-black/28 p-4 transition-colors duration-200 hover:border-gold/20">
+            <span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-gold shadow-[0_0_8px_rgba(212,175,55,0.4)] shrink-0"></span>
             <span>Mobile service works best with safe parking and enough room around the vehicle.</span>
           </li>
-          <li class="flex items-start gap-3 rounded-2xl border border-white/8 bg-black/28 p-4">
-            <span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-gold shrink-0"></span>
+          <li class="flex items-start gap-3 rounded-2xl border border-white/8 bg-black/28 p-4 transition-colors duration-200 hover:border-gold/20">
+            <span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-gold shadow-[0_0_8px_rgba(212,175,55,0.4)] shrink-0"></span>
             <span>Share vehicle condition, service goals, and access details before booking.</span>
           </li>
-          <li class="flex items-start gap-3 rounded-2xl border border-white/8 bg-black/28 p-4">
-            <span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-gold shrink-0"></span>
+          <li class="flex items-start gap-3 rounded-2xl border border-white/8 bg-black/28 p-4 transition-colors duration-200 hover:border-gold/20">
+            <span class="mt-1.5 h-1.5 w-1.5 rounded-full bg-gold shadow-[0_0_8px_rgba(212,175,55,0.4)] shrink-0"></span>
             <span>Availability can vary by service type, distance, and appointment schedule.</span>
           </li>
         </ul>
@@ -103,7 +103,7 @@ const heroPreload = getPageHeroImageUrls(heroBackground);
           Featured services
         </span>
         <h2 class="text-text-dark font-bold text-h2">Featured services for {city.name}</h2>
-        <p data-city-service-guide class="text-text-dark/72 leading-relaxed">
+        <p data-city-service-guide class="text-text-dark/78 leading-relaxed">
           Start with one of these core services, or contact Duartes Auto Detailing for help matching the detail to your vehicle condition and goals. {city.serviceGuidance}
         </p>
       </div>
@@ -114,10 +114,10 @@ const heroPreload = getPageHeroImageUrls(heroBackground);
             data-reveal="up"
             style={`--reveal-delay: ${index * 80}ms`}
             href={`/services/${service.slug}/`}
-            class="group flex flex-col rounded-3xl border border-divider-light bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-gold/60 hover:shadow-lg active:scale-[0.98]"
+            class="group flex flex-col rounded-3xl border border-divider-light bg-white p-6 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-gold/60 hover:shadow-lg active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 touch-manipulation"
           >
             <h3 class="text-lg font-bold text-text-dark group-hover:text-gold-deep transition-colors">{service.name.trim()}</h3>
-            <p class="mt-2 text-sm leading-relaxed text-text-dark/68">{service.tagline}</p>
+            <p class="mt-2 text-sm leading-relaxed text-text-dark/78">{service.tagline}</p>
             <div class="mt-auto pt-4 flex items-center gap-1.5 text-xs font-semibold text-gold-deep border-t border-divider-light/60">
               <span>Explore service details</span>
               <svg class="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -140,14 +140,20 @@ const heroPreload = getPageHeroImageUrls(heroBackground);
         <h2 class="text-h2 font-bold text-text-primary">{city.name} mobile detailing FAQ</h2>
         <div class="grid gap-4">
           {city.faqs.map((faq) => (
-            <details class="group rounded-3xl border border-white/8 bg-surface p-5 transition-colors duration-200 open:border-gold/30 open:bg-surface/90">
-              <summary class="flex cursor-pointer items-center justify-between list-none text-base font-semibold text-text-primary [&::-webkit-details-marker]:hidden">
+            <details class="faq-item group rounded-3xl border border-white/8 bg-surface p-5 transition-[border-color,background-color] duration-200 open:border-gold/30 open:bg-surface/90">
+              <summary class="flex cursor-pointer items-center justify-between list-none text-base font-semibold text-text-primary group-hover:text-gold transition-colors active:scale-[0.99] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 focus-visible:ring-offset-2 focus-visible:ring-offset-surface rounded-xl [&::-webkit-details-marker]:hidden">
                 <span>{faq.question}</span>
-                <svg class="h-4 w-4 text-gold/60 transition-transform duration-200 group-open:rotate-180 shrink-0 ml-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                </svg>
+                <span class="faq-icon ml-3 flex-shrink-0 text-gold/60 group-hover:text-gold transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]">
+                  <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </span>
               </summary>
-              <p class="mt-3 text-sm leading-relaxed text-text-secondary">{faq.answer}</p>
+              <div class="faq-content">
+                <div class="faq-content-inner">
+                  <p class="pt-3 text-sm leading-relaxed text-text-secondary">{faq.answer}</p>
+                </div>
+              </div>
             </details>
           ))}
         </div>
@@ -159,14 +165,14 @@ const heroPreload = getPageHeroImageUrls(heroBackground);
           Compare other Bay Area service pages or return to the main service-area hub.
         </p>
         <div class="mt-5 grid gap-3">
-          <a class="group flex items-center justify-between rounded-2xl border border-white/8 bg-black/28 p-4 text-sm font-semibold text-gold transition-colors hover:border-gold/36 active:scale-[0.98]" href="/service-area/bay-area/">
+          <a class="group flex items-center justify-between rounded-2xl border border-white/8 bg-black/28 p-4 text-sm font-semibold text-gold transition-all duration-200 hover:border-gold/40 hover:bg-gold/[0.04] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 focus-visible:ring-offset-2 focus-visible:ring-offset-surface touch-manipulation" href="/service-area/bay-area/">
             <span>Bay Area service-area hub</span>
             <svg class="h-4 w-4 text-gold/40 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-gold shrink-0 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
             </svg>
           </a>
           {relatedCities.map((relatedCity) => (
-            <a class="group flex items-center justify-between rounded-2xl border border-white/8 bg-black/28 p-4 text-sm font-semibold text-text-primary transition-colors hover:border-gold/36 hover:text-gold active:scale-[0.98]" href={`/service-area/${relatedCity.slug}/`}>
+            <a class="group flex items-center justify-between rounded-2xl border border-white/8 bg-black/28 p-4 text-sm font-semibold text-text-primary transition-all duration-200 hover:border-gold/40 hover:text-gold hover:bg-gold/[0.04] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 focus-visible:ring-offset-2 focus-visible:ring-offset-surface touch-manipulation" href={`/service-area/${relatedCity.slug}/`}>
               <span>{relatedCity.name} mobile auto detailing</span>
               <svg class="h-4 w-4 text-text-muted transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-gold shrink-0 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
@@ -188,3 +194,84 @@ const heroPreload = getPageHeroImageUrls(heroBackground);
     variant="premium"
   />
 </BaseLayout>
+
+<style>
+  .faq-content {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 200ms cubic-bezier(0.4, 0, 1, 1);
+  }
+
+  .faq-content-inner {
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition:
+      opacity 160ms ease-in,
+      transform 200ms cubic-bezier(0.4, 0, 1, 1);
+  }
+
+  /* Expanding: 260ms natural deceleration with staggered opacity */
+  details[open]:not(.is-closing) .faq-content {
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 260ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  details[open]:not(.is-closing) .faq-content-inner {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity 220ms ease-out 40ms,
+      transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Chevron rotation */
+  details[open]:not(.is-closing) .faq-icon {
+    transform: rotate(180deg);
+  }
+
+  details.is-closing .faq-icon {
+    transform: rotate(0deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq-content,
+    .faq-content-inner,
+    .faq-icon {
+      transition: none !important;
+    }
+  }
+</style>
+
+<script>
+  function setupFaqAccordions() {
+    const detailsList = document.querySelectorAll<HTMLDetailsElement>('details.faq-item');
+
+    detailsList.forEach((detail) => {
+      const summary = detail.querySelector('summary');
+      const content = detail.querySelector('.faq-content');
+      if (!summary || !content) return;
+
+      summary.addEventListener('click', (event) => {
+        if (detail.classList.contains('is-closing')) {
+          event.preventDefault();
+          return;
+        }
+
+        if (detail.open) {
+          event.preventDefault();
+          detail.classList.add('is-closing');
+
+          setTimeout(() => {
+            detail.removeAttribute('open');
+            detail.classList.remove('is-closing');
+          }, 210);
+        }
+      });
+    });
+  }
+
+  document.addEventListener('astro:page-load', setupFaqAccordions);
+  setupFaqAccordions();
+</script>
+

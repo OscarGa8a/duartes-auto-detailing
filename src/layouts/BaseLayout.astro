@@ -120,29 +120,62 @@ const shellContent = locale === 'es-US' ? spanishShellContent : englishShellCont
     <script>
       let revealObserver: IntersectionObserver | null = null;
       let countupObserver: IntersectionObserver | null = null;
+      let motionAbortController: AbortController | null = null;
 
       function initScrollReveal() {
         document.documentElement.classList.add('js');
 
-        if (revealObserver) revealObserver.disconnect();
+        if (revealObserver) {
+          revealObserver.disconnect();
+          revealObserver = null;
+        }
 
         const elements = document.querySelectorAll<HTMLElement>('[data-reveal]');
         if (!elements.length) return;
 
-        elements.forEach((el) => el.classList.remove('is-visible'));
+        const checkPendingElements = () => {
+          const pending = document.querySelectorAll<HTMLElement>('[data-reveal]:not(.is-visible)');
+          if (!pending.length) return;
+          const windowHeight = window.innerHeight;
+          pending.forEach((el) => {
+            const rect = el.getBoundingClientRect();
+            if (rect.top <= windowHeight + 60) {
+              el.classList.add('is-visible');
+              revealObserver?.unobserve(el);
+            }
+          });
+        };
 
         revealObserver = new IntersectionObserver(
           (entries, observer) => {
             entries.forEach((entry) => {
-              if (!entry.isIntersecting) return;
-              entry.target.classList.add('is-visible');
-              observer.unobserve(entry.target);
+              if (entry.isIntersecting || entry.boundingClientRect.top <= window.innerHeight + 60) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+              }
             });
           },
-          { threshold: 0.1, rootMargin: '0px 0px -6% 0px' }
+          { threshold: 0, rootMargin: '0px 0px 60px 0px' }
         );
 
-        elements.forEach((el) => revealObserver!.observe(el));
+        elements.forEach((el) => {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= window.innerHeight + 60) {
+            el.classList.add('is-visible');
+          } else {
+            el.classList.remove('is-visible');
+            revealObserver!.observe(el);
+          }
+        });
+
+        if (motionAbortController) {
+          motionAbortController.abort();
+        }
+        motionAbortController = new AbortController();
+        const { signal } = motionAbortController;
+
+        window.addEventListener('scroll', checkPendingElements, { passive: true, signal });
+        window.addEventListener('resize', checkPendingElements, { passive: true, signal });
       }
 
       function animateCount(el: HTMLElement) {
@@ -188,26 +221,55 @@ const shellContent = locale === 'es-US' ? spanishShellContent : englishShellCont
       }
 
       function initCountups() {
-        if (countupObserver) countupObserver.disconnect();
+        if (countupObserver) {
+          countupObserver.disconnect();
+          countupObserver = null;
+        }
 
         const counters = document.querySelectorAll<HTMLElement>('[data-count-to]');
         if (!counters.length) return;
 
+        const checkPendingCounters = () => {
+          const pending = document.querySelectorAll<HTMLElement>('[data-count-to]:not([data-count-animated="true"])');
+          if (!pending.length) return;
+          const windowHeight = window.innerHeight;
+          pending.forEach((counter) => {
+            const rect = counter.getBoundingClientRect();
+            if (rect.top <= windowHeight + 40) {
+              animateCount(counter);
+              countupObserver?.unobserve(counter);
+            }
+          });
+        };
+
         countupObserver = new IntersectionObserver(
           (entries, observer) => {
             entries.forEach((entry) => {
-              if (!entry.isIntersecting) return;
-              animateCount(entry.target as HTMLElement);
-              observer.unobserve(entry.target);
+              if (entry.isIntersecting || entry.boundingClientRect.top <= window.innerHeight + 40) {
+                animateCount(entry.target as HTMLElement);
+                observer.unobserve(entry.target);
+              }
             });
           },
-          { threshold: 0.55 }
+          { threshold: 0.1, rootMargin: '0px 0px 40px 0px' }
         );
 
         counters.forEach((counter) => {
           if (counter.dataset.countAnimated === 'true') return;
-          countupObserver!.observe(counter);
+          const rect = counter.getBoundingClientRect();
+          if (rect.top <= window.innerHeight + 40) {
+            animateCount(counter);
+          } else {
+            countupObserver!.observe(counter);
+          }
         });
+
+        if (motionAbortController) {
+          window.addEventListener('scroll', checkPendingCounters, {
+            passive: true,
+            signal: motionAbortController.signal,
+          });
+        }
       }
 
       function initPageMotion() {

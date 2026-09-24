@@ -23,7 +23,7 @@ const { content } = Astro.props as { content: ServicesContent["intro"] };
         {content.benefits.map((benefit, index) => (
           <div
             data-reveal="scale"
-            style={`--reveal-delay: ${140 + index * 90}ms`}
+            style={`--reveal-delay: ${index * 60}ms`}
             class="relative overflow-hidden rounded-xl border border-white/10 bg-surface-2/90 px-4 py-4 text-center transition-all duration-300 hover:border-gold/30 hover:bg-surface-2"
           >
             <div class={`absolute inset-x-4 top-0 h-px bg-linear-to-r from-transparent ${index === 1 ? "via-gold/70" : "via-wine-soft/72"} to-transparent`}></div>
@@ -35,20 +35,23 @@ const { content } = Astro.props as { content: ServicesContent["intro"] };
     </div>
 
     <div data-reveal="scale" class="relative">
-      <div class="overflow-hidden rounded-xl border border-white/8 shadow-lg min-h-80 sm:min-h-96 lg:min-h-136">
+      <div class="overflow-hidden rounded-xl border border-white/8 shadow-lg">
         <CldImage
           src="about-cta_xhm8le"
           alt={content.imageAlt}
           width={1000}
           height={800}
           sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) 90vw, 44vw"
-          class="w-full h-full object-cover"
+          class="w-full object-cover min-h-80 sm:min-h-96 lg:min-h-136"
         />
         <div class="absolute inset-0 bg-linear-to-t from-black/58 via-transparent to-transparent"></div>
       </div>
 
-      <div class="motion-enter absolute left-5 right-5 bottom-5 rounded-xl border border-wine-soft/20 bg-[linear-gradient(180deg,rgba(110,43,44,0.16),rgba(23,24,27,0.9))] px-5 py-4 shadow-lg backdrop-blur-sm" style="--enter-delay: 220ms">
-        <p class="text-xs font-semibold uppercase tracking-wide text-gold">{content.processEyebrow}</p>
+      <div
+        class="motion-enter absolute left-4 right-4 sm:right-auto sm:left-5 bottom-4 sm:bottom-5 sm:max-w-sm rounded-xl border border-wine-soft/20 bg-[linear-gradient(180deg,rgba(15,16,18,0.85),rgba(79,29,30,0.50))] px-5 py-4 shadow-lg backdrop-blur-md"
+        style="--enter-delay: 240ms"
+      >
+        <p class="text-xs font-semibold uppercase tracking-wider text-gold">{content.processEyebrow}</p>
         <p class="mt-2 text-sm leading-relaxed text-text-secondary">{content.processDescription}</p>
       </div>
     </div>

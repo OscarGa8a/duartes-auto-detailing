@@ -60,7 +60,7 @@ const options: ContactOption[] = [
       target={opt.href.startsWith('http') ? '_blank' : undefined}
       rel={opt.href.startsWith('http') ? 'noopener noreferrer' : undefined}
       aria-label={opt.ariaLabel}
-      class={`motion-card-hover relative overflow-hidden rounded-xl border border-border-soft bg-surface-2 p-7 flex flex-col gap-5 group transition-[transform,border-color,box-shadow] duration-200 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 ${index === 2 ? "sm:col-span-2 sm:max-w-1/2 sm:w-full sm:mx-auto xl:col-span-1 xl:max-w-none" : ""}`}
+      class={`motion-card-hover relative overflow-hidden rounded-xl border border-border-soft bg-surface-2 p-7 flex flex-col gap-5 group transition-[transform,border-color,box-shadow] duration-200 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 ${index === 2 ? "sm:col-span-2 sm:max-w-md sm:w-full sm:mx-auto xl:col-span-1 xl:max-w-none" : ""}`}
     >
       <div class={`absolute inset-x-6 top-0 h-px bg-linear-to-r from-transparent ${index === 2 ? 'via-wine-soft/78' : 'via-gold/75'} to-transparent`}></div>
       <div class={`motion-glow-pulse absolute -right-8 -top-8 h-24 w-24 rounded-full ${index === 2 ? 'bg-wine/12' : 'bg-gold/8'} blur-2xl`} style={`--float-delay: ${index * 0.6}s`}></div>

@@ -78,10 +78,10 @@ const contactHref = isSpanish ? '/es/contact/' : '/contact/';
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {includes.map((item) => (
             <div
-              class="motion-card-hover relative overflow-hidden rounded-xl border border-border-soft bg-surface-2 px-4 py-3 flex items-start gap-3 transition-colors duration-200 hover:border-gold/35 active:scale-[0.99]"
+              class="motion-card-hover relative overflow-hidden rounded-xl border border-border-soft bg-surface-2 px-4 py-3 flex items-start gap-3 transition-colors duration-200 hover:border-gold/35 active:scale-[0.99] touch-manipulation"
             >
               <div class="absolute inset-x-4 top-0 h-px bg-linear-to-r from-transparent via-gold/60 to-transparent"></div>
-              <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold/14 text-gold">
+              <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold/14 text-gold border border-gold/20">
                 <Icon name="tabler:check" size="sm" />
               </span>
               <span class="text-sm leading-relaxed text-text-secondary">{item}</span>
@@ -92,20 +92,20 @@ const contactHref = isSpanish ? '/es/contact/' : '/contact/';
 
       <div class="pt-2 flex flex-col gap-3.5">
         <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-          <Button href={phoneUrl} variant="primary-bright" target="_blank" class='w-full sm:w-auto sm:min-w-64'>
+          <Button href={phoneUrl} variant="primary-bright" target="_blank" class='w-full sm:w-auto sm:min-w-64 touch-manipulation'>
             <Icon name="tabler:phone" />
             {ctaButtonText}
           </Button>
           <a
             href={contactHref}
-            class="inline-flex items-center justify-center gap-1.5 text-xs sm:text-sm font-medium text-text-secondary hover:text-gold transition-colors duration-200 py-2.5 px-3 rounded-lg hover:bg-white/4"
+            class="inline-flex items-center justify-center gap-1.5 text-xs sm:text-sm font-medium text-text-secondary hover:text-gold transition-colors duration-200 py-2.5 px-3 rounded-lg hover:bg-white/4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 focus-visible:ring-offset-2 focus-visible:ring-offset-black touch-manipulation"
           >
             <span>{isSpanish ? "O agenda mediante formulario web" : "Or book via custom form"}</span>
             <Icon name="tabler:arrow-right" size="sm" />
           </a>
         </div>
         <p class="text-xs text-text-muted flex items-center gap-2">
-          <span class="size-1.5 rounded-full bg-gold shrink-0"></span>
+          <span class="size-1.5 rounded-full bg-gold shrink-0 shadow-[0_0_8px_rgba(212,175,55,0.4)]"></span>
           <span>{isSpanish ? "Unidades 100% autónomas con agua y electricidad · A tu hogar u oficina" : "100% self-contained units with onboard water & power · Home or office"}</span>
         </p>
       </div>

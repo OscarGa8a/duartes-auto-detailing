@@ -40,7 +40,7 @@ const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${coor
 
     <div data-reveal="scale" class="motion-card-hover relative overflow-hidden rounded-xl border border-border-soft bg-surface p-4 shadow-lg lg:p-5">
       <div class="motion-glow-pulse absolute -right-10 -top-10 h-28 w-28 rounded-full bg-wine/12 blur-2xl"></div>
-      <div class="relative w-full overflow-hidden rounded-xl border border-white/8" style="height: 420px;">
+      <div class="relative w-full overflow-hidden rounded-xl border border-white/8 h-72 sm:h-96 lg:h-105">
         <iframe
           title={content.iframeTitle}
           src={mapEmbedUrl}
@@ -53,7 +53,7 @@ const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${coor
           aria-describedby="service-map-help"
         ></iframe>
 
-        <div class="absolute top-4 left-4 bg-[linear-gradient(180deg,rgba(15,16,18,0.86),rgba(79,29,30,0.34))] text-text-primary text-sm font-semibold uppercase tracking-wide px-3.5 py-2 rounded-full shadow-sm border border-wine-soft/22 backdrop-blur-md">
+        <div class="absolute top-4 left-4 bg-[linear-gradient(180deg,rgba(15,16,18,0.86),rgba(79,29,30,0.34))] text-text-primary text-xs sm:text-sm font-semibold uppercase tracking-wide px-3.5 py-1.5 sm:py-2 rounded-full shadow-sm border border-wine-soft/22 backdrop-blur-md">
           {content.overlayLabel}
         </div>
       </div>
@@ -64,7 +64,7 @@ const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${coor
         href={directionsUrl}
         target="_blank"
         rel="noopener noreferrer"
-        class="inline-flex items-center justify-center bg-black text-text-primary font-semibold px-5 py-3 rounded-full hover:bg-surface active:scale-[0.98] transition-[background-color,border-color,transform] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
+        class="inline-flex items-center justify-center bg-black text-text-primary font-semibold px-5 py-3 rounded-full hover:bg-surface active:scale-[0.98] transition-[background-color,border-color,transform] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 w-full sm:w-auto"
       >
         {content.directionsLabel}
       </a>
@@ -73,7 +73,7 @@ const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${coor
         href={googleMapsUrl}
         target="_blank"
         rel="noopener noreferrer"
-        class="inline-flex items-center justify-center border border-gold text-text-dark font-semibold px-5 py-3 rounded-full hover:bg-gold/8 active:scale-[0.98] transition-[background-color,border-color,transform] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
+        class="inline-flex items-center justify-center border border-gold text-text-dark font-semibold px-5 py-3 rounded-full hover:bg-gold/8 active:scale-[0.98] transition-[background-color,border-color,transform] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 w-full sm:w-auto"
       >
         {content.openMapLabel}
       </a>
