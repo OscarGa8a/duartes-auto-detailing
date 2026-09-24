@@ -10,7 +10,7 @@ Replace Cloudflare Pages' generic 200 homepage fallback with a premium bilingual
 
 ## Approved design direction
 - Premium nocturnal automotive language using existing graphite, cream, and gold tokens.
-- Spanish-primary bilingual copy with concise English support on one static page; no pathname detection.
+- English-primary bilingual copy with concise Spanish support on one static page; no pathname detection.
 - Asymmetric, editorial composition with one clear return-home action.
 - Restrained, motivated reflective-light motion with a complete reduced-motion fallback.
 - Design dials: variance 7, motion 4, density 3.
@@ -24,7 +24,7 @@ Replace Cloudflare Pages' generic 200 homepage fallback with a premium bilingual
 
 ## Constraints
 - Keep one primary action to `/`; do not render the full Navbar/Footer.
-- Use `<html lang="es-US">` and mark English support with `lang="en"`.
+- Use `<html lang="en">` and mark Spanish support with `lang="es"`.
 - Exactly one `<h1>`, one `<main>`, descriptive action text, visible focus treatment, at least 44px target, AA contrast, and no decorative semantics.
 - Respect `prefers-reduced-motion`; animate only transform/opacity or a decorative background position with a static fallback.
 - Do not create localized fake routes, redirect unknown URLs to `/`, or add the 404 to the sitemap.
@@ -35,13 +35,13 @@ Replace Cloudflare Pages' generic 200 homepage fallback with a premium bilingual
 TDD is not configured. Use ordinary deterministic source/output checks, Astro/type check, isolated build, SEO verification, accessibility-oriented source inspection, and read-only HTTP status validation. Route: delegated ODD because implementation spans multiple non-trivial files. Forecast: 170–250 authored changed lines. Delivery strategy: `ask-on-risk`; one cohesive PR is expected below the repository review budget.
 
 ## Tasks
-- [x] **ODD-404-01 — Build the branded error page.** Added `src/pages/404.astro` with a standalone Spanish-primary, bilingual error page, error-safe metadata, accessible home action, responsive graphite/cream/gold composition, and reduced-motion reflective treatment.
+- [x] **ODD-404-01 — Build the branded error page.** Added `src/pages/404.astro` with a standalone English-primary, bilingual error page, error-safe metadata, accessible home action, responsive graphite/cream/gold composition, and reduced-motion reflective treatment.
 - [x] **ODD-404-02 — Enforce static error contracts.** Extended `scripts/verify-seo-output.mjs` to require and validate `dist/404.html` while keeping it outside canonical route and sitemap inventories.
 - [x] **ODD-404-03 — Verify build and status boundary.** Source checks, Astro check, isolated build/SEO, exact path/line inventory, visual/static review, native review, and post-delivery HTTP 404 validation passed.
 
 ## Acceptance criteria
 1. `dist/404.html` exists and is not included in sitemap or canonical page inventories.
-2. The document has `lang="es-US"`, Spanish-primary copy, explicitly marked English support, exactly one main heading, and one home action.
+2. The document has `lang="en"`, English-primary copy, explicitly marked Spanish support (`lang="es"`), exactly one main heading, and one home action.
 3. The page emits `noindex, nofollow` and no canonical, hreflang, Open Graph URL, or JSON-LD.
 4. Desktop and mobile layouts retain premium brand hierarchy, keyboard focus, AA contrast, and reduced-motion behavior.
 5. After deployment, both a random unknown path and `/es/services/interior-detailing` return HTTP 404 and render the custom page.
