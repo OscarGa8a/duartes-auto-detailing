@@ -27,10 +27,18 @@ const { image, title, description, href, buttonText = "See more details" } = Ast
     </a>
   </div>
   <div class="p-5 flex flex-col gap-3 flex-1">
-    <h3 class="font-bold text-lg text-text-primary">{title}</h3>
+    <h3 class="font-bold text-lg text-text-primary">
+      {href ? (
+        <a href={href} class="hover:text-gold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold rounded-xs">
+          {title}
+        </a>
+      ) : (
+        title
+      )}
+    </h3>
     <p class="text-sm leading-relaxed flex-1 line-clamp-4 text-text-secondary">{description}</p>
     {href && (
-      <Button href={href} variant="primary-bright" class="w-full text-center">
+      <Button href={href} variant="primary-bright" class="w-full text-center touch-manipulation">
         {buttonText}
       </Button>
     )}
